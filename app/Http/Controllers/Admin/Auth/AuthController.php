@@ -96,8 +96,6 @@ class AuthController extends Controller
                     ])
                 ) {
                     $token = $this->respondWithToken($token);
-                    ///   $user = $this->me();
-
                     $user = DBHelpers::query_filter_first(AdminUser::class, [
                         'email' => $request->email,
                     ]);

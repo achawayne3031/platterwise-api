@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 ///// Auth /////
 Route::group(
     [
-        'middleware' => ['api'],
+        'middleware' => ['api', 'cors'],
         'prefix' => 'auth',
         'namespace' => 'App\Http\Controllers\Admin\Auth',
     ],
