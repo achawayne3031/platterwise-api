@@ -33,16 +33,14 @@ class ResturantController extends Controller
                     'phone' => $request->phone,
                     'address' => $request->address,
                     'state' => $request->state,
-                    'local_govt' => $request->local_govt,
-                    'landmark' => $request->landmark,
                     'cover_pic' => $request->cover_pic,
                     'banner' => $request->banner,
                     'descriptions' => $request->descriptions,
+                    'working_days' => $request->days,
                     'opening_hour' => $request->opening_hour,
                     'closing_hour' => $request->closing_hour,
                     'website' => $request->website,
                     'social_handle' => $request->social_handle,
-                    'kyc' => $request->kyc,
                     'latitude' => $request->latitude,
                     'longitude' => $request->longitude,
                 ];
@@ -63,8 +61,8 @@ class ResturantController extends Controller
                     }
                 }
 
-                if (count($request->menu_pic) > 0) {
-                    $image = $request->menu_pic;
+                if (count($request->menu_picture) > 0) {
+                    $image = $request->menu_picture;
                     foreach ($seat as $value) {
                         DBHelpers::create_query(RestaurantImages::class, [
                             'image_url' => $value->name,
@@ -84,20 +82,18 @@ class ResturantController extends Controller
                     'email',
                     'address',
                     'state',
-                    'local_govt',
                     'phone',
-                    'landmark',
                     'cover_pic',
                     'banner',
                     'descriptions',
+                    'working_days',
                     'closing_hour',
                     'opening_hour',
                     'website',
                     'longitude',
                     'latitude',
-                    'kyc',
                     'seat_type',
-                    'menu_pic',
+                    'menu_picture',
                 ];
                 $error_res = ErrorValidation::arrange_error($errors, $props);
 
