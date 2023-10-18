@@ -19,6 +19,75 @@ class RestaurantController extends Controller
 {
     //
 
+    //// view restaurant ///
+    public function follow(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = RestaurantFollowerValidator::validate_rules(
+                $request,
+                'follow'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                $uid = Auth::id();
+
+                if (
+                    !DBHelpers::exists(Resturant::class, [
+                        'id' => $request->restaurant_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant not found',
+                        $validate->errors(),
+                        401
+                    );
+                }
+
+                if (
+                    DBHelpers::exists(RestaurantFollowers::class, [
+                        'id' => $request->restaurant_id,
+                        'uid' => $uid,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant followed already',
+                        $validate->errors(),
+                        401
+                    );
+                }
+
+                $requestData = $request->all();
+                $requestData['uid'] = Auth::id();
+
+                DBHelpers::create_query(
+                    RestaurantFollowers::class,
+                    $requestData
+                );
+
+                return ResponseHelper::success_response(
+                    'Restaurant followed successfully',
+                    null
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     //// Rate restaurant ////
     public function rate(Request $request)
     {

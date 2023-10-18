@@ -63,9 +63,9 @@ class ResturantController extends Controller
 
                 if (count($request->menu_picture) > 0) {
                     $image = $request->menu_picture;
-                    foreach ($seat as $value) {
+                    foreach ($image as $value) {
                         DBHelpers::create_query(RestaurantImages::class, [
-                            'image_url' => $value->name,
+                            'image_url' => $value->menu_pic,
                             'restaurant_id' => $restaurant_id,
                         ]);
                     }

@@ -48,6 +48,7 @@ Route::group(
         Route::post('/save', 'RestaurantController@save');
         Route::post('/unsave', 'RestaurantController@unsave');
         Route::post('/rate', 'RestaurantController@rate');
+        Route::post('/view', 'RestaurantController@view');
     }
 );
 
