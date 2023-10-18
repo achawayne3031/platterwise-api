@@ -2,4 +2,4 @@
 deployment:
  tasks:
  - export DEPLOYPATH=/home/platterwise/public_html/api2.platterwise.com
- - /bin/cp * $DEPLOYPATH
+ - /bin/cp /routes/* $DEPLOYPATH
