@@ -32,3 +32,15 @@ Route::group(
         Route::post('/register', 'AuthController@register');
     }
 );
+
+///// Restaurant /////
+Route::group(
+    [
+        'middleware' => ['cors'],
+        'prefix' => 'restaurant',
+        'namespace' => 'App\Http\Controllers\Admin',
+    ],
+    function ($router) {
+        Route::post('/create', 'ResturantController@create');
+    }
+);

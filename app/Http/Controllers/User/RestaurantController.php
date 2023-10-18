@@ -17,6 +17,65 @@ class RestaurantController extends Controller
 {
     //
 
+    public function unfollow(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = RestaurantFollowerValidator::validate_rules(
+                $request,
+                'unfollow'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                $uid = Auth::id();
+
+                if (
+                    !DBHelpers::exists(Resturant::class, [
+                        'id' => $request->restaurant_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant not found',
+                        $validate->errors(),
+                        401
+                    );
+                }
+
+                if (
+                    DBHelpers::exists(RestaurantFollowers::class, [
+                        'id' => $request->restaurant_id,
+                        'uid' => $uid,
+                    ])
+                ) {
+                    DBHelpers::delete_query_multi(RestaurantFollowers::class, [
+                        'id' => $request->restaurant_id,
+                        'uid' => $uid,
+                    ]);
+                }
+
+                return ResponseHelper::success_response(
+                    'Restaurant unfollowed successfully',
+                    null
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function follow(Request $request)
     {
         if ($request->isMethod('post')) {

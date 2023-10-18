@@ -44,6 +44,7 @@ Route::group(
         Route::get('/index', 'RestaurantController@index');
         Route::post('/near-you', 'RestaurantController@near_you');
         Route::post('/follow', 'RestaurantController@follow');
+        Route::post('/unfollow', 'RestaurantController@unfollow');
     }
 );
 
