@@ -36,7 +36,7 @@ Route::group(
 ///// Restaurant /////
 Route::group(
     [
-        'middleware' => ['cors'],
+        'middleware' => ['cors', 'jwt.verify'],
         'prefix' => 'restaurant',
         'namespace' => 'App\Http\Controllers\Admin',
     ],

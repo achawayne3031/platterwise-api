@@ -13,19 +13,67 @@ use App\Validations\User\RestaurantFollowerValidator;
 use App\Validations\ErrorValidation;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SavedRestaurant;
+use App\Models\RestaurantReviews;
 
 class RestaurantController extends Controller
 {
     //
 
+    //// Rate restaurant ////
+    public function rate(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = RestaurantValidator::validate_rules($request, 'rate');
+
+            if (!$validate->fails() && $validate->validated()) {
+                $uid = Auth::id();
+
+                if (
+                    !DBHelpers::exists(Resturant::class, [
+                        'id' => $request->restaurant_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant not found',
+                        $validate->errors(),
+                        401
+                    );
+                }
+
+                $requestData = $request->all();
+                $requestData['uid'] = Auth::id();
+
+                DBHelpers::create_query(RestaurantReviews::class, $requestData);
+
+                return ResponseHelper::success_response(
+                    'Restaurant review saved successfully',
+                    null
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id', 'star_rating', 'comment'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     //// unsave restaurant ///
     public function unsave(Request $request)
     {
         if ($request->isMethod('post')) {
-            $validate = RestaurantFollowerValidator::validate_rules(
-                $request,
-                'unsave'
-            );
+            $validate = RestaurantValidator::validate_rules($request, 'unsave');
 
             if (!$validate->fails() && $validate->validated()) {
                 $uid = Auth::id();

@@ -35,6 +35,11 @@ class RestaurantValidator
             'unsave' => [
                 'restaurant_id' => 'required|integer',
             ],
+            'rate' => [
+                'restaurant_id' => 'required|integer',
+                'comment' => 'required',
+                'star_rating' => 'required|integer',
+            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);

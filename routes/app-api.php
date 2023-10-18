@@ -47,6 +47,7 @@ Route::group(
         Route::post('/unfollow', 'RestaurantController@unfollow');
         Route::post('/save', 'RestaurantController@save');
         Route::post('/unsave', 'RestaurantController@unsave');
+        Route::post('/rate', 'RestaurantController@rate');
     }
 );
 
