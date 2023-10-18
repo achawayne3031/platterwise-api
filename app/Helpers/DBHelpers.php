@@ -15,6 +15,46 @@ use Illuminate\Support\Facades\DB;
 
 class DBHelpers
 {
+    ////// get all query data
+    public static function data_with_paginate(
+        $dataModel,
+        $with_data,
+        $limit = 20
+    ) {
+        try {
+            return $dataModel
+                ::query()
+                ->with($with_data)
+                ->orderBy('id', 'DESC')
+                ->paginate($limit);
+        } catch (Exception $e) {
+            return ResponseHelper::error_response(
+                'Server Error',
+                $e->getMessage(),
+                401,
+                $e->getLine()
+            );
+        }
+    }
+
+    ////// get all query data
+    public static function data_paginate($dataModel, $limit = 20)
+    {
+        try {
+            return $dataModel
+                ::query()
+                ->orderBy('id', 'DESC')
+                ->paginate($limit);
+        } catch (Exception $e) {
+            return ResponseHelper::error_response(
+                'Server Error',
+                $e->getMessage(),
+                401,
+                $e->getLine()
+            );
+        }
+    }
+
     public static function query_like_filter($dataModel, $column, $value)
     {
         try {

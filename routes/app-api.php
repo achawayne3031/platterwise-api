@@ -32,3 +32,30 @@ Route::group(
         Route::post('/register', 'AuthController@register');
     }
 );
+
+///// Restuarant /////
+Route::group(
+    [
+        'middleware' => ['cors', 'jwt.verify'],
+        'prefix' => 'restaurant',
+        'namespace' => 'App\Http\Controllers\User',
+    ],
+    function ($router) {
+        Route::get('/index', 'RestaurantController@index');
+        Route::post('/near-you', 'RestaurantController@near_you');
+        Route::post('/follow', 'RestaurantController@follow');
+    }
+);
+
+///// Restuarant /////
+Route::group(
+    [
+        'middleware' => ['cors', 'jwt.verify'],
+        'prefix' => 'reservation',
+        'namespace' => 'App\Http\Controllers\User',
+    ],
+    function ($router) {
+        Route::post('/create', 'ReservationController@create');
+        Route::post('/cancel', 'ReservationController@cancel');
+    }
+);

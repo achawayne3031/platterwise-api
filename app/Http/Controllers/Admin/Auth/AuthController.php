@@ -96,9 +96,13 @@ class AuthController extends Controller
                     ])
                 ) {
                     $token = $this->respondWithToken($token);
-                    $user = DBHelpers::query_filter_first(AdminUser::class, [
-                        'email' => $request->email,
-                    ]);
+                    $user = DBHelpers::with_where_query_filter_first(
+                        AdminUser::class,
+                        ['resturant'],
+                        [
+                            'email' => $request->email,
+                        ]
+                    );
                     $user = response()->json($user);
 
                     return ResponseHelper::success_response(

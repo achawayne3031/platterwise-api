@@ -56,4 +56,9 @@ class AdminUser extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    public function resturant()
+    {
+        return $this->hasMany(Resturant::class, 'id', 'admin_uid');
+    }
 }
