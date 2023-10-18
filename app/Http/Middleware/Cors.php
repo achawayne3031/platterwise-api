@@ -22,7 +22,7 @@ class Cors
             ->header('Access-Control-Allow-Credentials', 'true')
             ->header(
                 'Access-Control-Allow-Headers',
-                'Origin, Content-Type, Authorization, X-Request-With, Accept'
+                'Origin, Content-Type, Authorization, X-Request-With, Accept, privatekey'
             );
     }
 }

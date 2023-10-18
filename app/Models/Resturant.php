@@ -36,4 +36,14 @@ class Resturant extends Model
     {
         return $this->hasOne(AdminUser::class, 'id', 'admin_uid');
     }
+
+    public function menu_pic()
+    {
+        return $this->hasMany(RestaurantImages::class, 'restaurant_id', 'id');
+    }
+
+    public function seat_type()
+    {
+        return $this->hasMany(RestaurantSeatType::class, 'restaurant_id', 'id');
+    }
 }

@@ -11,24 +11,13 @@
 namespace App\Validations\User;
 use App\Helpers\Func;
 
-class RestaurantValidator
+class SavedRestaurantValidator
 {
     protected static $validation_rules = [];
 
     public static function validate_rules($request, string $arg)
     {
         self::$validation_rules = [
-            'create' => [
-                'reservation_date' => 'required|date',
-                'restaurant_id' => 'required|integer',
-                'seat_type' => 'required',
-                'guest_no' => 'required',
-            ],
-
-            'near_you' => [
-                'latitude' => 'required',
-                'longitude' => 'required',
-            ],
             'save' => [
                 'restaurant_id' => 'required|integer',
             ],

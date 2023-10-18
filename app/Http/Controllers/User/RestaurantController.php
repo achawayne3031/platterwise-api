@@ -12,11 +12,136 @@ use App\Validations\User\RestaurantValidator;
 use App\Validations\User\RestaurantFollowerValidator;
 use App\Validations\ErrorValidation;
 use Illuminate\Support\Facades\Auth;
+use App\Models\SavedRestaurant;
 
 class RestaurantController extends Controller
 {
     //
 
+    //// unsave restaurant ///
+    public function unsave(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = RestaurantFollowerValidator::validate_rules(
+                $request,
+                'unsave'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                $uid = Auth::id();
+
+                if (
+                    !DBHelpers::exists(Resturant::class, [
+                        'id' => $request->restaurant_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant not found',
+                        $validate->errors(),
+                        401
+                    );
+                }
+
+                if (
+                    DBHelpers::exists(SavedRestaurant::class, [
+                        'id' => $request->restaurant_id,
+                        'uid' => $uid,
+                    ])
+                ) {
+                    DBHelpers::delete_query_multi(SavedRestaurant::class, [
+                        'id' => $request->restaurant_id,
+                        'uid' => $uid,
+                    ]);
+                }
+
+                return ResponseHelper::success_response(
+                    'Restaurant unsaved successfully',
+                    null
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
+    //// Save restaurant ////
+    public function save(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = RestaurantValidator::validate_rules($request, 'save');
+
+            if (!$validate->fails() && $validate->validated()) {
+                $uid = Auth::id();
+
+                if (
+                    !DBHelpers::exists(Resturant::class, [
+                        'id' => $request->restaurant_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant not found',
+                        $validate->errors(),
+                        401
+                    );
+                }
+
+                if (
+                    DBHelpers::exists(SavedRestaurant::class, [
+                        'id' => $request->restaurant_id,
+                        'uid' => $uid,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant saved already',
+                        $validate->errors(),
+                        401
+                    );
+                }
+
+                $requestData = $request->all();
+                $requestData['uid'] = Auth::id();
+
+                DBHelpers::create_query(SavedRestaurant::class, $requestData);
+
+                return ResponseHelper::success_response(
+                    'Restaurant saved successfully',
+                    null
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
+    //// unfollow restaurant ///
     public function unfollow(Request $request)
     {
         if ($request->isMethod('post')) {
@@ -76,6 +201,7 @@ class RestaurantController extends Controller
         }
     }
 
+    //// follow restaurant ///
     public function follow(Request $request)
     {
         if ($request->isMethod('post')) {
@@ -144,6 +270,7 @@ class RestaurantController extends Controller
         }
     }
 
+    //// restaurant near you///
     public function near_you(Request $request)
     {
         if ($request->isMethod('post')) {
