@@ -4,19 +4,154 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
 use App\Validations\Admin\AdminAuthValidator;
 use App\Validations\Admin\ResturantValidator;
 use App\Validations\ErrorValidation;
 use App\Helpers\ResponseHelper;
 use App\Models\Admin\AdminUser;
-use App\Models\Admin\Resturant;
+use App\Models\Resturant;
 use App\Models\Admin\RestaurantSeatType;
-use App\Models\Admin\RestaurantImages;
+use App\Models\RestaurantImages;
+use App\Models\RestaurantReviews;
+
 use App\Helpers\DBHelpers;
+use Illuminate\Support\Facades\Auth;
 
 class ResturantController extends Controller
 {
     //
+
+    public function menu(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ResturantValidator::validate_rules($request, 'menu');
+
+            if (!$validate->fails() && $validate->validated()) {
+                $uid = Auth::id();
+
+                // \Mail::to('achawayne@gmail.com')->send(
+                //     new \App\Mail\MailTester()
+                // );
+
+                if (
+                    !DBHelpers::exists(Resturant::class, [
+                        'admin_uid' => $uid,
+                        'id' => $request->restaurant_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant not found on your collection',
+                        null,
+                        401
+                    );
+                }
+
+                $menus = DBHelpers::data_where_paginate(
+                    RestaurantImages::class,
+                    ['restaurant_id' => $request->restaurant_id]
+                );
+
+                return ResponseHelper::success_response(
+                    'Restaurant menus fetched was successfully',
+                    $menus
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+
+        $restaurant = DBHelpers::data_where_paginate(
+            Resturant::class,
+            ['admin_uid' => $uid],
+            40
+        );
+
+        return ResponseHelper::success_response(
+            'Restaurant created',
+            restaurant
+        );
+    }
+
+    public function reviews(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ResturantValidator::validate_rules($request, 'reviews');
+
+            if (!$validate->fails() && $validate->validated()) {
+                $uid = Auth::id();
+
+                // \Mail::to('achawayne@gmail.com')->send(
+                //     new \App\Mail\MailTester()
+                // );
+
+                if (
+                    !DBHelpers::exists(Resturant::class, [
+                        'admin_uid' => $uid,
+                        'id' => $request->restaurant_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant not found on your collection',
+                        null,
+                        401
+                    );
+                }
+
+                $reviews = DBHelpers::data_with_where_paginate(
+                    RestaurantReviews::class,
+                    ['restaurant_id' => $request->restaurant_id],
+                    ['user']
+                );
+
+                return ResponseHelper::success_response(
+                    'Restaurant reviews fetched was successfully',
+                    $reviews
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+
+        $restaurant = DBHelpers::data_where_paginate(
+            Resturant::class,
+            ['admin_uid' => $uid],
+            40
+        );
+
+        return ResponseHelper::success_response(
+            'Restaurant created',
+            restaurant
+        );
+    }
 
     public function all_reservations()
     {
@@ -134,10 +269,5 @@ class ResturantController extends Controller
                 404
             );
         }
-
-        $id = Auth::id();
-
-        $create = DBHelpers::create_query(User::class, $user_data);
-        $uid = $create->id;
     }
 }

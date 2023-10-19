@@ -43,5 +43,22 @@ Route::group(
     function ($router) {
         Route::post('/create', 'ResturantController@create');
         Route::get('/all', 'ResturantController@all');
+        Route::post('/reviews', 'ResturantController@reviews');
+        Route::post('/menu', 'ResturantController@menu');
+    }
+);
+
+///// Reservation /////
+Route::group(
+    [
+        'middleware' => ['cors', 'jwt.verify'],
+        'prefix' => 'reservation',
+        'namespace' => 'App\Http\Controllers\Admin',
+    ],
+    function ($router) {
+        Route::post('/create', 'ResturantController@create');
+        Route::post('/all', 'ReservationController@all');
+        Route::post('/cancel', 'ReservationController@cancel');
+        Route::post('/approve', 'ReservationController@approve');
     }
 );

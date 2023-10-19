@@ -34,7 +34,7 @@ class ReservationController extends Controller
                 ) {
                     return ResponseHelper::error_response(
                         'Reservation not found',
-                        $validate->errors(),
+                        null,
                         401
                     );
                 }
@@ -48,7 +48,7 @@ class ReservationController extends Controller
                 ) {
                     return ResponseHelper::error_response(
                         'Reservation has been cancelled already',
-                        $validate->errors(),
+                        null,
                         401
                     );
                 }

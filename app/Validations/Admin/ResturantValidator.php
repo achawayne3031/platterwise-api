@@ -39,26 +39,11 @@ class ResturantValidator
                 'days' => 'required',
             ],
 
-            'token' => [
-                'token' => 'required',
+            'reviews' => [
+                'restaurant_id' => 'required',
             ],
-            'set_password' => [
-                'email' => 'required',
-                'password' => 'required',
-            ],
-
-            'reset_password' => [
-                'password' => 'required',
-                'otp' => 'required',
-                'verify_password' => 'required|same:password',
-            ],
-
-            'register' => [
-                'phone' => 'required',
-                'full_name' => 'required',
-                'email' => 'required|email|unique:admin_users',
-                'username' => 'required|unique:admin_users',
-                'password' => 'required|min:8',
+            'menu' => [
+                'restaurant_id' => 'required',
             ],
         ];
 
