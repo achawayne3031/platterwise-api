@@ -42,5 +42,6 @@ Route::group(
     ],
     function ($router) {
         Route::post('/create', 'ResturantController@create');
+        Route::get('/all', 'ResturantController@all');
     }
 );

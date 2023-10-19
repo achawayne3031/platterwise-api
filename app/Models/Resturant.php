@@ -46,4 +46,9 @@ class Resturant extends Model
     {
         return $this->hasMany(RestaurantSeatType::class, 'restaurant_id', 'id');
     }
+
+    public function review()
+    {
+        return $this->hasMany(RestaurantReviews::class, 'restaurant_id', 'id');
+    }
 }

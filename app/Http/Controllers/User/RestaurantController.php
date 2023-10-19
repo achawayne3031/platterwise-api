@@ -20,17 +20,12 @@ class RestaurantController extends Controller
     //
 
     //// view restaurant ///
-    public function follow(Request $request)
+    public function view(Request $request)
     {
         if ($request->isMethod('post')) {
-            $validate = RestaurantFollowerValidator::validate_rules(
-                $request,
-                'follow'
-            );
+            $validate = RestaurantValidator::validate_rules($request, 'view');
 
             if (!$validate->fails() && $validate->validated()) {
-                $uid = Auth::id();
-
                 if (
                     !DBHelpers::exists(Resturant::class, [
                         'id' => $request->restaurant_id,
@@ -43,30 +38,15 @@ class RestaurantController extends Controller
                     );
                 }
 
-                if (
-                    DBHelpers::exists(RestaurantFollowers::class, [
-                        'id' => $request->restaurant_id,
-                        'uid' => $uid,
-                    ])
-                ) {
-                    return ResponseHelper::error_response(
-                        'Restaurant followed already',
-                        $validate->errors(),
-                        401
-                    );
-                }
-
-                $requestData = $request->all();
-                $requestData['uid'] = Auth::id();
-
-                DBHelpers::create_query(
-                    RestaurantFollowers::class,
-                    $requestData
+                $current = DBHelpers::with_where_query_filter_first(
+                    Resturant::class,
+                    ['menu_pic', 'seat_type', 'review'],
+                    ['id' => $request->restaurant_id]
                 );
 
                 return ResponseHelper::success_response(
-                    'Restaurant followed successfully',
-                    null
+                    'View restaurant',
+                    $current
                 );
             } else {
                 $errors = json_decode($validate->errors());

@@ -40,6 +40,9 @@ class RestaurantValidator
                 'comment' => 'required',
                 'star_rating' => 'required|integer',
             ],
+            'view' => [
+                'restaurant_id' => 'required|integer',
+            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);

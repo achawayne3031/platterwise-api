@@ -18,6 +18,30 @@ class ResturantController extends Controller
 {
     //
 
+    public function all_reservations()
+    {
+    }
+
+    public function view_restaurant()
+    {
+    }
+
+    public function all()
+    {
+        $uid = Auth::id();
+
+        $restaurant = DBHelpers::data_where_paginate(
+            Resturant::class,
+            ['admin_uid' => $uid],
+            40
+        );
+
+        return ResponseHelper::success_response(
+            'Restaurant created',
+            restaurant
+        );
+    }
+
     public function create(Request $request)
     {
         if ($request->isMethod('post')) {
