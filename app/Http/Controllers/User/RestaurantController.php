@@ -19,6 +19,40 @@ class RestaurantController extends Controller
 {
     //
 
+    public function saved(Request $request)
+    {
+        $uid = Auth::id();
+
+        $restaurant = DBHelpers::data_with_where_paginate(
+            SavedRestaurant::class,
+            ['uid' => $uid],
+            ['restaurant'],
+            40
+        );
+
+        return ResponseHelper::success_response(
+            'All saved restaurant fetched successfully',
+            $restaurant
+        );
+    }
+
+    public function followed(Request $request)
+    {
+        $uid = Auth::id();
+
+        $restaurant = DBHelpers::data_with_where_paginate(
+            RestaurantFollowers::class,
+            ['uid' => $uid],
+            ['restaurant'],
+            40
+        );
+
+        return ResponseHelper::success_response(
+            'All followed restaurant fetched successfully',
+            $restaurant
+        );
+    }
+
     //// view restaurant ///
     public function view(Request $request)
     {

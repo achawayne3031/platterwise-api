@@ -16,6 +16,23 @@ class ReservationController extends Controller
 {
     //
 
+    public function all()
+    {
+        $uid = Auth::id();
+
+        $restaurant = DBHelpers::data_with_where_paginate(
+            Reservation::class,
+            ['uid' => $uid],
+            ['restaurant'],
+            40
+        );
+
+        return ResponseHelper::success_response(
+            'All reservations fetched successfully',
+            $restaurant
+        );
+    }
+
     public function cancel(Request $request)
     {
         if ($request->isMethod('post')) {

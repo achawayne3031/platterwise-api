@@ -49,6 +49,8 @@ Route::group(
         Route::post('/unsave', 'RestaurantController@unsave');
         Route::post('/rate', 'RestaurantController@rate');
         Route::post('/view', 'RestaurantController@view');
+        Route::get('/followed', 'RestaurantController@followed');
+        Route::get('/saved', 'RestaurantController@saved');
     }
 );
 
@@ -62,5 +64,6 @@ Route::group(
     function ($router) {
         Route::post('/create', 'ReservationController@create');
         Route::post('/cancel', 'ReservationController@cancel');
+        Route::get('/all', 'ReservationController@all');
     }
 );
