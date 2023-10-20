@@ -49,30 +49,6 @@ class AuthValidators
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:8',
             ],
-
-            'register_staff' => [
-                'first_name' => 'required',
-                'other_name' => 'required',
-                'surname' => 'required',
-                'email' => 'required|unique:users',
-                'password' => 'required',
-                'phone' => 'required',
-                'role' => 'required',
-            ],
-
-            'register_student' => [
-                'first_name' => 'required',
-                'other_name' => 'required',
-                'surname' => 'required',
-                'email' => 'required|unique:users',
-                'password' => 'required',
-                'phone' => 'required',
-                'role' => 'required',
-                'dob' => 'required',
-                'sport_house' => 'required',
-                'admission_number' => 'required',
-                'school_class' => 'required',
-            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);

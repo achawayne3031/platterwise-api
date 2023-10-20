@@ -40,6 +40,7 @@ class UserAuthValidator
             'register' => [
                 'phone' => 'required',
                 'full_name' => 'required',
+                'username' => 'required|unique:users',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:8',
             ],

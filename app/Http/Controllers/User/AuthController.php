@@ -26,6 +26,8 @@ class AuthController extends Controller
                         'full_name' => $request->full_name,
                         'phone' => $request->phone,
                         'email' => $request->email,
+                        'location' => $request->location,
+                        'username' => $request->username,
                         'password' => bcrypt($request->password),
                     ];
 
@@ -52,7 +54,13 @@ class AuthController extends Controller
                 }
             } else {
                 $errors = json_decode($validate->errors());
-                $props = ['full_name', 'phone', 'email', 'password'];
+                $props = [
+                    'full_name',
+                    'phone',
+                    'email',
+                    'password',
+                    'username',
+                ];
                 $error_res = ErrorValidation::arrange_error($errors, $props);
 
                 return ResponseHelper::error_response(
