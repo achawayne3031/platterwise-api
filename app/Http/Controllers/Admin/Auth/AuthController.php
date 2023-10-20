@@ -40,7 +40,7 @@ class AuthController extends Controller
 
                     if ($register) {
                         if (
-                            $token = Auth::guard('api')->attempt([
+                            $token = Auth::guard('web-api')->attempt([
                                 'email' => $request->email,
                                 'password' => $request->password,
                             ])
@@ -60,9 +60,6 @@ class AuthController extends Controller
                                 401
                             );
                         }
-
-
-
                     } else {
                         return ResponseHelper::error_response(
                             'Registration failed, Database insertion issues',
