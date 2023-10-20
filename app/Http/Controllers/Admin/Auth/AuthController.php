@@ -39,10 +39,30 @@ class AuthController extends Controller
                     );
 
                     if ($register) {
-                        return ResponseHelper::success_response(
-                            'Registration was successful',
-                            null
-                        );
+                        if (
+                            $token = Auth::guard('api')->attempt([
+                                'email' => $request->email,
+                                'password' => $request->password,
+                            ])
+                        ) {
+                            $token = $this->respondWithToken($token);
+                            $user = $this->me();
+
+                            return ResponseHelper::success_response(
+                                'Registration was Successful',
+                                $user,
+                                $token
+                            );
+                        } else {
+                            return ResponseHelper::error_response(
+                                'Invalid login credentials',
+                                null,
+                                401
+                            );
+                        }
+
+
+
                     } else {
                         return ResponseHelper::error_response(
                             'Registration failed, Database insertion issues',
