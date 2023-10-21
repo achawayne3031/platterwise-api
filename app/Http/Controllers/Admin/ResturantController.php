@@ -254,6 +254,7 @@ class ResturantController extends Controller
                     'seat_type',
                     'menu_picture',
                     'social_handle',
+                    'days',
                 ];
                 $error_res = ErrorValidation::arrange_error($errors, $props);
 
