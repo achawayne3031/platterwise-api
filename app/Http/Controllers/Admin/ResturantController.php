@@ -253,6 +253,7 @@ class ResturantController extends Controller
                     'latitude',
                     'seat_type',
                     'menu_picture',
+                    'social_handle',
                 ];
                 $error_res = ErrorValidation::arrange_error($errors, $props);
 
