@@ -19,7 +19,6 @@ class ResturantValidator
     {
         self::$validation_rules = [
             'create' => [
-                'admin_uid' => 'required',
                 'name' => 'required',
                 'email' => 'required|email|unique:resturant',
                 'phone' => 'required',
