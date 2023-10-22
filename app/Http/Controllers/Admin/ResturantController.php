@@ -11,7 +11,7 @@ use App\Validations\ErrorValidation;
 use App\Helpers\ResponseHelper;
 use App\Models\Admin\AdminUser;
 use App\Models\Resturant;
-use App\Models\Admin\RestaurantSeatType;
+use App\Models\RestaurantSeatType;
 use App\Models\RestaurantImages;
 use App\Models\RestaurantReviews;
 
@@ -183,57 +183,62 @@ class ResturantController extends Controller
             $validate = ResturantValidator::validate_rules($request, 'create');
 
             if (!$validate->fails() && $validate->validated()) {
-                $uid = Auth::id();
+                DB::beginTransaction();
 
-                $restaurant_data = [
-                    'admin_uid' => $uid,
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'phone' => $request->phone,
-                    'address' => $request->address,
-                    'state' => $request->state,
-                    'cover_pic' => $request->cover_pic,
-                    'banner' => $request->banner,
-                    'descriptions' => $request->descriptions,
-                    'working_days' => $request->days,
-                    'opening_hour' => $request->opening_hour,
-                    'closing_hour' => $request->closing_hour,
-                    'website' => $request->website,
-                    'social_handle' => $request->social_handle,
-                    'latitude' => $request->latitude,
-                    'longitude' => $request->longitude,
-                ];
+                try {
+                    $uid = Auth::id();
 
-                $create = DBHelpers::create_query(
-                    Resturant::class,
-                    $restaurant_data
-                );
-                $restaurant_id = $create->id;
+                    $restaurant_data = [
+                        'admin_uid' => $uid,
+                        'name' => $request->name,
+                        'email' => $request->email,
+                        'phone' => $request->phone,
+                        'address' => $request->address,
+                        'state' => $request->state,
+                        'cover_pic' => $request->cover_pic,
+                        'banner' => $request->banner,
+                        'descriptions' => $request->descriptions,
+                        'working_days' => $request->days,
+                        'opening_hour' => $request->opening_hour,
+                        'closing_hour' => $request->closing_hour,
+                        'website' => $request->website,
+                        'latitude' => $request->latitude,
+                        'longitude' => $request->longitude,
+                    ];
 
-                if (count($request->seat_type) > 0) {
-                    $seat = $request->seat_type;
-                    foreach ($seat as $value) {
-                        DBHelpers::create_query(RestaurantSeatType::class, [
-                            'name' => $value->name,
-                            'restaurant_id' => $restaurant_id,
-                        ]);
+                    $create = Resturant::create($restaurant_data);
+                    $restaurant_id = $create->id;
+
+                    if (count($request->seat_type) > 0) {
+                        $seat = $request->seat_type;
+                        foreach ($seat as $value) {
+                            RestaurantSeatType::create([
+                                'name' => $value['name'],
+                                'restaurant_id' => $restaurant_id,
+                            ]);
+                        }
                     }
-                }
 
-                if (count($request->menu_picture) > 0) {
-                    $image = $request->menu_picture;
-                    foreach ($image as $value) {
-                        DBHelpers::create_query(RestaurantImages::class, [
-                            'image_url' => $value->menu_pic,
-                            'restaurant_id' => $restaurant_id,
-                        ]);
+                    if (count($request->menu_picture) > 0) {
+                        $image = $request->menu_picture;
+                        foreach ($image as $value) {
+                            RestaurantImages::create([
+                                'image_url' => $value['menu_pic'],
+                                'restaurant_id' => $restaurant_id,
+                            ]);
+                        }
                     }
-                }
 
-                return ResponseHelper::success_response(
-                    'Restaurant created successfully',
-                    null
-                );
+                    DB::commit(); // execute the operations above and commit transaction
+
+                    return ResponseHelper::success_response(
+                        'Restaurant created successfully',
+                        null
+                    );
+                } catch (\Throwable $error) {
+                    DB::rollBack(); // rollback in case of an exception || error
+                    return ResponseHelper::error_response($error);
+                }
             } else {
                 $errors = json_decode($validate->errors());
                 $props = [
