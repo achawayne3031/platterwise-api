@@ -14,9 +14,9 @@ use App\Models\Resturant;
 use App\Models\RestaurantSeatType;
 use App\Models\RestaurantImages;
 use App\Models\RestaurantReviews;
-
 use App\Helpers\DBHelpers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ResturantController extends Controller
 {
