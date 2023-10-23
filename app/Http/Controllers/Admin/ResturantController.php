@@ -28,7 +28,8 @@ class ResturantController extends Controller
             $validate = ResturantValidator::validate_rules($request, 'menu');
 
             if (!$validate->fails() && $validate->validated()) {
-                $uid = Auth::id();
+                $user = auth('web-api')->user();
+                $uid = $user->id;
 
                 // \Mail::to('achawayne@gmail.com')->send(
                 //     new \App\Mail\MailTester()
@@ -93,8 +94,8 @@ class ResturantController extends Controller
             $validate = ResturantValidator::validate_rules($request, 'reviews');
 
             if (!$validate->fails() && $validate->validated()) {
-                $uid = Auth::id();
-
+                $user = auth('web-api')->user();
+                $uid = $user->id;
                 // \Mail::to('achawayne@gmail.com')->send(
                 //     new \App\Mail\MailTester()
                 // );
@@ -163,7 +164,8 @@ class ResturantController extends Controller
 
     public function all()
     {
-        $uid = Auth::id();
+        $user = auth('web-api')->user();
+        $uid = $user->id;
 
         $restaurant = DBHelpers::data_where_paginate(
             Resturant::class,
@@ -186,7 +188,8 @@ class ResturantController extends Controller
                 DB::beginTransaction();
 
                 try {
-                    $uid = Auth::id();
+                    $user = auth('web-api')->user();
+                    $uid = $user->id;
 
                     $restaurant_data = [
                         'admin_uid' => $uid,

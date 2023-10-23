@@ -27,8 +27,8 @@ class ReservationController extends Controller
             );
 
             if (!$validate->fails() && $validate->validated()) {
-                $uid = Auth::id();
-
+                $user = auth('web-api')->user();
+                $uid = $user->id;
                 // \Mail::to('achawayne@gmail.com')->send(
                 //     new \App\Mail\MailTester()
                 // );
@@ -111,8 +111,8 @@ class ReservationController extends Controller
             );
 
             if (!$validate->fails() && $validate->validated()) {
-                $uid = Auth::id();
-
+                $user = auth('web-api')->user();
+                $uid = $user->id;
                 if (
                     !DBHelpers::exists(Resturant::class, [
                         'admin_uid' => $uid,
@@ -175,8 +175,8 @@ class ReservationController extends Controller
             $validate = ReservationValidator::validate_rules($request, 'all');
 
             if (!$validate->fails() && $validate->validated()) {
-                $uid = Auth::id();
-
+                $user = auth('web-api')->user();
+                $uid = $user->id;
                 if (
                     !DBHelpers::exists(Resturant::class, ['admin_uid' => $uid])
                 ) {
