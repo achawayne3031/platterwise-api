@@ -39,12 +39,6 @@ class AuthController extends Controller
                     );
 
                     if ($register) {
-                        return ResponseHelper::success_response(
-                            'Registration was Successful',
-                            null,
-                            null
-                        );
-
                         if (
                             $token = Auth::guard('web-api')->attempt([
                                 'email' => $request->email,
