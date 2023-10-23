@@ -173,10 +173,7 @@ class ResturantController extends Controller
             40
         );
 
-        return ResponseHelper::success_response(
-            'Restaurant created',
-            $restaurant
-        );
+        return ResponseHelper::success_response('All restaurant', $restaurant);
     }
 
     public function create(Request $request)
