@@ -175,7 +175,7 @@ class ResturantController extends Controller
 
         return ResponseHelper::success_response(
             'Restaurant created',
-            restaurant
+            $restaurant
         );
     }
 
