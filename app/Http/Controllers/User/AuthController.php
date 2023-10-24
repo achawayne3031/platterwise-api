@@ -36,9 +36,9 @@ class AuthController extends Controller
                     if ($register) {
                         $data = ['token' => 'bvssnms'];
 
-                        // \Mail::to('michealovie33@gmail.com')->send(
-                        //     new \App\Mail\UserEmailVerification($data)
-                        // );
+                        \Mail::to($request->email)->send(
+                            new \App\Mail\UserEmailVerification($data)
+                        );
 
                         return ResponseHelper::success_response(
                             'Registration was successful',
