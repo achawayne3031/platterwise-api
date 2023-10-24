@@ -34,6 +34,12 @@ class AuthController extends Controller
                     $register = DBHelpers::create_query(AppUser::class, $data);
 
                     if ($register) {
+                        $data = ['token' => 'bvssnms'];
+
+                        // \Mail::to('michealovie33@gmail.com')->send(
+                        //     new \App\Mail\UserEmailVerification($data)
+                        // );
+
                         return ResponseHelper::success_response(
                             'Registration was successful',
                             null
@@ -92,6 +98,15 @@ class AuthController extends Controller
                 ) {
                     $token = $this->respondWithToken($token);
                     $user = $this->me();
+                    $check_user = auth()->user();
+
+                    if ($check_user->is_verified == 0) {
+                        return ResponseHelper::error_response(
+                            'Email not verified yet',
+                            null,
+                            401
+                        );
+                    }
 
                     return ResponseHelper::success_response(
                         'Login Successful',
