@@ -12,7 +12,7 @@
 <body>
 
 
-    <h4>Hello Platterwise</h4>
+    <h4>Platterwise User Verification</h4>
 
 </body>
 </html>

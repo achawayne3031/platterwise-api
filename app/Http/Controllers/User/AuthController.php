@@ -125,7 +125,7 @@ class AuthController extends Controller
                             'verify_token' => $verify_token,
                         ];
 
-                        \Mail::to('achawayne@gmail.com')->send(
+                        \Mail::to($request->email)->send(
                             new \App\Mail\UserEmailVerification($data)
                         );
 
