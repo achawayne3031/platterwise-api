@@ -31,7 +31,7 @@ class VerificationController extends Controller
             $status = true;
             DBHelpers::update_query_v2(
                 AppUser::class,
-                ['is_verified' => 1],
+                ['is_verified' => 1, 'verify_token' => null],
                 $user
             );
         }
