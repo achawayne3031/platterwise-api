@@ -125,6 +125,12 @@ class AuthController extends Controller
                             'verify_token' => $verify_token,
                         ];
 
+                        DBHelpers::update_query_v2(
+                            AppUser::class,
+                            ['verify_token' => $verify_token],
+                            $check_user->id
+                        );
+
                         \Mail::to($request->email)->send(
                             new \App\Mail\UserEmailVerification($data)
                         );
