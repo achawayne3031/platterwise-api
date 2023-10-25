@@ -10,6 +10,7 @@ use App\Validations\ErrorValidation;
 use App\Helpers\ResponseHelper;
 use App\Models\User\AppUser;
 use App\Helpers\DBHelpers;
+use App\Helpers\Func;
 
 class AuthController extends Controller
 {
@@ -22,6 +23,8 @@ class AuthController extends Controller
 
             if (!$validate->fails() && $validate->validated()) {
                 try {
+                    $verify_token = Func::generate_reference(10, 'all');
+
                     $data = [
                         'full_name' => $request->full_name,
                         'phone' => $request->phone,
@@ -29,12 +32,21 @@ class AuthController extends Controller
                         'location' => $request->location,
                         'username' => $request->username,
                         'password' => bcrypt($request->password),
+                        'verify_token' => $verify_token,
                     ];
 
                     $register = DBHelpers::create_query(AppUser::class, $data);
 
                     if ($register) {
-                        $data = ['token' => 'bvssnms'];
+                        $data = [
+                            'link' =>
+                                'https://api2.platterwise.com/verify-user/' .
+                                $register->id .
+                                '/' .
+                                $verify_token,
+                            'user' => $register->id,
+                            'verify_token' => $verify_token,
+                        ];
 
                         \Mail::to($request->email)->send(
                             new \App\Mail\UserEmailVerification($data)
@@ -89,6 +101,8 @@ class AuthController extends Controller
         if ($request->isMethod('post')) {
             $validate = UserAuthValidator::validate_rules($request, 'login');
 
+            $verify_token = Func::generate_reference(10, 'all');
+
             if (!$validate->fails() && $validate->validated()) {
                 if (
                     $token = Auth::guard('api')->attempt([
@@ -101,6 +115,20 @@ class AuthController extends Controller
                     $check_user = auth()->user();
 
                     if ($check_user->is_verified == 0) {
+                        $data = [
+                            'link' =>
+                                'https://api2.platterwise.com/verify-user/' .
+                                $check_user->id .
+                                '/' .
+                                $verify_token,
+                            'user' => $check_user->id,
+                            'verify_token' => $verify_token,
+                        ];
+
+                        \Mail::to('achawayne@gmail.com')->send(
+                            new \App\Mail\UserEmailVerification($data)
+                        );
+
                         return ResponseHelper::error_response(
                             'Email not verified yet',
                             null,

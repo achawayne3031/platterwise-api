@@ -23,6 +23,7 @@ class AppUser extends Authenticatable implements JWTSubject
         'full_name',
         'email',
         'password',
+        'verify_token',
         'device_token',
         'username',
         'phone',

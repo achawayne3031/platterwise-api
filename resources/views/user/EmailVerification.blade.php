@@ -37,10 +37,11 @@
         background-color: #db4e2e;
         border-radius: 5px;
         padding: 8px 25px;
-        color: #ffffff;
+        color: #ffffff !important;
         border: 0px;
         font-weight: 700;
         font-size: 11px;
+        text-decoration: none;
       }
       .mail-inner-text {
         color: #5c5c5c;
@@ -112,7 +113,11 @@
               email.
             </p>
 
-            <button class="verify-btn">Click to Verify Email</button>
+
+
+            @php
+                echo "<a href=".$mailMessageData['link']." target='_blank' class='verify-btn'>Click to Verify Email</a>";
+            @endphp
 
             <p class="mail-inner-text mt-3">Thank you for using Platterwise!</p>
 

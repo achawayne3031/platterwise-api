@@ -21,56 +21,6 @@ class Func
         return Validator::make($request->all(), $input);
     }
 
-    public static function school_session_builder($last = 10)
-    {
-        $yearly = [];
-        $current_year = date('Y');
-        $start_year = $current_year - $last;
-        $next_year = $current_year + 1;
-        $next_session = $current_year . '/' . $next_year;
-
-        for ($i = 0; $i < $last; $i++) {
-            $add = $i + 1;
-            $sessions_years = $start_year + $i . '/' . $start_year + $add;
-            array_push($yearly, $sessions_years);
-        }
-
-        array_push($yearly, $next_session);
-
-        return $yearly;
-    }
-
-    public static function generate_admission_code($serial_no)
-    {
-        return isset($serial_no) && !empty($serial_no)
-            ? '000' . $serial_no
-            : false;
-    }
-
-    public static function generate_school_admission_no($serial_no)
-    {
-        $current_session = DB::table('school_session_data')
-            ->where(['is_active' => 1])
-            ->get()
-            ->first();
-        $school_data = DB::table('school_settings')
-            ->get()
-            ->first();
-
-        if (!$current_session && !$school_data) {
-            return false;
-        }
-
-        $school_prefix = $school_data->school_prefix;
-        $current_session_year = $current_session->year;
-
-        return $school_prefix .
-            '/' .
-            $current_session_year .
-            '/' .
-            Func::generate_admission_code($serial_no);
-    }
-
     public static function generate_reference($length = 4, $mixture = 'all')
     {
         $lowercase_alpha = 'abcdefghijklmnopqrstuvwxyz';
