@@ -32,6 +32,7 @@ class Resturant extends Model
         'kyc',
         'latitude',
         'longitude',
+        'total_rating',
     ];
 
     public function owner()

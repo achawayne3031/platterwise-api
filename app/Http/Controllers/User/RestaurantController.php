@@ -204,6 +204,20 @@ class RestaurantController extends Controller
 
                 DBHelpers::create_query(RestaurantReviews::class, $requestData);
 
+                $cureent_restuarant = DBHelpers::query_filter_first(
+                    Resturant::class,
+                    ['id' => $requestData['restaurant_id']]
+                );
+                $total_rating = $cureent_restuarant->total_rating;
+                $user_rating = $requestData['star_rating'];
+                $current_rating = intval($total_rating) + intval($user_rating);
+
+                DBHelpers::update_query_v3(
+                    Resturant::class,
+                    ['total_rating' => $current_rating],
+                    ['id' => $requestData['restaurant_id']]
+                );
+
                 return ResponseHelper::success_response(
                     'Restaurant review saved successfully',
                     null
