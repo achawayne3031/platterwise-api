@@ -159,7 +159,7 @@ class RestaurantController extends Controller
             $validate = RestaurantValidator::validate_rules($request, 'unsave');
 
             if (!$validate->fails() && $validate->validated()) {
-                //  return $uid = Auth::id();
+                $uid = Auth::id();
 
                 // return $uid = Auth::user();
 
