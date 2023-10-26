@@ -392,12 +392,12 @@ class RestaurantController extends Controller
 
                 if (
                     DBHelpers::exists(RestaurantFollowers::class, [
-                        'id' => $request->restaurant_id,
+                        'restaurant_id' => $request->restaurant_id,
                         'uid' => $uid,
                     ])
                 ) {
                     DBHelpers::delete_query_multi(RestaurantFollowers::class, [
-                        'id' => $request->restaurant_id,
+                        'restaurant_id' => $request->restaurant_id,
                         'uid' => $uid,
                     ]);
                 }
@@ -452,7 +452,7 @@ class RestaurantController extends Controller
 
                 if (
                     DBHelpers::exists(RestaurantFollowers::class, [
-                        'id' => $request->restaurant_id,
+                        'restaurant_id' => $request->restaurant_id,
                         'uid' => $uid,
                     ])
                 ) {
