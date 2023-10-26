@@ -159,7 +159,11 @@ class RestaurantController extends Controller
             $validate = RestaurantValidator::validate_rules($request, 'unsave');
 
             if (!$validate->fails() && $validate->validated()) {
-                $uid = Auth::id();
+                //  return $uid = Auth::id();
+
+                // return $uid = Auth::user();
+
+                /// $user = auth('web-api')->user();
 
                 if (
                     !DBHelpers::exists(Resturant::class, [
@@ -175,12 +179,12 @@ class RestaurantController extends Controller
 
                 if (
                     DBHelpers::exists(SavedRestaurant::class, [
-                        'id' => $request->restaurant_id,
+                        'restaurant_id' => $request->restaurant_id,
                         'uid' => $uid,
                     ])
                 ) {
                     DBHelpers::delete_query_multi(SavedRestaurant::class, [
-                        'id' => $request->restaurant_id,
+                        'restaurant_id' => $request->restaurant_id,
                         'uid' => $uid,
                     ]);
                 }
@@ -232,7 +236,7 @@ class RestaurantController extends Controller
 
                 if (
                     DBHelpers::exists(SavedRestaurant::class, [
-                        'id' => $request->restaurant_id,
+                        'restaurant_id' => $request->restaurant_id,
                         'uid' => $uid,
                     ])
                 ) {

@@ -369,7 +369,13 @@ class DBHelpers
     public static function delete_query_multi($dataModel, $filter)
     {
         try {
-            return $dataModel::where($filter)->delete();
+            DB::beginTransaction();
+
+            $status = $dataModel::where($filter)->delete();
+
+            DB::commit(); // execute the operations above and commit transaction
+
+            return $status;
         } catch (Exception $e) {
             return ResponseHelper::error_response(
                 'Server Error',
