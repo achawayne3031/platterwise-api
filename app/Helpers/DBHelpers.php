@@ -101,6 +101,27 @@ class DBHelpers
         }
     }
 
+    public static function query_like_with_filter(
+        $dataModel,
+        $column,
+        $value,
+        $with = null
+    ) {
+        try {
+            return $dataModel
+                ::where($column, 'LIKE', "%{$value}%")
+                ->with($with)
+                ->get();
+        } catch (Exception $e) {
+            return ResponseHelper::error_response(
+                'Server Error',
+                $e->getMessage(),
+                401,
+                $e->getLine()
+            );
+        }
+    }
+
     public static function query_like_filter($dataModel, $column, $value)
     {
         try {

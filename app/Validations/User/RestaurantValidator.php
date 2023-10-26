@@ -43,6 +43,12 @@ class RestaurantValidator
             'view' => [
                 'restaurant_id' => 'required|integer',
             ],
+            'state_filter' => [
+                'state' => 'required',
+            ],
+            'search' => [
+                'name' => 'required',
+            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);

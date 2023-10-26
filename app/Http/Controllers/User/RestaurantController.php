@@ -19,6 +19,82 @@ class RestaurantController extends Controller
 {
     //
 
+    public function search_by_name(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = RestaurantValidator::validate_rules($request, 'search');
+
+            if (!$validate->fails() && $validate->validated()) {
+                $current = DBHelpers::query_like_with_filter(
+                    Resturant::class,
+                    'name',
+                    $request->search,
+                    ['menu_pic', 'seat_type', 'review']
+                );
+
+                return ResponseHelper::success_response(
+                    'Search restaurant by name',
+                    $current
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['name'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
+    public function state_filter(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = RestaurantValidator::validate_rules(
+                $request,
+                'state_filter'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                $current = DBHelpers::with_where_query_filter(
+                    Resturant::class,
+                    ['menu_pic', 'seat_type', 'review'],
+                    ['state' => $request->state]
+                );
+
+                return ResponseHelper::success_response(
+                    'Restaurant by state',
+                    $current
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['state'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function saved(Request $request)
     {
         $uid = Auth::id();

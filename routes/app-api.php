@@ -51,6 +51,8 @@ Route::group(
         Route::post('/view', 'RestaurantController@view');
         Route::get('/followed', 'RestaurantController@followed');
         Route::get('/saved', 'RestaurantController@saved');
+        Route::post('/state-filter', 'RestaurantController@state_filter');
+        Route::post('/search-filter', 'RestaurantController@search_by_name');
     }
 );
 
