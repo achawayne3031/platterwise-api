@@ -40,6 +40,29 @@ class DBHelpers
     }
 
     ////// get all query data
+    public static function data_where_paginate_active(
+        $dataModel,
+        $where_data,
+        $limit = 20
+    ) {
+        try {
+            return $dataModel
+                ::query()
+                ->active()
+                ->where($where_data)
+                ->orderBy('id', 'DESC')
+                ->paginate($limit);
+        } catch (Exception $e) {
+            return ResponseHelper::error_response(
+                'Server Error',
+                $e->getMessage(),
+                401,
+                $e->getLine()
+            );
+        }
+    }
+
+    ////// get all query data
     public static function data_where_paginate(
         $dataModel,
         $where_data,

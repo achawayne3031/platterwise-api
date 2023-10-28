@@ -54,4 +54,9 @@ class Resturant extends Model
     {
         return $this->hasMany(RestaurantReviews::class, 'restaurant_id', 'id');
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 1);
+    }
 }

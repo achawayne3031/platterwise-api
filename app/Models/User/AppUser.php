@@ -7,6 +7,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Reservation;
 
 class AppUser extends Authenticatable implements JWTSubject
 {
@@ -56,5 +57,15 @@ class AppUser extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function reservation()
+    {
+        return $this->hasMany(Reservation::class, 'id', 'uid');
+    }
+
+    public function restaurant()
+    {
+        // return $this->hasMany(Resturant::class, 'id', 'restaurant_id');
     }
 }

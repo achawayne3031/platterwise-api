@@ -22,6 +22,78 @@ class ResturantController extends Controller
 {
     //
 
+    public function delete(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ResturantValidator::validate_rules($request, 'delete');
+
+            if (!$validate->fails() && $validate->validated()) {
+                $user = auth('web-api')->user();
+                $uid = $user->id;
+                // \Mail::to('achawayne@gmail.com')->send(
+                //     new \App\Mail\MailTester()
+                // );
+
+                if (
+                    !DBHelpers::exists(Resturant::class, [
+                        'admin_uid' => $uid,
+                        'id' => $request->restaurant_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant not found on your collection',
+                        null,
+                        401
+                    );
+                }
+
+                if (
+                    DBHelpers::exists(Resturant::class, [
+                        'id' => $request->restaurant_id,
+                        'admin_uid' => $uid,
+                        'status' => 0,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant has been deleted already',
+                        null,
+                        401
+                    );
+                }
+
+                DBHelpers::update_query_v3(
+                    Resturant::class,
+                    ['status' => 0],
+                    [
+                        'id' => $request->restaurant_id,
+                        'admin_uid' => $uid,
+                    ]
+                );
+
+                return ResponseHelper::success_response(
+                    'Restaurant deleted successfully',
+                    null
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function menu(Request $request)
     {
         if ($request->isMethod('post')) {
@@ -34,6 +106,19 @@ class ResturantController extends Controller
                 // \Mail::to('achawayne@gmail.com')->send(
                 //     new \App\Mail\MailTester()
                 // );
+
+                if (
+                    DBHelpers::exists(Resturant::class, [
+                        'id' => $request->restaurant_id,
+                        'status' => 0,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant has been deletd',
+                        null,
+                        401
+                    );
+                }
 
                 if (
                     !DBHelpers::exists(Resturant::class, [
@@ -99,6 +184,19 @@ class ResturantController extends Controller
                 // \Mail::to('achawayne@gmail.com')->send(
                 //     new \App\Mail\MailTester()
                 // );
+
+                if (
+                    DBHelpers::exists(Resturant::class, [
+                        'id' => $request->restaurant_id,
+                        'status' => 0,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant has been deletd',
+                        null,
+                        401
+                    );
+                }
 
                 if (
                     !DBHelpers::exists(Resturant::class, [
@@ -167,7 +265,7 @@ class ResturantController extends Controller
         $user = auth('web-api')->user();
         $uid = $user->id;
 
-        $restaurant = DBHelpers::data_where_paginate(
+        $restaurant = DBHelpers::data_where_paginate_active(
             Resturant::class,
             ['admin_uid' => $uid],
             40

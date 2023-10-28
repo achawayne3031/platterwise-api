@@ -44,6 +44,12 @@ class UserAuthValidator
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:8',
             ],
+            'edit' => [
+                'full_name' => 'required',
+                'username' => 'required|unique:users',
+                'email' => 'required|email|unique:users',
+                'phone' => 'required',
+            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);

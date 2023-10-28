@@ -69,3 +69,16 @@ Route::group(
         Route::get('/all', 'ReservationController@all');
     }
 );
+
+///// User /////
+Route::group(
+    [
+        'middleware' => ['cors', 'jwt.verify'],
+        'prefix' => 'user',
+        'namespace' => 'App\Http\Controllers\User',
+    ],
+    function ($router) {
+        Route::get('/profile', 'UserController@profile');
+        Route::post('/edit', 'UserController@edit');
+    }
+);
