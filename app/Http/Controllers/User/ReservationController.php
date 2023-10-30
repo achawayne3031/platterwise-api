@@ -112,10 +112,38 @@ class ReservationController extends Controller
                 try {
                     $requestData = $request->all();
                     $requestData['uid'] = Auth::id();
+                    $owner = Auth::user();
+
+                    $all_guest_data = [];
+
+                    $owner_data = [
+                        'name' => $owner->full_name,
+                        'email' => $owner->email,
+                        'type' => 'owner',
+                    ];
+
+                    array_push($all_guest_data, $owner_data);
+
+                    if (isset($request->guest) && count($request->guest) > 0) {
+                        $guest_data = $request->guest;
+                        foreach ($guest_data as $value) {
+                            $value['type'] = 'guest';
+                            array_push($all_guest_data, $value);
+                        }
+                    }
+
+                    $create_data = [
+                        'uid' => Auth::id(),
+                        'reservation_date' => $request->reservation_date,
+                        'restaurant_id' => $request->restaurant_id,
+                        'seat_type' => $request->seat_type,
+                        'guests' => json_encode($request->guest),
+                        'all_guests' => json_encode($all_guest_data),
+                    ];
 
                     $register = DBHelpers::create_query(
                         Reservation::class,
-                        $requestData
+                        $create_data
                     );
 
                     if ($register) {

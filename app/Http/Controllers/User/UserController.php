@@ -75,6 +75,8 @@ class UserController extends Controller
                         'email' => $request->email,
                         'location' => $request->location,
                         'username' => $request->username,
+                        'bio' => $request->bio ?? null,
+                        'img_url' => $request->profileUrl ?? null,
                     ];
 
                     $update = DBHelpers::update_query_v3(

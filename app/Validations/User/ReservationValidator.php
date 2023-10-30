@@ -22,7 +22,6 @@ class ReservationValidator
                 'reservation_date' => 'required|date',
                 'restaurant_id' => 'required|integer',
                 'seat_type' => 'required',
-                'guest_no' => 'required',
             ],
 
             'cancel' => [

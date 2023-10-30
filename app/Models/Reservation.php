@@ -19,6 +19,8 @@ class Reservation extends Model
         'seat_type',
         'guest_no',
         'subject_of_invite',
+        'guests',
+        'all_guests',
     ];
 
     public function owner()
