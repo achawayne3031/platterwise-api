@@ -71,7 +71,9 @@ class RestaurantController extends Controller
                 //     ['state' => $request->state]
                 // );
 
-                $distance = 1;
+                // return $current;
+
+                $distance = 100;
 
                 $haversine =
                     "(
