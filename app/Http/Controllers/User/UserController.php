@@ -20,6 +20,46 @@ class UserController extends Controller
 {
     //
 
+    public function search_by_name(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = UserAuthValidator::validate_rules(
+                $request,
+                'search_name'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                $current = DBHelpers::query_like_with_filter(
+                    AppUser::class,
+                    'full_name',
+                    $request->name,
+                    ['reservation']
+                );
+
+                return ResponseHelper::success_response(
+                    'Search user by name',
+                    $current
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['name'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function edit(Request $request)
     {
         if ($request->isMethod('post')) {

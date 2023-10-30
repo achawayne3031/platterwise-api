@@ -80,5 +80,6 @@ Route::group(
     function ($router) {
         Route::get('/profile', 'UserController@profile');
         Route::post('/edit', 'UserController@edit');
+        Route::post('/search-name', 'UserController@search_by_name');
     }
 );

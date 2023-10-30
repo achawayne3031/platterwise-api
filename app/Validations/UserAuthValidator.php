@@ -50,6 +50,9 @@ class UserAuthValidator
                 'email' => 'required|email|unique:users',
                 'phone' => 'required',
             ],
+            'search_name' => [
+                'name' => 'required',
+            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);
