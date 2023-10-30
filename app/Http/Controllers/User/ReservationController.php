@@ -70,10 +70,13 @@ class ReservationController extends Controller
                     );
                 }
 
-                DBHelpers::update_query_v2(
+                DBHelpers::update_query_v3(
                     Reservation::class,
                     ['status' => 0],
-                    $request->reservation_id
+                    [
+                        'uid' => $uid,
+                        'id' => $request->reservation_id,
+                    ]
                 );
 
                 return ResponseHelper::success_response(
