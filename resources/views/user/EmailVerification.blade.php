@@ -113,8 +113,6 @@
               email.
             </p>
 
-
-
             @php
                 echo "<a href=".$mailMessageData['link']." target='_blank' class='verify-btn'>Click to Verify Email</a>";
             @endphp
