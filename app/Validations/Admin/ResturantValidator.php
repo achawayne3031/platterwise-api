@@ -45,6 +45,11 @@ class ResturantValidator
             'delete' => [
                 'restaurant_id' => 'required',
             ],
+
+            'delete_restaurant_menu_pic' => [
+                'restaurant_id' => 'required',
+                'id' => 'required',
+            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);

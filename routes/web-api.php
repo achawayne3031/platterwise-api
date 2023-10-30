@@ -46,6 +46,10 @@ Route::group(
         Route::post('/reviews', 'ResturantController@reviews');
         Route::post('/menu', 'ResturantController@menu');
         Route::post('/delete', 'ResturantController@delete');
+        Route::post(
+            '/delete-restaurant-picture',
+            'ResturantController@delete_restaurant_menu_pic'
+        );
     }
 );
 

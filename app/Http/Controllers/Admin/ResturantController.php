@@ -22,6 +22,76 @@ class ResturantController extends Controller
 {
     //
 
+    public function delete_restaurant_menu_pic(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ResturantValidator::validate_rules(
+                $request,
+                'delete_restaurant_menu_pic'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                $user = auth('web-api')->user();
+                $uid = $user->id;
+                // \Mail::to('achawayne@gmail.com')->send(
+                //     new \App\Mail\MailTester()
+                // );
+
+                if (
+                    !DBHelpers::exists(Resturant::class, [
+                        'admin_uid' => $uid,
+                        'id' => $request->restaurant_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant not found on your collection',
+                        null,
+                        401
+                    );
+                }
+
+                if (
+                    !DBHelpers::exists(RestaurantImages::class, [
+                        'restaurant_id' => $request->restaurant_id,
+                        'id' => $request->id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant menu picture has been deleted already',
+                        null,
+                        401
+                    );
+                }
+
+                DBHelpers::delete_query_multi(RestaurantImages::class, [
+                    'restaurant_id' => $request->restaurant_id,
+                    'id' => $request->id,
+                ]);
+
+                return ResponseHelper::success_response(
+                    'Restaurant menu picture deleted successfully',
+                    null
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id', 'id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function delete(Request $request)
     {
         if ($request->isMethod('post')) {

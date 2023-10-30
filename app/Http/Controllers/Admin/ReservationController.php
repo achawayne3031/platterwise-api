@@ -18,7 +18,7 @@ class ReservationController extends Controller
 {
     //
 
-    public function approve(Request $request)
+    public function close(Request $request)
     {
         if ($request->isMethod('post')) {
             $validate = ReservationValidator::validate_rules(
