@@ -65,15 +65,41 @@ class RestaurantController extends Controller
             );
 
             if (!$validate->fails() && $validate->validated()) {
-                $current = DBHelpers::with_where_query_filter(
-                    Resturant::class,
-                    ['menu_pic', 'seat_type', 'review'],
-                    ['state' => $request->state]
-                );
+                // $current = DBHelpers::with_where_query_filter(
+                //     Resturant::class,
+                //     ['menu_pic', 'seat_type', 'review'],
+                //     ['state' => $request->state]
+                // );
+
+                $distance = 1;
+
+                $haversine =
+                    "(
+            6371 * acos(
+                cos(radians(" .
+                    $request->latitude .
+                    "))
+                * cos(radians(`latitude`))
+                * cos(radians(`longitude`) - radians(" .
+                    $request->longitude .
+                    "))
+                + sin(radians(" .
+                    $request->latitude .
+                    ")) * sin(radians(`latitude`))
+            )
+        )";
+
+                $restaurant = Resturant::select('*')
+                    ->selectRaw("$haversine AS distance")
+                    ->having('distance', '<=', $distance)
+                    ->where(['state' => $request->state])
+                    ->with(['menu_pic', 'seat_type', 'review'])
+                    ->orderby('distance', 'desc')
+                    ->get();
 
                 return ResponseHelper::success_response(
                     'Restaurant by state',
-                    $current
+                    $restaurant
                 );
             } else {
                 $errors = json_decode($validate->errors());

@@ -45,6 +45,8 @@ class RestaurantValidator
             ],
             'state_filter' => [
                 'state' => 'required',
+                'longitude' => 'required',
+                'latitude' => 'required',
             ],
             'search' => [
                 'name' => 'required',
