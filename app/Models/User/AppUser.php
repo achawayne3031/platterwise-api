@@ -29,7 +29,7 @@ class AppUser extends Authenticatable implements JWTSubject
         'username',
         'phone',
         'bio',
-        'img_url',
+        'profileUrl',
         'location',
         'guests',
         'all_guests',

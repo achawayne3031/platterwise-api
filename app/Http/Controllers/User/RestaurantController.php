@@ -19,6 +19,20 @@ class RestaurantController extends Controller
 {
     //
 
+    public function get_restaurant_banner()
+    {
+    }
+
+    public function top_rated()
+    {
+        $top_rated = DBHelpers::top_column(Resturant::class, 'total_rating', 3);
+
+        return ResponseHelper::success_response(
+            'Top rated restaurant',
+            $top_rated
+        );
+    }
+
     public function search_by_name(Request $request)
     {
         if ($request->isMethod('post')) {
@@ -178,9 +192,16 @@ class RestaurantController extends Controller
 
                 $current = DBHelpers::with_where_query_filter_first(
                     Resturant::class,
-                    ['menu_pic', 'seat_type', 'review'],
+                    ['menu_pic', 'seat_type'],
                     ['id' => $request->restaurant_id]
                 );
+
+                $reviews = DBHelpers::with_where_query_filter(
+                    RestaurantReviews::class,
+                    ['user'],
+                    ['restaurant_id' => $request->restaurant_id]
+                );
+                $current->review = $reviews;
 
                 return ResponseHelper::success_response(
                     'View restaurant',

@@ -16,6 +16,25 @@ use Illuminate\Support\Facades\DB;
 class DBHelpers
 {
     ////// get all query data
+    public static function top_column($dataModel, $column, $limit = 10)
+    {
+        try {
+            return $dataModel
+                ::query()
+                ->orderBy($column, 'DESC')
+                ->take($limit)
+                ->get();
+        } catch (Exception $e) {
+            return ResponseHelper::error_response(
+                'Server Error',
+                $e->getMessage(),
+                401,
+                $e->getLine()
+            );
+        }
+    }
+
+    ////// get all query data
     public static function data_with_where_paginate(
         $dataModel,
         $where_data,

@@ -51,6 +51,7 @@ Route::group(
         Route::post('/view', 'RestaurantController@view');
         Route::get('/followed', 'RestaurantController@followed');
         Route::get('/saved', 'RestaurantController@saved');
+        Route::get('/top-rated', 'RestaurantController@top_rated');
         Route::post('/state-filter', 'RestaurantController@state_filter');
         Route::post('/search-filter', 'RestaurantController@search_by_name');
     }
@@ -67,6 +68,7 @@ Route::group(
         Route::post('/create', 'ReservationController@create');
         Route::post('/cancel', 'ReservationController@cancel');
         Route::get('/all', 'ReservationController@all');
+        Route::get('/view/{id}', 'ReservationController@view');
     }
 );
 

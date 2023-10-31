@@ -16,6 +16,40 @@ class ReservationController extends Controller
 {
     //
 
+    public function view($id)
+    {
+        $uid = Auth::id();
+
+        if (!DBHelpers::exists(Reservation::class, ['id' => $id])) {
+            return ResponseHelper::error_response(
+                'Reservation not found',
+                null,
+                401
+            );
+        }
+
+        if (
+            !DBHelpers::exists(Reservation::class, ['id' => $id, 'uid' => $uid])
+        ) {
+            return ResponseHelper::error_response(
+                'Reservation not found in your collection',
+                null,
+                401
+            );
+        }
+
+        $reservation = DBHelpers::with_where_query_filter_first(
+            Reservation::class,
+            ['restaurant'],
+            ['uid' => $uid, 'id' => $id]
+        );
+
+        return ResponseHelper::success_response(
+            'Current reservations fetched successfully',
+            $reservation
+        );
+    }
+
     public function all()
     {
         $uid = Auth::id();
@@ -142,6 +176,7 @@ class ReservationController extends Controller
                         'seat_type' => $request->seat_type,
                         'guests' => json_encode($request->guest),
                         'all_guests' => json_encode($all_guest_data),
+                        'guest_no' => count($all_guest_data),
                     ];
 
                     $register = DBHelpers::create_query(

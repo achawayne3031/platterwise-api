@@ -21,13 +21,18 @@ class RestaurantReviews extends Model
         'status',
     ];
 
-    public function user()
-    {
-        return $this->hasMany(AppUser::class, 'id', 'uid');
-    }
+    // public function user()
+    // {
+    //     return $this->hasMany(AppUser::class, 'id', 'uid');
+    // }
 
     public function restaurant()
     {
         return $this->hasMany(Resturant::class, 'id', 'restaurant_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(AppUser::class, 'uid');
     }
 }
