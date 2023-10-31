@@ -54,6 +54,7 @@ Route::group(
         Route::get('/top-rated', 'RestaurantController@top_rated');
         Route::post('/state-filter', 'RestaurantController@state_filter');
         Route::post('/search-filter', 'RestaurantController@search_by_name');
+        Route::get('/banner', 'RestaurantController@banner');
     }
 );
 

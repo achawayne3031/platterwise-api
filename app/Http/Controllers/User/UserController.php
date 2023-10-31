@@ -83,7 +83,6 @@ class UserController extends Controller
                         $request->only([
                             'full_name',
                             'phone',
-                            'email',
                             'location',
                             'username',
                             'bio',

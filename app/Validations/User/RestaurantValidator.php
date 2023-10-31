@@ -51,6 +51,10 @@ class RestaurantValidator
             'search' => [
                 'name' => 'required',
             ],
+
+            'banner' => [
+                'restaurant_id' => 'required',
+            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);

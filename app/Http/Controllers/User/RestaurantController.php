@@ -19,8 +19,17 @@ class RestaurantController extends Controller
 {
     //
 
-    public function get_restaurant_banner()
+    //// view restaurant ///
+    public function banner()
     {
+        $restaurants = Resturant::query()
+            ->select('banner')
+            ->paginate(20);
+
+        return ResponseHelper::success_response(
+            'Restaurant banners',
+            $restaurants
+        );
     }
 
     public function top_rated()

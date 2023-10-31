@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 class DBHelpers
 {
-    ////// get all query data
+    ////// get top column
     public static function top_column($dataModel, $column, $limit = 10)
     {
         try {
