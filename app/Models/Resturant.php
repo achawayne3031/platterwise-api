@@ -33,6 +33,7 @@ class Resturant extends Model
         'latitude',
         'longitude',
         'total_rating',
+        'working_days',
     ];
 
     public function owner()

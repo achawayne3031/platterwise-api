@@ -66,5 +66,6 @@ Route::group(
         Route::post('/cancel', 'ReservationController@cancel');
         Route::post('/approve', 'ReservationController@approve');
         Route::post('/edit', 'ReservationController@edit');
+        Route::post('/check-in', 'ReservationController@check_in');
     }
 );

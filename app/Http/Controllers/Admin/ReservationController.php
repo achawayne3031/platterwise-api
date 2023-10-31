@@ -18,6 +18,120 @@ class ReservationController extends Controller
 {
     //
 
+    public function check_in(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ReservationValidator::validate_rules(
+                $request,
+                'check_in'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                $user = auth('web-api')->user();
+                $uid = $user->id;
+
+                if (
+                    !DBHelpers::exists(Resturant::class, [
+                        'admin_uid' => $uid,
+                        'id' => $request->restaurant_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant not found on your collection',
+                        null,
+                        401
+                    );
+                }
+
+                $current_reservation = DBHelpers::query_filter_first(
+                    Reservation::class,
+                    [
+                        'id' => $request->reservation_id,
+                        'restaurant_id' => $request->restaurant_id,
+                    ]
+                );
+
+                $status = $current_reservation->status;
+
+                switch ($status) {
+                    case 0:
+                        # code...
+                        return ResponseHelper::error_response(
+                            'Reservation has been cancelled already',
+                            null,
+                            401
+                        );
+                        break;
+
+                    case 1:
+                        # code...
+                        return ResponseHelper::error_response(
+                            'Reservation has not been approved',
+                            null,
+                            401
+                        );
+                        break;
+
+                    case 2:
+                        # code...
+                        DBHelpers::update_query_v3(
+                            Reservation::class,
+                            ['status' => 3],
+                            [
+                                'id' => $request->reservation_id,
+                                'restaurant_id' => $request->restaurant_id,
+                            ]
+                        );
+
+                        return ResponseHelper::success_response(
+                            'Reservation checked in was successful',
+                            null
+                        );
+
+                        break;
+
+                    case 3:
+                        # code...
+                        return ResponseHelper::error_response(
+                            'Reservation is in progress already',
+                            null,
+                            401
+                        );
+                        break;
+
+                    case 4:
+                        # code...
+                        return ResponseHelper::error_response(
+                            'Reservation has been completed already',
+                            null,
+                            401
+                        );
+                        break;
+
+                    default:
+                        # code...
+                        break;
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id', 'reservation_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function close(Request $request)
     {
         if ($request->isMethod('post')) {
