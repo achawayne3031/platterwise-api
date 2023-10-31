@@ -46,8 +46,7 @@ class UserAuthValidator
             ],
             'edit' => [
                 'full_name' => 'required',
-                'username' => 'required|unique:users',
-                'email' => 'required|email|unique:users',
+                'username' => 'required',
                 'phone' => 'required',
             ],
             'search_name' => [

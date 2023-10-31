@@ -69,32 +69,36 @@ class UserController extends Controller
                 try {
                     $uid = Auth::id();
 
-                    // $data = [
-                    //     'full_name' => $request->full_name,
-                    //     'phone' => $request->phone,
-                    //     'email' => $request->email,
-                    //     'location' => $request->location,
-                    //     'username' => $request->username,
-                    //     'bio' => $request->bio ?? null,
-                    //     'img_url' => $request->profileUrl ?? null,
-                    // ];
+                    $user_data = DBHelpers::query_filter_first(AppUser::class, [
+                        'id' => $uid,
+                    ]);
 
-                    $update = AppUser::where(['id' => $uid])->update(
-                        $request->only([
-                            'full_name',
-                            'phone',
-                            'location',
-                            'username',
-                            'bio',
-                            'profileUrl',
-                        ])
+                    $data = [
+                        'full_name' =>
+                            $request->full_name ?? $user_data->full_name,
+                        'phone' => $request->phone ?? $user_data->phone,
+                        'location' =>
+                            $request->location ?? isset($user_data->location)
+                                ? $user_data->location
+                                : null,
+                        'username' =>
+                            $request->username ?? $user_data->username,
+                        'bio' =>
+                            $request->bio ?? isset($user_data->bio)
+                                ? $user_data->bio
+                                : null,
+                        'profileUrl' =>
+                            $request->profileUrl ??
+                            isset($user_data->profileUrl)
+                                ? $user_data->profileUrl
+                                : null,
+                    ];
+
+                    $update = DBHelpers::update_query_v3(
+                        AppUser::class,
+                        $data,
+                        ['id' => $uid]
                     );
-
-                    // $update = DBHelpers::update_query_v3(
-                    //     AppUser::class,
-                    //     $data,
-                    //     ['id' => $uid]
-                    // );
 
                     if ($update) {
                         return ResponseHelper::success_response(

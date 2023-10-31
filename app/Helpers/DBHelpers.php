@@ -487,11 +487,10 @@ class DBHelpers
         try {
             if ($filter != null) {
                 $status = $dataModel::where($filter)->update($data);
-                DB::commit(); // execute the operations above and commit transaction
             } else {
                 $status = $dataModel::query()->update($data);
-                DB::commit(); // execute the operations above and commit transaction
             }
+            DB::commit(); // execute the operations above and commit transaction
             return $status;
         } catch (Exception $e) {
             return ResponseHelper::error_response(
