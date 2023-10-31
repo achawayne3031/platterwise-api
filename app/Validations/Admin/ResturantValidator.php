@@ -50,6 +50,11 @@ class ResturantValidator
                 'restaurant_id' => 'required',
                 'id' => 'required',
             ],
+
+            'edit_restaurant_menu_pic' => [
+                'restaurant_id' => 'required',
+                'menu_picture' => 'required|array',
+            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);

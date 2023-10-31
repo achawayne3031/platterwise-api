@@ -50,6 +50,11 @@ Route::group(
             '/delete-restaurant-picture',
             'ResturantController@delete_restaurant_menu_pic'
         );
+
+        Route::post(
+            '/edit-menu-picture',
+            'ResturantController@edit_menu_picture'
+        );
     }
 );
 

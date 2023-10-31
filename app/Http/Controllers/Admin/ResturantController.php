@@ -22,6 +22,74 @@ class ResturantController extends Controller
 {
     //
 
+    public function edit_menu_picture(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ResturantValidator::validate_rules(
+                $request,
+                'edit_restaurant_menu_pic'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                DB::beginTransaction();
+
+                try {
+                    $user = auth('web-api')->user();
+                    $uid = $user->id;
+
+                    if (
+                        !DBHelpers::exists(Resturant::class, [
+                            'admin_uid' => $uid,
+                            'id' => $request->restaurant_id,
+                        ])
+                    ) {
+                        return ResponseHelper::error_response(
+                            'Restaurant not found on your collection',
+                            null,
+                            401
+                        );
+                    }
+
+                    if (count($request->menu_picture) > 0) {
+                        $image = $request->menu_picture;
+                        foreach ($image as $value) {
+                            RestaurantImages::create([
+                                'image_url' => $value['menu_pic'],
+                                'restaurant_id' => $request->restaurant_id,
+                            ]);
+                        }
+                    }
+
+                    DB::commit(); // execute the operations above and commit transaction
+
+                    return ResponseHelper::success_response(
+                        'Restaurant menu picture edited successfully',
+                        null
+                    );
+                } catch (\Throwable $error) {
+                    DB::rollBack(); // rollback in case of an exception || error
+                    return ResponseHelper::error_response($error);
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['menu_picture', 'restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function delete_restaurant_menu_pic(Request $request)
     {
         if ($request->isMethod('post')) {
