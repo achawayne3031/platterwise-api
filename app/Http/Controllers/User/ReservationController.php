@@ -40,7 +40,7 @@ class ReservationController extends Controller
 
         $reservation = DBHelpers::with_where_query_filter_first(
             Reservation::class,
-            ['restaurant'],
+            ['restaurant', 'owner'],
             ['uid' => $uid, 'id' => $id]
         );
 
@@ -57,7 +57,7 @@ class ReservationController extends Controller
         $restaurant = DBHelpers::data_with_where_paginate(
             Reservation::class,
             ['uid' => $uid],
-            ['restaurant'],
+            ['restaurant', 'owner'],
             40
         );
 
