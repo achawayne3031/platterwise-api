@@ -12,11 +12,74 @@ use App\Models\RestaurantSeatType;
 use App\Models\RestaurantImages;
 use App\Helpers\DBHelpers;
 use App\Models\Reservation;
+use App\Models\ReservationBills;
+
 use Illuminate\Support\Facades\Auth;
 
 class ReservationController extends Controller
 {
     //
+
+    public function create_bill(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ReservationValidator::validate_rules(
+                $request,
+                'create_bill'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                $user = auth('web-api')->user();
+                $uid = $user->id;
+                // \Mail::to('achawayne@gmail.com')->send(
+                //     new \App\Mail\MailTester()
+                // );
+
+                if (
+                    DBHelpers::exists(ReservationBills::class, [
+                        'reservation_id' => $request->reservation_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Reservation bill has been created already',
+                        null,
+                        401
+                    );
+                }
+
+                $create = ReservationBills::create($request->all());
+
+                if ($create) {
+                    return ResponseHelper::success_response(
+                        'Reservation approved was successfully',
+                        null
+                    );
+                } else {
+                    return ResponseHelper::error_response(
+                        'Update failed, Database insertion issues',
+                        $validate->errors(),
+                        401
+                    );
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['reservation_id', 'total_bill', 'set_picture'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
 
     public function check_in(Request $request)
     {

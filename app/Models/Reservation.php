@@ -33,4 +33,9 @@ class Reservation extends Model
     {
         return $this->hasOne(Resturant::class, 'id', 'restaurant_id');
     }
+
+    public function reservation_bill()
+    {
+        return $this->hasOne(ReservationBills::class, 'reservation_id');
+    }
 }

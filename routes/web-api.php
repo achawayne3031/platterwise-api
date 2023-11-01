@@ -74,5 +74,6 @@ Route::group(
         Route::post('/approve', 'ReservationController@approve');
         Route::post('/edit', 'ReservationController@edit');
         Route::post('/check-in', 'ReservationController@check_in');
+        Route::post('/create-bill', 'ReservationController@create_bill');
     }
 );
