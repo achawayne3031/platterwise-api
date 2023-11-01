@@ -21,6 +21,7 @@ class Reservation extends Model
         'subject_of_invite',
         'guests',
         'all_guests',
+        'cancel_reason',
     ];
 
     public function owner()

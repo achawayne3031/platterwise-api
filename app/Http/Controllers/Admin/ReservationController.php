@@ -386,6 +386,7 @@ class ReservationController extends Controller
             if (!$validate->fails() && $validate->validated()) {
                 $user = auth('web-api')->user();
                 $uid = $user->id;
+
                 if (
                     !DBHelpers::exists(Resturant::class, [
                         'admin_uid' => $uid,
@@ -414,7 +415,7 @@ class ReservationController extends Controller
 
                 DBHelpers::update_query_v2(
                     Reservation::class,
-                    ['status' => 0],
+                    ['status' => 0, 'cancel_reason' => $request->cancel_reason],
                     $request->reservation_id
                 );
 
@@ -424,7 +425,7 @@ class ReservationController extends Controller
                 );
             } else {
                 $errors = json_decode($validate->errors());
-                $props = ['restaurant_id', 'reservation_id'];
+                $props = ['restaurant_id', 'reservation_id', 'cancel_reason'];
                 $error_res = ErrorValidation::arrange_error($errors, $props);
 
                 return ResponseHelper::error_response(

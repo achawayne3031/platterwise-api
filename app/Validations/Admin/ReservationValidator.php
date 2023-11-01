@@ -24,6 +24,7 @@ class ReservationValidator
             'cancel' => [
                 'reservation_id' => 'required|integer',
                 'restaurant_id' => 'required|integer',
+                'cancel_reason' => 'required',
             ],
             'approve' => [
                 'reservation_id' => 'required|integer',

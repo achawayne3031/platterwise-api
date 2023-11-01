@@ -55,6 +55,8 @@ Route::group(
             '/edit-menu-picture',
             'ResturantController@edit_menu_picture'
         );
+
+        Route::post('/view', 'ResturantController@view_restaurant');
     }
 );
 

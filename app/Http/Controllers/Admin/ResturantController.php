@@ -394,8 +394,60 @@ class ResturantController extends Controller
     {
     }
 
-    public function view_restaurant()
+    //// view restaurant ///
+    public function view_restaurant(Request $request)
     {
+        if ($request->isMethod('post')) {
+            $validate = ResturantValidator::validate_rules($request, 'view');
+
+            if (!$validate->fails() && $validate->validated()) {
+                if (
+                    !DBHelpers::exists(Resturant::class, [
+                        'id' => $request->restaurant_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant not found',
+                        $validate->errors(),
+                        401
+                    );
+                }
+
+                $current = DBHelpers::with_where_query_filter_first(
+                    Resturant::class,
+                    ['menu_pic', 'seat_type'],
+                    ['id' => $request->restaurant_id]
+                );
+
+                $reviews = DBHelpers::with_where_query_filter(
+                    RestaurantReviews::class,
+                    ['user'],
+                    ['restaurant_id' => $request->restaurant_id]
+                );
+                $current->review = $reviews;
+
+                return ResponseHelper::success_response(
+                    'View restaurant',
+                    $current
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
     }
 
     public function all()
