@@ -73,25 +73,27 @@ class UserController extends Controller
                         'id' => $uid,
                     ]);
 
+                    // return $user_data;
+
                     $data = [
-                        'full_name' =>
-                            $request->full_name ?? $user_data->full_name,
-                        'phone' => $request->phone ?? $user_data->phone,
-                        'location' =>
-                            $request->location ?? isset($user_data->location)
-                                ? $user_data->location
-                                : null,
-                        'username' =>
-                            $request->username ?? $user_data->username,
-                        'bio' =>
-                            $request->bio ?? isset($user_data->bio)
-                                ? $user_data->bio
-                                : null,
-                        'profileUrl' =>
-                            $request->profileUrl ??
-                            isset($user_data->profileUrl)
-                                ? $user_data->profileUrl
-                                : null,
+                        'full_name' => isset($request->full_name)
+                            ? $request->full_name
+                            : $user_data->full_name,
+                        'phone' => isset($request->phone)
+                            ? $request->phone
+                            : $user_data->phone,
+                        'location' => isset($request->location)
+                            ? $request->location
+                            : $user_data->location,
+                        'username' => isset($request->username)
+                            ? $request->username
+                            : $user_data->username,
+                        'bio' => isset($request->bio)
+                            ? $request->bio
+                            : $user_data->bio,
+                        'profileUrl' => isset($request->profileUrl)
+                            ? $request->profileUrl
+                            : $user_data->profileUrl,
                     ];
 
                     $update = DBHelpers::update_query_v3(
