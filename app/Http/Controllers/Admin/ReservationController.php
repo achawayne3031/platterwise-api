@@ -515,6 +515,26 @@ class ReservationController extends Controller
                     $request->reservation_id
                 );
 
+                $res_data = DBHelpers::with_where_query_filter_first(
+                    Reservation::class,
+                    ['owner', 'restaurant'],
+                    [
+                        'id' => $request->reservation_id,
+                        'restaurant_id' => $request->restaurant_id,
+                    ]
+                );
+
+                $mailData = [
+                    'owner_name' => $res_data->owner->full_name,
+                    'restaurant' => $res_data->restaurant->name,
+                ];
+
+                $owner_email = $res_data->owner->email;
+
+                \Mail::to($owner_email)->send(
+                    new \App\Mail\ReservationCancelled($mailData)
+                );
+
                 return ResponseHelper::success_response(
                     'Reservation cancelled was successful',
                     null

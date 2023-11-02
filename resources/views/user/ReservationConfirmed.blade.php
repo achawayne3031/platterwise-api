@@ -11,7 +11,7 @@
     />
 
     <link href="http://fonts.cdnfonts.com/css/verdana" rel="stylesheet" />
-    <title>Confirm email verification</title>
+    <title>Reservation Confirmed</title>
 
     <style>
       html {

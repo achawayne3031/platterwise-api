@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class ReservationConfirmed extends Mailable
+class ReservationCancelled extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -29,24 +29,12 @@ class ReservationConfirmed extends Mailable
      *
      * @return \Illuminate\Mail\Mailables\Envelope
      */
-    // public function envelope()
-    // {
-    //     return new Envelope(
-    //         subject: 'Reservation Confirmed',
-    //     );
-    // }
 
     /**
      * Get the message content definition.
      *
      * @return \Illuminate\Mail\Mailables\Content
      */
-    // public function content()
-    // {
-    //     return new Content(
-    //         view: 'view.name',
-    //     );
-    // }
 
     /**
      * Get the attachments for the message.
@@ -61,7 +49,7 @@ class ReservationConfirmed extends Mailable
     public function build()
     {
         return $this->from(config('mail.from.address'))
-            ->subject('Platterwise Reservation Confirmed')
-            ->view('user.ReservationConfirmed');
+            ->subject('Platterwise Reservation Cancelled')
+            ->view('user.ReservationCancelled');
     }
 }
