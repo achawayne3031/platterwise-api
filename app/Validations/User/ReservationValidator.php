@@ -19,13 +19,19 @@ class ReservationValidator
     {
         self::$validation_rules = [
             'create' => [
-                'reservation_date' => 'required|date',
+                'reservation_date' => 'required',
                 'restaurant_id' => 'required|integer',
                 'seat_type' => 'required',
             ],
 
             'cancel' => [
                 'reservation_id' => 'required|integer',
+            ],
+
+            'split_bills' => [
+                'reservation_id' => 'required|integer',
+                'total_amount' => 'required',
+                'guests' => 'required|array',
             ],
         ];
 

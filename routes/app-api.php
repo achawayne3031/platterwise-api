@@ -58,7 +58,7 @@ Route::group(
     }
 );
 
-///// Restuarant /////
+///// Reservation /////
 Route::group(
     [
         'middleware' => ['cors', 'jwt.verify'],
@@ -70,6 +70,8 @@ Route::group(
         Route::post('/cancel', 'ReservationController@cancel');
         Route::get('/all', 'ReservationController@all');
         Route::get('/view/{id}', 'ReservationController@view');
+        Route::post('/split-bills', 'ReservationController@split_bills');
+
     }
 );
 

@@ -13,6 +13,7 @@ use App\Models\RestaurantImages;
 use App\Helpers\DBHelpers;
 use App\Models\Reservation;
 use App\Models\ReservationBills;
+use Carbon\Carbon;
 
 use Illuminate\Support\Facades\Auth;
 
@@ -144,6 +145,38 @@ class ReservationController extends Controller
                                 'id' => $request->reservation_id,
                                 'restaurant_id' => $request->restaurant_id,
                             ]
+                        );
+
+                        $res_data = DBHelpers::with_where_query_filter_first(
+                            Reservation::class,
+                            ['owner', 'restaurant'],
+                            [
+                                'id' => $request->reservation_id,
+                                'restaurant_id' => $request->restaurant_id,
+                            ]
+                        );
+
+                        $res_date = $res_data->reservation_date;
+                        $cre = Carbon::create($res_date);
+                        $formattedTime = $cre->toDayDateTimeString();
+                        $array_time = explode(' ', $formattedTime);
+                        $booked_date = $cre->toFormattedDateString();
+                        $book_time = $array_time[4] . ' ' . $array_time[5];
+
+                        $mailData = [
+                            'owner_name' => $res_data->owner->full_name,
+                            'restaurant' => $res_data->restaurant->name,
+                            'seat_type' => $res_data->seat_type,
+                            'guest' => $res_data->guest_no,
+                            'location' => $res_data->restaurant->address,
+                            'book_date' => $booked_date,
+                            'book_time' => $book_time,
+                        ];
+
+                        $owner_email = $res_data->owner->email;
+
+                        \Mail::to($owner_email)->send(
+                            new \App\Mail\ReservationConfirmed($mailData)
                         );
 
                         return ResponseHelper::success_response(

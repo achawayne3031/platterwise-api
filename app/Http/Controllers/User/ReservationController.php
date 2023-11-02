@@ -9,12 +9,102 @@ use App\Validations\User\ReservationValidator;
 use App\Validations\ErrorValidation;
 use App\Helpers\ResponseHelper;
 use App\Models\Reservation;
+use App\Models\ReservationSplitBills;
 use App\Helpers\DBHelpers;
 use Illuminate\Support\Facades\Auth;
 
 class ReservationController extends Controller
 {
     //
+
+    public function split_bills(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ReservationValidator::validate_rules(
+                $request,
+                'split_bills'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                try {
+                    $requestData = $request->all();
+                    $uid = Auth::id();
+                    $owner = Auth::user();
+
+                    if (
+                        !DBHelpers::exists(Reservation::class, [
+                            'id' => $request->reservation_id,
+                            'uid' => $uid,
+                        ])
+                    ) {
+                        return ResponseHelper::error_response(
+                            'Reservation not found on your collection',
+                            null,
+                            401
+                        );
+                    }
+
+                    if (
+                        DBHelpers::exists(ReservationSplitBills::class, [
+                            'reservation_id' => $request->reservation_id,
+                        ])
+                    ) {
+                        return ResponseHelper::error_response(
+                            'Reservation has been splitted already',
+                            null,
+                            401
+                        );
+                    }
+
+                    $create_data = [
+                        'reservation_id' => $request->reservation_id,
+                        'total_amount' => $request->total_amount,
+                        'guests' => json_encode($request->guests),
+                    ];
+
+                    $register = DBHelpers::create_query(
+                        ReservationSplitBills::class,
+                        $create_data
+                    );
+
+                    if ($register) {
+                        return ResponseHelper::success_response(
+                            'Reservation split bills was successful',
+                            null
+                        );
+                    } else {
+                        return ResponseHelper::error_response(
+                            'Creation failed, Database insertion issues',
+                            $validate->errors(),
+                            401
+                        );
+                    }
+                } catch (Exception $e) {
+                    return ResponseHelper::error_response(
+                        'Server Error',
+                        $e->getMessage(),
+                        401
+                    );
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['reservation_id', 'guests', 'total_amount'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
 
     public function view($id)
     {
