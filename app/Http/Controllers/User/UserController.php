@@ -11,14 +11,172 @@ use App\Models\SavedRestaurant;
 use App\Models\Resturant;
 use App\Models\Reservation;
 use App\Models\RestaurantFollowers;
+use App\Models\UserFollowers;
+
 use App\Helpers\DBHelpers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User\AppUser;
 use App\Validations\UserAuthValidator;
+use App\Validations\User\UserFollowerValidator;
 
 class UserController extends Controller
 {
     //
+
+    //// unfollow user ///
+    public function unfollow(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = UserFollowerValidator::validate_rules(
+                $request,
+                'unfollow'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                $uid = Auth::id();
+
+                if (
+                    !DBHelpers::exists(AppUser::class, [
+                        'id' => $request->user,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'User not found',
+                        null,
+                        401
+                    );
+                }
+
+                if (
+                    !DBHelpers::exists(UserFollowers::class, [
+                        'follower' => $uid,
+                        'user' => $request->user,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'You are not following this user',
+                        null,
+                        401
+                    );
+                }
+
+                $delete_data = [
+                    'user' => $request->user,
+                    'follower' => Auth::id(),
+                ];
+
+                DBHelpers::delete_query_multi(
+                    UserFollowers::class,
+                    $delete_data
+                );
+
+                $user_owner = AppUser::find($request->user);
+                // increment the value of the `follower` column by 1
+                $user_owner->decrement('followers');
+
+                $user_follower = AppUser::find(Auth::id());
+                // increment the value of the `following` column by 1
+                $user_follower->decrement('following');
+
+                return ResponseHelper::success_response(
+                    'User unfollowed successfully',
+                    null
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['user'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
+    //// follow user ///
+    public function follow(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = UserFollowerValidator::validate_rules(
+                $request,
+                'follow'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                $uid = Auth::id();
+
+                if (
+                    !DBHelpers::exists(AppUser::class, [
+                        'id' => $request->user,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'User not found',
+                        null,
+                        401
+                    );
+                }
+
+                if (
+                    DBHelpers::exists(UserFollowers::class, [
+                        'follower' => $uid,
+                        'user' => $request->user,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'User followed already',
+                        null,
+                        401
+                    );
+                }
+
+                $insert = [
+                    'user' => $request->user,
+                    'follower' => Auth::id(),
+                ];
+
+                DBHelpers::create_query(UserFollowers::class, $insert);
+
+                $user_owner = AppUser::find($request->user);
+                // increment the value of the `follower` column by 1
+                $user_owner->increment('followers');
+
+                $user_follower = AppUser::find(Auth::id());
+                // increment the value of the `following` column by 1
+                $user_follower->increment('following');
+
+                return ResponseHelper::success_response(
+                    'User followed successfully',
+                    null
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['user'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
 
     public function search_by_name(Request $request)
     {

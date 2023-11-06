@@ -14,6 +14,7 @@ use App\Models\Resturant;
 use App\Models\RestaurantSeatType;
 use App\Models\RestaurantImages;
 use App\Models\RestaurantReviews;
+use App\Models\Reservation;
 use App\Helpers\DBHelpers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,95 @@ use Illuminate\Support\Facades\DB;
 class ResturantController extends Controller
 {
     //
+
+    public function dashboard(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ResturantValidator::validate_rules(
+                $request,
+                'dashboard'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                DB::beginTransaction();
+
+                try {
+                    $user = auth('web-api')->user();
+                    $uid = $user->id;
+
+                    if (
+                        !DBHelpers::exists(Resturant::class, [
+                            'admin_uid' => $uid,
+                            'id' => $request->restaurant_id,
+                        ])
+                    ) {
+                        return ResponseHelper::error_response(
+                            'Restaurant not found on your collection',
+                            null,
+                            401
+                        );
+                    }
+
+                    $data = [
+                        'total_pending_reservation' => Reservation::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->pending()
+                            ->count(),
+                        'total_rejected_reservation' => Reservation::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->rejected()
+                            ->count(),
+                        'total_accepted_reservation' => Reservation::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->accepted()
+                            ->count(),
+                        'total_inprogress_reservation' => Reservation::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->inprogress()
+                            ->count(),
+                        'total_completed_reservation' => Reservation::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->completed()
+                            ->count(),
+
+                        'total_reviews' => DBHelpers::count(
+                            RestaurantReviews::class,
+                            ['restaurant_id' => $request->restaurant_id]
+                        ),
+                    ];
+
+                    return ResponseHelper::success_response(
+                        'Restaurant dashboard analysis data fetched was successfully',
+                        $data
+                    );
+                } catch (\Throwable $error) {
+                    DB::rollBack(); // rollback in case of an exception || error
+                    return ResponseHelper::error_response($error);
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
 
     public function edit_menu_picture(Request $request)
     {

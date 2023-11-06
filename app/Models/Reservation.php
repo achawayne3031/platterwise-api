@@ -38,4 +38,29 @@ class Reservation extends Model
     {
         return $this->hasOne(ReservationBills::class, 'reservation_id');
     }
+
+    public function scopeRejected($query)
+    {
+        return $query->where('status', 0);
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', 1);
+    }
+
+    public function scopeAccepted($query)
+    {
+        return $query->where('status', 2);
+    }
+
+    public function scopeInprogress($query)
+    {
+        return $query->where('status', 3);
+    }
+
+    public function scopeCompleted($query)
+    {
+        return $query->where('status', 4);
+    }
 }

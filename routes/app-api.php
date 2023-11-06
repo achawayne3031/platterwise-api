@@ -71,7 +71,6 @@ Route::group(
         Route::get('/all', 'ReservationController@all');
         Route::get('/view/{id}', 'ReservationController@view');
         Route::post('/split-bills', 'ReservationController@split_bills');
-
     }
 );
 
@@ -86,5 +85,8 @@ Route::group(
         Route::get('/profile', 'UserController@profile');
         Route::post('/edit', 'UserController@edit');
         Route::post('/search-name', 'UserController@search_by_name');
+
+        Route::post('/follow', 'UserController@follow');
+        Route::post('/unfollow', 'UserController@unfollow');
     }
 );

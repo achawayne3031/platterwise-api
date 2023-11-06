@@ -16,6 +16,21 @@ use Illuminate\Support\Facades\DB;
 
 class Func
 {
+    // $tes = BAPEmployeePayroll::with([
+    //     'employee' => function ($query) use ($business) {
+    //         $query->where(['business_info_id' => $business]);
+    //     },
+    // ])
+    //     ->whereHas('employee')
+    //     ->get();
+
+    // $employees_data_paginate = BAPEmployee::where([
+    //     'business_info_id' => $business,
+    // ])
+    //     ->with(['currency', 'employee_payroll'])
+    //     ->whereHas('employee_payroll')
+    //     ->paginate(40);
+
     public static function run_validation(Request $request, array $input)
     {
         return Validator::make($request->all(), $input);

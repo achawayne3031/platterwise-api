@@ -57,6 +57,7 @@ Route::group(
         );
 
         Route::post('/view', 'ResturantController@view_restaurant');
+        Route::post('/dashboard', 'ResturantController@dashboard');
     }
 );
 
