@@ -14,6 +14,7 @@ use App\Helpers\DBHelpers;
 use App\Models\Reservation;
 use App\Models\ReservationBills;
 use Carbon\Carbon;
+use App\Models\User\AppUser;
 
 use Illuminate\Support\Facades\Auth;
 
@@ -138,6 +139,7 @@ class ReservationController extends Controller
 
                     case 2:
                         # code...
+
                         DBHelpers::update_query_v3(
                             Reservation::class,
                             ['status' => 3],
@@ -178,6 +180,26 @@ class ReservationController extends Controller
                         \Mail::to($owner_email)->send(
                             new \App\Mail\ReservationConfirmed($mailData)
                         );
+
+                        $guests = json_decode($res_data->guests);
+
+                        if (count($guests) > 0) {
+                            $jobMailData = [
+                                'owner_name' => $res_data->owner->full_name,
+                                'restaurant' => $res_data->restaurant->name,
+                                'seat_type' => $res_data->seat_type,
+                                'guests' => $guests,
+                                'location' => $res_data->restaurant->address,
+                                'book_date' => $booked_date,
+                                'book_time' => $book_time,
+                            ];
+
+                            $job = (new \App\Jobs\SendDinnerInvite(
+                                $jobMailData
+                            ))->delay(now()->addSeconds(2));
+
+                            dispatch($job);
+                        }
 
                         return ResponseHelper::success_response(
                             'Reservation checked in was successful',
@@ -398,6 +420,7 @@ class ReservationController extends Controller
             if (!$validate->fails() && $validate->validated()) {
                 $user = auth('web-api')->user();
                 $uid = $user->id;
+
                 // \Mail::to('achawayne@gmail.com')->send(
                 //     new \App\Mail\MailTester()
                 // );
@@ -410,6 +433,19 @@ class ReservationController extends Controller
                 ) {
                     return ResponseHelper::error_response(
                         'Restaurant not found on your collection',
+                        null,
+                        401
+                    );
+                }
+
+                if (
+                    !DBHelpers::exists(Reservation::class, [
+                        'id' => $request->reservation_id,
+                        'restaurant_id' => $request->restaurant_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Reservation not found',
                         null,
                         401
                     );
@@ -441,11 +477,47 @@ class ReservationController extends Controller
                     );
                 }
 
-                DBHelpers::update_query_v2(
+                // DBHelpers::update_query_v2(
+                //     Reservation::class,
+                //     ['status' => 2],
+                //     $request->reservation_id
+                // );
+
+                $res_data = DBHelpers::with_where_query_filter_first(
                     Reservation::class,
-                    ['status' => 2],
-                    $request->reservation_id
+                    ['owner', 'restaurant'],
+                    [
+                        'id' => $request->reservation_id,
+                        'restaurant_id' => $request->restaurant_id,
+                    ]
                 );
+
+                $res_date = $res_data->reservation_date;
+                $cre = Carbon::create($res_date);
+                $formattedTime = $cre->toDayDateTimeString();
+                $array_time = explode(' ', $formattedTime);
+                $booked_date = $cre->toFormattedDateString();
+                $book_time = $array_time[4] . ' ' . $array_time[5];
+
+                $guests = json_decode($res_data->guests);
+
+                if (count($guests) > 0) {
+                    $jobMailData = [
+                        'owner_name' => $res_data->owner->full_name,
+                        'restaurant' => $res_data->restaurant->name,
+                        'seat_type' => $res_data->seat_type,
+                        'guests' => $guests,
+                        'location' => $res_data->restaurant->address,
+                        'book_date' => $booked_date,
+                        'book_time' => $book_time,
+                    ];
+
+                    $job = (new \App\Jobs\SendDinnerInvite(
+                        $jobMailData
+                    ))->delay(now()->addSeconds(2));
+
+                    dispatch($job);
+                }
 
                 return ResponseHelper::success_response(
                     'Reservation approved was successfully',

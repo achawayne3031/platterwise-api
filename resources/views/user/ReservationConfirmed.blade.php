@@ -183,8 +183,6 @@
                     </tr>
                 </table>
 
-
-
                 <table class="inner-bill" width="100%" border="0" cellpadding="0" cellspacing="0">
                     <tr>
                     <td>
