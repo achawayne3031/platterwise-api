@@ -87,9 +87,7 @@
 
 
       .inner-bill{
-        display: flex;
-        gap: 10px;
-        justify-content: space-between;
+
         margin-bottom: 15px;
       }
 
