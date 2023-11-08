@@ -59,28 +59,113 @@ class ReservationController extends Controller
                     }
 
                     $reservation_id = $request->reservation_id;
-
                     $reservation_data = DBHelpers::with_where_query_filter_first(
                         Reservation::class,
                         ['restaurant'],
                         ['id' => $reservation_id]
                     );
-
                     $resturant_data = $reservation_data->restaurant;
 
-                    $dispatchData = [
-                        'restaurant_id' => $resturant_data->id,
-                        'restuarant' => $resturant_data,
-                        'guests' => $request->guests,
-                        'reservation_id' => $request->reservation_id,
-                        'total_amount' => $request->total_amount,
-                    ];
+                    if (count($request->guests) > 1) {
+                        $dispatchData = [
+                            'restaurant_id' => $resturant_data->id,
+                            'restuarant' => $resturant_data,
+                            'guests' => $request->guests,
+                            'reservation_id' => $request->reservation_id,
+                            'total_amount' => $request->total_amount,
+                        ];
 
-                    $job = (new \App\Jobs\SendBillPayment(
-                        $dispatchData
-                    ))->delay(now());
+                        $job = (new \App\Jobs\SendBillPayment(
+                            $dispatchData
+                        ))->delay(now());
 
-                    dispatch($job);
+                        dispatch($job);
+                    } else {
+                        if (count($request->guests) > 0) {
+                            // $dispatchData = [
+                            //     'restaurant_id' => $resturant_data->id,
+                            //     'restuarant' => $resturant_data,
+                            //     'guests' => $request->guests,
+                            //     'reservation_id' => $request->reservation_id,
+                            //     'total_amount' => $request->total_amount,
+                            // ];
+
+                            $current_guest = $request->guests[0];
+
+                            $post_data = [
+                                'email' => $current_guest['guest_email'],
+                                'amount' => $value['bill'] * 100,
+                                'callback_url' =>
+                                    'https://api2.platterwise.com/',
+                            ];
+
+                            $paystack = Paystack::intializeTransaction(
+                                $post_data
+                            );
+
+                            if ($paystack->status) {
+                                $auth_url = $paystack->data->authorization_url;
+                                $access_code = $paystack->data->access_code;
+                                $reference = $paystack->data->reference;
+
+                                $desc =
+                                    $value['guest_name'] .
+                                    ' Payment of  ' .
+                                    $value['bill'];
+
+                                $in_guest = [
+                                    'guest_email' =>
+                                        $current_guest['guest_email'],
+                                    'guest_name' =>
+                                        $current_guest['guest_name'],
+                                    'type' => $current_guest['type'],
+                                    'bill' => $current_guest['bill'],
+                                    'payment_url' => $auth_url,
+                                ];
+
+                                array_push($set_guest, $in_guest);
+
+                                $transaction_data = [
+                                    'restaurant_id' => $restaurant_id,
+                                    'reservation_id' => $reservation_id,
+                                    'email' => $current_guest['guest_email'],
+                                    'guest_name' =>
+                                        $current_guest['guest_name'],
+                                    'payment_type' => 'card',
+                                    'description' => $desc,
+                                    'ref' => $reference,
+                                    'amount' => $current_guest['bill'] * 100,
+                                    'init_extra' => json_encode(
+                                        $paystack->data
+                                    ),
+                                ];
+
+                                DBHelpers::create_query(
+                                    Transactions::class,
+                                    $transaction_data
+                                );
+
+                                if ($current_guest['type'] == 'owner') {
+                                    return ResponseHelper::success_response(
+                                        'Reservation split bills was successful',
+                                        $paystack->data
+                                    );
+                                } else {
+                                    $jobMailData = [
+                                        'payment_link' => $auth_url,
+                                        'restaurant' =>
+                                            $this->details['restuarant'],
+                                    ];
+
+                                    \Mail::to(
+                                        $current_guest['guest_email']
+                                    )->send(
+                                        new \App\Mail\BillPayment($jobMailData)
+                                    );
+                                }
+                            }
+                        }
+                    }
 
                     return ResponseHelper::success_response(
                         'Reservation split bills was successful',
