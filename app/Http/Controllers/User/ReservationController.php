@@ -10,8 +10,10 @@ use App\Validations\ErrorValidation;
 use App\Helpers\ResponseHelper;
 use App\Models\Reservation;
 use App\Models\ReservationSplitBills;
+use App\Models\Transactions;
 use App\Helpers\DBHelpers;
 use Illuminate\Support\Facades\Auth;
+use App\Services\Paystack;
 
 class ReservationController extends Controller
 {
@@ -56,29 +58,34 @@ class ReservationController extends Controller
                         );
                     }
 
-                    $create_data = [
-                        'reservation_id' => $request->reservation_id,
-                        'total_amount' => $request->total_amount,
-                        'guests' => json_encode($request->guests),
-                    ];
+                    $reservation_id = $request->reservation_id;
 
-                    $register = DBHelpers::create_query(
-                        ReservationSplitBills::class,
-                        $create_data
+                    $reservation_data = DBHelpers::with_where_query_filter_first(
+                        Reservation::class,
+                        ['restaurant'],
+                        ['id' => $reservation_id]
                     );
 
-                    if ($register) {
-                        return ResponseHelper::success_response(
-                            'Reservation split bills was successful',
-                            null
-                        );
-                    } else {
-                        return ResponseHelper::error_response(
-                            'Creation failed, Database insertion issues',
-                            $validate->errors(),
-                            401
-                        );
-                    }
+                    $resturant_data = $reservation_data->restaurant;
+
+                    $dispatchData = [
+                        'restaurant_id' => $resturant_data->id,
+                        'restuarant' => $resturant_data,
+                        'guests' => $request->guests,
+                        'reservation_id' => $request->reservation_id,
+                        'total_amount' => $request->total_amount,
+                    ];
+
+                    $job = (new \App\Jobs\SendBillPayment(
+                        $dispatchData
+                    ))->delay(now());
+
+                    dispatch($job);
+
+                    return ResponseHelper::success_response(
+                        'Reservation split bills was successful',
+                        null
+                    );
                 } catch (Exception $e) {
                     return ResponseHelper::error_response(
                         'Server Error',
