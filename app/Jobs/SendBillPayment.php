@@ -13,6 +13,7 @@ use App\Models\ReservationSplitBills;
 use App\Models\Transactions;
 
 use App\Helpers\DBHelpers;
+use App\Helpers\Func;
 
 class SendBillPayment implements ShouldQueue
 {
@@ -51,10 +52,14 @@ class SendBillPayment implements ShouldQueue
         $set_guest = [];
 
         foreach ($guests as $value) {
+            $payment_ref = Func::generate_reference(20);
+
             $post_data = [
                 'email' => $value['guest_email'],
                 'amount' => $value['bill'] * 100,
-                'callback_url' => 'https://api2.platterwise.com/',
+                'callback_url' =>
+                    'https://api2.platterwise.com/verify-payment/' .
+                    $payment_ref,
             ];
 
             $paystack = Paystack::intializeTransaction($post_data);
@@ -87,6 +92,7 @@ class SendBillPayment implements ShouldQueue
                     'amount' => $value['bill'] * 100,
                     'extra' => 'sdb',
                     'init_extra' => json_encode($paystack->data),
+                    'payment_ref' => $payment_ref,
                 ];
 
                 $register = DBHelpers::create_query(

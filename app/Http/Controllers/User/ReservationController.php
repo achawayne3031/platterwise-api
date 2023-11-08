@@ -12,6 +12,8 @@ use App\Models\Reservation;
 use App\Models\ReservationSplitBills;
 use App\Models\Transactions;
 use App\Helpers\DBHelpers;
+use App\Helpers\Func;
+
 use Illuminate\Support\Facades\Auth;
 use App\Services\Paystack;
 
@@ -92,11 +94,14 @@ class ReservationController extends Controller
 
                             $current_guest = $request->guests[0];
 
+                            $payment_ref = Func::generate_reference(20);
+
                             $post_data = [
                                 'email' => $current_guest['guest_email'],
                                 'amount' => $value['bill'] * 100,
                                 'callback_url' =>
-                                    'https://api2.platterwise.com/',
+                                    'https://api2.platterwise.com/verify-payment/' .
+                                    $payment_ref,
                             ];
 
                             $paystack = Paystack::intializeTransaction(
@@ -138,6 +143,7 @@ class ReservationController extends Controller
                                     'init_extra' => json_encode(
                                         $paystack->data
                                     ),
+                                    'payment_ref' => $payment_ref,
                                 ];
 
                                 DBHelpers::create_query(

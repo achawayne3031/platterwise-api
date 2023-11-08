@@ -22,6 +22,7 @@ class Transactions extends Model
         'payment_type',
         'description',
         'ref',
+        'payment_ref',
         'status',
         'extra',
         'init_extra',
