@@ -477,11 +477,11 @@ class ReservationController extends Controller
                     );
                 }
 
-                // DBHelpers::update_query_v2(
-                //     Reservation::class,
-                //     ['status' => 2],
-                //     $request->reservation_id
-                // );
+                DBHelpers::update_query_v2(
+                    Reservation::class,
+                    ['status' => 2],
+                    $request->reservation_id
+                );
 
                 $res_data = DBHelpers::with_where_query_filter_first(
                     Reservation::class,
