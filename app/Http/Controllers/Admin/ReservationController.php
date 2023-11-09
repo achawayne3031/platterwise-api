@@ -181,25 +181,25 @@ class ReservationController extends Controller
                             new \App\Mail\ReservationConfirmed($mailData)
                         );
 
-                        $guests = json_decode($res_data->guests);
+                        ///  $guests = json_decode($res_data->guests);
 
-                        if (count($guests) > 0) {
-                            $jobMailData = [
-                                'owner_name' => $res_data->owner->full_name,
-                                'restaurant' => $res_data->restaurant->name,
-                                'seat_type' => $res_data->seat_type,
-                                'guests' => $guests,
-                                'location' => $res_data->restaurant->address,
-                                'book_date' => $booked_date,
-                                'book_time' => $book_time,
-                            ];
+                        // if (count($guests) > 0) {
+                        //     $jobMailData = [
+                        //         'owner_name' => $res_data->owner->full_name,
+                        //         'restaurant' => $res_data->restaurant->name,
+                        //         'seat_type' => $res_data->seat_type,
+                        //         'guests' => $guests,
+                        //         'location' => $res_data->restaurant->address,
+                        //         'book_date' => $booked_date,
+                        //         'book_time' => $book_time,
+                        //     ];
 
-                            $job = (new \App\Jobs\SendDinnerInvite(
-                                $jobMailData
-                            ))->delay(now()->addSeconds(2));
+                        //     $job = (new \App\Jobs\SendDinnerInvite(
+                        //         $jobMailData
+                        //     ))->delay(now()->addSeconds(2));
 
-                            dispatch($job);
-                        }
+                        //     dispatch($job);
+                        // }
 
                         return ResponseHelper::success_response(
                             'Reservation checked in was successful',
