@@ -31,5 +31,10 @@ Route::group(
             '/verify-user/{user}/{token}',
             'VerificationController@verify_user'
         );
+
+        Route::get(
+            '/verify-payment/{paymentRef}',
+            'VerificationController@verify_payment'
+        );
     }
 );

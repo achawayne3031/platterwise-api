@@ -5,10 +5,45 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Helpers\DBHelpers;
 use App\Models\User\AppUser;
+use App\Services\Paystack;
+use App\Models\Transactions;
 
 class VerificationController extends Controller
 {
     //
+
+    public function verify_payment(Request $request, $paymentRef)
+    {
+        $status = 1;
+
+        $paystack_ref = $request->query('reference');
+
+        $verify_res = Paystack::verifyTransaction($paystack_ref);
+
+        $payment_status = $verify_res->data->status;
+
+        switch ($payment_status) {
+            case 'success':
+                # code...
+                $status = 3;
+
+                $payment_data = json_encode($verify_res->data);
+
+                DBHelpers::update_query_v3(
+                    Transactions::class,
+                    ['status' => 3, 'payment_extra' => $payment_data],
+                    ['ref' => $paystack_ref]
+                );
+
+                break;
+
+            default:
+                # code...
+                break;
+        }
+
+        return view('user.VerifyPaymentStatus')->with(['status' => $status]);
+    }
 
     public function verify_user($user, $token)
     {

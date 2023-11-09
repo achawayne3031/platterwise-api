@@ -10,7 +10,7 @@
     />
 
     <link href="http://fonts.cdnfonts.com/css/verdana" rel="stylesheet" />
-    <title>Platerwise Verification</title>
+    <title>Platerwise Payment Verification</title>
 
     <style>
       .main-wrapper {
@@ -88,6 +88,18 @@
 
 
 
+        <div class="d-flex justify-content-center mt-4">
+            <div class="inner-wrapper">
+                <div class="d-flex justify-content-center mt-4 mb-4">
+                <img
+                    src="https://plugin.markaimg.com/public/f4702e25/0Vb8r2AH1i6ZgCV6jKc6DXxq2eWMrd.png"
+                    class="img-fluid"
+                />
+                </div>
+            </div>
+        </div>
+
+
         @if($status)
             <div class="d-flex justify-content-center mt-4">
                 <div class="inner-wrapper">
@@ -95,7 +107,7 @@
 
                     <div class="d-flex justify-content-center mt-4 mb-4">
                     <img
-                        src="https://plugin.markaimg.com/public/58c7dacf/orbLiZ8ANoRuEFanBRRclR9btGDyB4.png"
+                        src="https://plugin.markaimg.com/public/f4702e25/0Vb8r2AH1i6ZgCV6jKc6DXxq2eWMrd.png"
                         class="img-fluid"
                     />
                     </div>

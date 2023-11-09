@@ -26,6 +26,7 @@ class Transactions extends Model
         'status',
         'extra',
         'init_extra',
+        'payment_extra',
         'amount',
     ];
 
