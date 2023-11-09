@@ -23,6 +23,129 @@ class ResturantController extends Controller
 {
     //
 
+    public function edit_restaurant(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ResturantValidator::validate_rules($request, 'edit');
+
+            if (!$validate->fails() && $validate->validated()) {
+                $user = auth('web-api')->user();
+                $uid = $user->id;
+
+                /// cover pic
+                /// https://firebasestorage.googleapis.com/v0/b/platterwise.appspot.com/o/restaurant%2Fannie-spratt-oT7_v-I0hHg-unsplash.jpg446aef1c-66df-489c-a6de-f6195d0a6618?alt=media&token=1dfd1b0f-15dc-49da-8f99-78a4df2fa521?1697918398114
+
+                // banner
+                // https://firebasestorage.googleapis.com/v0/b/platterwise.appspot.com/o/restaurant%2Fmadie-hamilton-dZ-HI4EuWcA-unsplash.jpg54b9cd27-cd21-48de-89e7-1be1f046d1fc?alt=media&token=4f0ff4d6-6dd5-4470-8748-9ac99a46a385?1697918352958
+
+                // address
+                // Ago Palace Way, Lagos, Nigeria
+
+                if (
+                    !DBHelpers::exists(Resturant::class, [
+                        'admin_uid' => $uid,
+                        'id' => $request->restaurant_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant not found on your collection',
+                        null,
+                        401
+                    );
+                }
+
+                try {
+                    DB::beginTransaction();
+
+                    $records = Resturant::where([
+                        'id' => $request->restaurant_id,
+                        'admin_uid' => $uid,
+                    ]);
+
+                    $records->update(
+                        $request->only([
+                            'name',
+                            'phone',
+                            'address',
+                            'state',
+                            'cover_pic',
+                            'banner',
+                            'descriptions',
+                            'working_days',
+                            'opening_hour',
+                            'closing_hour',
+                            'website',
+                            'latitude',
+                            'longitude',
+                            'local_govt',
+                            'landmark',
+                        ])
+                    );
+
+                    if (count($request->seat_type) > 0) {
+                        DBHelpers::delete_query_multi(
+                            RestaurantSeatType::class,
+                            ['restaurant_id' => $request->restaurant_id]
+                        );
+
+                        $seat = $request->seat_type;
+                        foreach ($seat as $value) {
+                            RestaurantSeatType::create([
+                                'name' => $value['name'],
+                                'restaurant_id' => $request->restaurant_id,
+                            ]);
+                        }
+                    }
+
+                    DB::commit(); // execute the operations above and commit transaction
+
+                    return ResponseHelper::success_response(
+                        'Restaurant updated successfully',
+                        null
+                    );
+                } catch (\Throwable $error) {
+                    DB::rollBack(); // rollback in case of an exception || error
+                    return ResponseHelper::error_response($error);
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = [
+                    'name',
+                    'email',
+                    'address',
+                    'state',
+                    'phone',
+                    'cover_pic',
+                    'banner',
+                    'descriptions',
+                    'working_days',
+                    'closing_hour',
+                    'opening_hour',
+                    'website',
+                    'longitude',
+                    'latitude',
+                    'seat_type',
+                    'social_handle',
+                    'days',
+                    'restaurant_id',
+                ];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function dashboard(Request $request)
     {
         if ($request->isMethod('post')) {
