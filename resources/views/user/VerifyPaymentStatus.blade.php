@@ -100,7 +100,7 @@
         </div>
 
 
-        @if($status)
+        {{-- @if($status)
             <div class="d-flex justify-content-center mt-4">
                 <div class="inner-wrapper">
                     <h5 class="inner-title">Email Address Verified</h5>
@@ -126,7 +126,7 @@
                     </p>
                 </div>
             </div>
-        @endif
+        @endif --}}
 
 
 
