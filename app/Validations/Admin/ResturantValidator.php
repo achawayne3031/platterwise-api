@@ -38,7 +38,7 @@ class ResturantValidator
 
             'edit' => [
                 'name' => 'required',
-                'email' => 'required|email',
+                // 'email' => 'required|email',
                 'phone' => 'required',
                 'address' => 'required',
                 'state' => 'required',
