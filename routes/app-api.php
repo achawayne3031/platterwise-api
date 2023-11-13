@@ -84,7 +84,7 @@ Route::group(
     }
 );
 
-///// Reservation /////
+///// Transactions /////
 Route::group(
     [
         'middleware' => ['cors', 'jwt.verify'],
@@ -110,5 +110,19 @@ Route::group(
 
         Route::post('/follow', 'UserController@follow');
         Route::post('/unfollow', 'UserController@unfollow');
+    }
+);
+
+///// Post /////
+Route::group(
+    [
+        'middleware' => ['cors', 'jwt.verify'],
+        'prefix' => 'post',
+        'namespace' => 'App\Http\Controllers\User',
+    ],
+    function ($router) {
+        Route::post('/create', 'PostController@create');
+        Route::get('/all-posts', 'PostController@get_all_posts');
+        Route::get('/my-posts', 'PostController@get_my_posts');
     }
 );
