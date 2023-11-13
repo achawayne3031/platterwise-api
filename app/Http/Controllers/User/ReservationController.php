@@ -10,6 +10,9 @@ use App\Validations\ErrorValidation;
 use App\Helpers\ResponseHelper;
 use App\Models\Reservation;
 use App\Models\ReservationSplitBills;
+
+use App\Models\ReservationBills;
+
 use App\Models\Transactions;
 use App\Helpers\DBHelpers;
 use App\Helpers\Func;
@@ -20,6 +23,133 @@ use App\Services\Paystack;
 class ReservationController extends Controller
 {
     //
+
+    public function get_reservation_bills(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ReservationValidator::validate_rules(
+                $request,
+                'get_reservation_bills'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                try {
+                    $requestData = $request->all();
+                    $uid = Auth::id();
+                    $owner = Auth::user();
+
+                    if (
+                        !DBHelpers::exists(Reservation::class, [
+                            'id' => $request->reservation_id,
+                            'uid' => $uid,
+                        ])
+                    ) {
+                        return ResponseHelper::error_response(
+                            'Reservation not found on your collection',
+                            null,
+                            401
+                        );
+                    }
+
+                    $data = DBHelpers::where_query(ReservationBills::class, [
+                        'reservation_id' => $request->reservation_id,
+                    ]);
+
+                    return ResponseHelper::success_response(
+                        'Get reservation bills was successful',
+                        $data
+                    );
+                } catch (Exception $e) {
+                    return ResponseHelper::error_response(
+                        'Server Error',
+                        $e->getMessage(),
+                        401
+                    );
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['reservation_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
+    public function get_split_bills(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ReservationValidator::validate_rules(
+                $request,
+                'get_split_bills'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                try {
+                    $requestData = $request->all();
+                    $uid = Auth::id();
+                    $owner = Auth::user();
+
+                    if (
+                        !DBHelpers::exists(Reservation::class, [
+                            'id' => $request->reservation_id,
+                            'uid' => $uid,
+                        ])
+                    ) {
+                        return ResponseHelper::error_response(
+                            'Reservation not found on your collection',
+                            null,
+                            401
+                        );
+                    }
+
+                    $data = DBHelpers::where_query(
+                        ReservationSplitBills::class,
+                        [
+                            'reservation_id' => $request->reservation_id,
+                        ]
+                    );
+
+                    return ResponseHelper::success_response(
+                        'Get reservation split bills was successful',
+                        $data
+                    );
+                } catch (Exception $e) {
+                    return ResponseHelper::error_response(
+                        'Server Error',
+                        $e->getMessage(),
+                        401
+                    );
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['reservation_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
 
     public function split_bills(Request $request)
     {

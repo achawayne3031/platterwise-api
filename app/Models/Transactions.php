@@ -28,6 +28,8 @@ class Transactions extends Model
         'init_extra',
         'payment_extra',
         'amount',
+        'webhook_extra',
+        'amount_paid',
     ];
 
     public function restaurant(): BelongsTo

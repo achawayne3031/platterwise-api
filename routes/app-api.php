@@ -71,6 +71,28 @@ Route::group(
         Route::get('/all', 'ReservationController@all');
         Route::get('/view/{id}', 'ReservationController@view');
         Route::post('/split-bills', 'ReservationController@split_bills');
+
+        Route::post(
+            '/get-split-bills',
+            'ReservationController@get_split_bills'
+        );
+
+        Route::post(
+            '/get-reservation-bills',
+            'ReservationController@get_reservation_bills'
+        );
+    }
+);
+
+///// Reservation /////
+Route::group(
+    [
+        'middleware' => ['cors', 'jwt.verify'],
+        'prefix' => 'transactions',
+        'namespace' => 'App\Http\Controllers\User',
+    ],
+    function ($router) {
+        Route::post('/reservation', 'TransactionController@reservation');
     }
 );
 

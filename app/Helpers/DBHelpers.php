@@ -288,6 +288,23 @@ class DBHelpers
         }
     }
 
+    public static function where_query($dataModel, $where_clause = [])
+    {
+        try {
+            return $dataModel
+                ::query()
+                ->where($where_clause)
+                ->get();
+        } catch (Exception $e) {
+            return ResponseHelper::error_response(
+                'Server Error',
+                $e->getMessage(),
+                401,
+                $e->getLine()
+            );
+        }
+    }
+
     public static function with_where_query_filter_first(
         $dataModel,
         $with_clause = [],

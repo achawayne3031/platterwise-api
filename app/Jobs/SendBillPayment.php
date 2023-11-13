@@ -77,6 +77,7 @@ class SendBillPayment implements ShouldQueue
                     'type' => $value['type'],
                     'bill' => $value['bill'],
                     'payment_url' => $auth_url,
+                    'amount_paid' => 0,
                 ];
 
                 array_push($set_guest, $in_guest);

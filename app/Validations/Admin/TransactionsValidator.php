@@ -8,38 +8,26 @@
  * @version	1.0
  */
 
-namespace App\Validations\User;
+namespace App\Validations\Admin;
 use App\Helpers\Func;
 
-class ReservationValidator
+class TransactionsValidator
 {
     protected static $validation_rules = [];
 
     public static function validate_rules($request, string $arg)
     {
         self::$validation_rules = [
-            'create' => [
-                'reservation_date' => 'required',
+            'index' => [
                 'restaurant_id' => 'required|integer',
-                'seat_type' => 'required',
             ],
-
-            'cancel' => [
+            'reservation' => [
                 'reservation_id' => 'required|integer',
             ],
 
-            'split_bills' => [
+            'check_in' => [
                 'reservation_id' => 'required|integer',
-                'total_amount' => 'required',
-                'guests' => 'required|array',
-            ],
-
-            'get_split_bills' => [
-                'reservation_id' => 'required|integer',
-            ],
-
-            'get_reservation_bills' => [
-                'reservation_id' => 'required|integer',
+                'restaurant_id' => 'required|integer',
             ],
         ];
 

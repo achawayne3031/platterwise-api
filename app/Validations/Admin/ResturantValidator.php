@@ -47,7 +47,7 @@ class ResturantValidator
                 'descriptions' => 'required',
                 'opening_hour' => 'required',
                 'closing_hour' => 'required',
-                'seat_type' => 'required|array',
+                //  'seat_type' => 'required|array',
                 //  'latitude' => 'required',
                 // 'longitude' => 'required',
                 //   'days' => 'required',
