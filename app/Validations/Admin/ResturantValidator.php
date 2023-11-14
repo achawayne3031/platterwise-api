@@ -38,20 +38,21 @@ class ResturantValidator
 
             'edit' => [
                 'name' => 'required',
-                // 'email' => 'required|email',
                 'phone' => 'required',
                 'address' => 'required',
                 'state' => 'required',
-                // 'cover_pic' => 'required',
-                //  'banner' => 'required',
+                'restaurant_id' => 'required',
                 'descriptions' => 'required',
                 'opening_hour' => 'required',
                 'closing_hour' => 'required',
+
                 //  'seat_type' => 'required|array',
                 //  'latitude' => 'required',
                 // 'longitude' => 'required',
                 //   'days' => 'required',
-                'restaurant_id' => 'required',
+                // 'email' => 'required|email',
+                // 'cover_pic' => 'required',
+                //  'banner' => 'required',
             ],
 
             'reviews' => [

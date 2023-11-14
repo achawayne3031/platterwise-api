@@ -197,11 +197,13 @@ class ReservationController extends Controller
                         ['id' => $reservation_id]
                     );
                     $resturant_data = $reservation_data->restaurant;
+                    $resturant_name = $reservation_data->restaurant->name;
 
                     if (count($request->guests) > 1) {
                         $dispatchData = [
                             'restaurant_id' => $resturant_data->id,
                             'restuarant' => $resturant_data,
+                            'restuarant_name' => $resturant_name,
                             'guests' => $request->guests,
                             'reservation_id' => $request->reservation_id,
                             'total_amount' => $request->total_amount,
@@ -289,8 +291,14 @@ class ReservationController extends Controller
                                 } else {
                                     $jobMailData = [
                                         'payment_link' => $auth_url,
+
                                         'restaurant' =>
                                             $this->details['restuarant'],
+
+                                        'restaurant_name' => $resturant_name,
+                                        'guest_name' =>
+                                            $current_guest['guest_email'],
+                                        'amount' => $current_guest['bill'],
                                     ];
 
                                     \Mail::to(

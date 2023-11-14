@@ -104,6 +104,9 @@ class SendBillPayment implements ShouldQueue
                 $jobMailData = [
                     'payment_link' => $auth_url,
                     'restaurant' => $this->details['restuarant'],
+                    'restaurant_name' => $this->details['restaurant_name'],
+                    'guest_name' => $value['guest_email'],
+                    'amount' => $value['bill'],
                 ];
 
                 \Mail::to($value['guest_email'])->send(

@@ -50,6 +50,6 @@ class BillPayment extends Mailable
     {
         return $this->from(config('mail.from.address'))
             ->subject('Platterwise Bill Payment')
-            ->view('user.BillPayment');
+            ->view('user.SplitBilllPayment');
     }
 }
