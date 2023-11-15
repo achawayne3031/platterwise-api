@@ -126,7 +126,7 @@ class PaystackWebhookController extends Controller
 
                 \Log::info('End Update Reservation Bills amount_paid');
 
-                if ($new_amount_paid >= inval($total_bill)) {
+                if ($new_amount_paid >= intval($total_bill)) {
                     DBHelpers::update_query_v3(
                         ReservationBills::class,
                         ['status' => 2],
