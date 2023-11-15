@@ -93,12 +93,12 @@ class PostController extends Controller
             if (!$validate->fails() && $validate->validated()) {
                 try {
                     $requestData = $request->all();
-                    $requestData['uid'] = Auth::id();
+                    $requestData['user_id'] = Auth::id();
                     $owner = Auth::user();
 
                     $register = DBHelpers::create_query(
                         UserPosts::class,
-                        $request->all()
+                        $requestData
                     );
 
                     if ($register) {

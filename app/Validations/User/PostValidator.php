@@ -19,10 +19,9 @@ class PostValidator
     {
         self::$validation_rules = [
             'create' => [
-                'user_id' => 'required|integer',
                 'content_post' => 'required',
                 'content_type' => 'required',
-                'contentUrl' => 'required',
+                // 'contentUrl' => 'required',
             ],
             'reservation' => [
                 'reservation_id' => 'required|integer',

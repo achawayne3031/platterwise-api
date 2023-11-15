@@ -46,12 +46,17 @@ class PaystackWebhookController extends Controller
             ]
         );
 
+        $this->logger->error('Init Transaction charge was success');
+
         if ($event->event == 'charge.success') {
+            $this->logger->error('enter Transaction charge was success');
+
             // $paystack = Paystack::verifyTransaction($event->data->reference);
 
             //  if ($event->data->status) {
 
             if ($event->data->status == 'success') {
+                $this->logger->error('Transaction status was success');
                 $payment_data = json_encode($event->data);
 
                 global $email;
