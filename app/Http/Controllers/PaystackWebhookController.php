@@ -46,17 +46,17 @@ class PaystackWebhookController extends Controller
             ]
         );
 
-        $this->logger->error('Init Transaction charge was success');
+        Log::info('Init Transaction charge was success');
 
         if ($event->event == 'charge.success') {
-            $this->logger->error('enter Transaction charge was success');
+            Log::info('enter Transaction charge was success');
 
             // $paystack = Paystack::verifyTransaction($event->data->reference);
 
             //  if ($event->data->status) {
 
             if ($event->data->status == 'success') {
-                $this->logger->error('Transaction status was success');
+                Log::info('Transaction status was success');
                 $payment_data = json_encode($event->data);
 
                 global $email;
@@ -65,7 +65,7 @@ class PaystackWebhookController extends Controller
                 $amount = $event->data->amount;
                 $email = $event->data->customer->email;
 
-                $this->logger->error(
+                Log::info(
                     'Start Update Transaction status, amount_paid, payment_extra'
                 );
 
@@ -79,12 +79,12 @@ class PaystackWebhookController extends Controller
                     ['ref' => $ref]
                 );
 
-                $this->logger->error(
+                Log::info(
                     'End Update Transaction status, amount_paid, payment_extra'
                 );
 
                 ////// Get current Transaction from Transaction Table //////
-                $this->logger->error('Start Transaction data');
+                Log::info('Start Transaction data');
 
                 $current_transaction = DBHelpers::query_filter_first(
                     Transactions::class,
@@ -92,13 +92,13 @@ class PaystackWebhookController extends Controller
                         'ref' => $ref,
                     ]
                 );
-                $this->logger->error('End Transaction data');
+                Log::info('End Transaction data');
 
                 $reservation_id = $current_transaction->reservation_id;
                 $restaurant_id = $current_transaction->restaurant_id;
 
                 /////// Add Amount paid on Reservation Bill Table /////
-                $this->logger->error('Start Get Reservation Bills data');
+                Log::info('Start Get Reservation Bills data');
 
                 $current_reservation_bill = DBHelpers::query_filter_first(
                     ReservationBills::class,
@@ -107,15 +107,13 @@ class PaystackWebhookController extends Controller
                     ]
                 );
 
-                $this->logger->error('End Get Reservation Bills data');
+                Log::info('End Get Reservation Bills data');
 
                 $total_bill = $current_reservation_bill->total_bill;
                 $amount_paid = $current_reservation_bill->amount_paid;
                 $new_amount_paid = $amount + $amount_paid;
 
-                $this->logger->error(
-                    'Start Update Reservation Bills amount_paid'
-                );
+                Log::info('Start Update Reservation Bills amount_paid');
 
                 DBHelpers::update_query_v3(
                     ReservationBills::class,
@@ -125,9 +123,7 @@ class PaystackWebhookController extends Controller
                     ]
                 );
 
-                $this->logger->error(
-                    'End Update Reservation Bills amount_paid'
-                );
+                Log::info('End Update Reservation Bills amount_paid');
 
                 // if ($new_amount_paid >= floatval($total_bill)) {
                 //     DBHelpers::update_query_v3(
@@ -140,7 +136,7 @@ class PaystackWebhookController extends Controller
                 // }
 
                 ////// Update reservation split bill table with amount paid //////
-                $this->logger->error('Start Get Reservation Spilt Bills ');
+                Log::info('Start Get Reservation Spilt Bills ');
 
                 $current_reservation_split_bill = DBHelpers::query_filter_first(
                     ReservationSplitBills::class,
@@ -149,7 +145,7 @@ class PaystackWebhookController extends Controller
                     ]
                 );
 
-                $this->logger->error('End Get Reservation Spilt Bills');
+                Log::info('End Get Reservation Spilt Bills');
 
                 $guests = json_decode($current_reservation_split_bill->guests);
                 $new_guest_data = [];
@@ -167,7 +163,7 @@ class PaystackWebhookController extends Controller
                     array_push($new_guest_data, $in_guest);
                 }
 
-                $this->logger->error('Start Update Reservation Spilt Bills');
+                Log::info('Start Update Reservation Spilt Bills');
 
                 DBHelpers::update_query_v3(
                     ReservationSplitBills::class,
@@ -177,9 +173,9 @@ class PaystackWebhookController extends Controller
                     ]
                 );
 
-                $this->logger->error('End Update Reservation Spilt Bills');
+                Log::info('End Update Reservation Spilt Bills');
             } else {
-                $this->logger->error('Transaction reference not found');
+                Log::info('Transaction reference not found');
             }
             //  }
         } else {
