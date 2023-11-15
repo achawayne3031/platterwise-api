@@ -151,16 +151,28 @@ class PaystackWebhookController extends Controller
                 $new_guest_data = [];
 
                 foreach ($guests as $value) {
-                    $in_guest = [
-                        'guest_email' => $value->guest_email,
-                        'guest_name' => $value->guest_name,
-                        'type' => $value->type,
-                        'bill' => $value->bill,
-                        'payment_url' => $value->payment_url,
-                        'amount_paid' => $amount,
-                    ];
+                    if ($value->guest_email == $email) {
+                        $in_guest = [
+                            'guest_email' => $value->guest_email,
+                            'guest_name' => $value->guest_name,
+                            'type' => $value->type,
+                            'bill' => $value->bill,
+                            'payment_url' => $value->payment_url,
+                            'amount_paid' => $amount,
+                        ];
+                        array_push($new_guest_data, $in_guest);
+                    } else {
+                        $in_guest = [
+                            'guest_email' => $value->guest_email,
+                            'guest_name' => $value->guest_name,
+                            'type' => $value->type,
+                            'bill' => $value->bill,
+                            'payment_url' => $value->payment_url,
+                            'amount_paid' => $value->amount_paid,
+                        ];
 
-                    array_push($new_guest_data, $in_guest);
+                        array_push($new_guest_data, $in_guest);
+                    }
                 }
 
                 \Log::info('Start Update Reservation Spilt Bills');
