@@ -74,20 +74,20 @@ class ResturantController extends Controller
                         ])
                     );
 
-                    if (count($request->seat_type) > 0) {
-                        DBHelpers::delete_query_multi(
-                            RestaurantSeatType::class,
-                            ['restaurant_id' => $request->restaurant_id]
-                        );
+                    // if (count($request->seat_type) > 0) {
+                    //     DBHelpers::delete_query_multi(
+                    //         RestaurantSeatType::class,
+                    //         ['restaurant_id' => $request->restaurant_id]
+                    //     );
 
-                        $seat = $request->seat_type;
-                        foreach ($seat as $value) {
-                            RestaurantSeatType::create([
-                                'name' => $value['name'],
-                                'restaurant_id' => $request->restaurant_id,
-                            ]);
-                        }
-                    }
+                    //     $seat = $request->seat_type;
+                    //     foreach ($seat as $value) {
+                    //         RestaurantSeatType::create([
+                    //             'name' => $value['name'],
+                    //             'restaurant_id' => $request->restaurant_id,
+                    //         ]);
+                    //     }
+                    // }
 
                     DB::commit(); // execute the operations above and commit transaction
 
