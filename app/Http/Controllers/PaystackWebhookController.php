@@ -47,105 +47,136 @@ class PaystackWebhookController extends Controller
         );
 
         if ($event->event == 'charge.success') {
-            $paystack = Paystack::verifyTransaction($event->data->reference);
-            if ($paystack->status) {
-                if ($paystack->data->status == 'success') {
-                    $payment_data = json_encode($paystack->data);
+            // $paystack = Paystack::verifyTransaction($event->data->reference);
 
-                    global $email;
-                    global $amount;
+            //  if ($event->data->status) {
 
-                    $amount = $paystack->data->amount;
-                    $email = $paystack->data->customer->email;
+            if ($event->data->status == 'success') {
+                $payment_data = json_encode($event->data);
 
-                    DBHelpers::update_query_v3(
-                        Transactions::class,
-                        [
-                            'status' => 3,
-                            'payment_extra' => $payment_data,
-                            'amount_paid' => $amount,
-                        ],
-                        ['ref' => $ref]
-                    );
+                global $email;
+                global $amount;
 
-                    ////// Get current Transaction from Transaction Table //////
-                    $current_transaction = DBHelpers::query_filter_first(
-                        Transactions::class,
-                        [
-                            'ref' => $ref,
-                        ]
-                    );
+                $amount = $event->data->amount;
+                $email = $event->data->customer->email;
 
-                    $reservation_id = $current_transaction->reservation_id;
-                    $restaurant_id = $current_transaction->restaurant_id;
+                $this->logger->error(
+                    'Start Update Transaction status, amount_paid, payment_extra'
+                );
 
-                    /////// Add Amount paid on Reservation Bill Table /////
-                    $current_reservation_bill = DBHelpers::query_filter_first(
-                        ReservationBills::class,
-                        [
-                            'reservation_id' => $reservation_id,
-                        ]
-                    );
+                DBHelpers::update_query_v3(
+                    Transactions::class,
+                    [
+                        'status' => 3,
+                        'payment_extra' => $payment_data,
+                        'amount_paid' => $amount,
+                    ],
+                    ['ref' => $ref]
+                );
 
-                    $total_bill = $current_reservation_bill->total_bill;
-                    $amount_paid = $current_reservation_bill->amount_paid;
-                    $new_amount_paid =
-                        floatval($amount) + floatval($amount_paid);
-                    DBHelpers::update_query_v3(
-                        ReservationBills::class,
-                        ['amount_paid' => $new_amount_paid],
-                        [
-                            'reservation_id' => $reservation_id,
-                        ]
-                    );
+                $this->logger->error(
+                    'End Update Transaction status, amount_paid, payment_extra'
+                );
 
-                    if ($new_amount_paid >= floatval($total_bill)) {
-                        DBHelpers::update_query_v3(
-                            ReservationBills::class,
-                            ['status' => 4],
-                            [
-                                'reservation_id' => $reservation_id,
-                            ]
-                        );
-                    }
+                ////// Get current Transaction from Transaction Table //////
+                $this->logger->error('Start Transaction data');
 
-                    ////// Update reservation split bill table with amount paid //////
-                    $current_reservation_split_bill = DBHelpers::query_filter_first(
-                        ReservationSplitBills::class,
-                        [
-                            'reservation_id' => $reservation_id,
-                        ]
-                    );
+                $current_transaction = DBHelpers::query_filter_first(
+                    Transactions::class,
+                    [
+                        'ref' => $ref,
+                    ]
+                );
+                $this->logger->error('End Transaction data');
 
-                    $guests = json_decode(
-                        $current_reservation_split_bill->guests
-                    );
-                    $new_guest_data = [];
+                $reservation_id = $current_transaction->reservation_id;
+                $restaurant_id = $current_transaction->restaurant_id;
 
-                    foreach ($guests as $value) {
-                        $in_guest = [
-                            'guest_email' => $value['guest_email'],
-                            'guest_name' => $value['guest_name'],
-                            'type' => $value['type'],
-                            'bill' => $value['bill'],
-                            'payment_url' => $value['auth_url'],
-                            'amount_paid' => $amount,
-                        ];
+                /////// Add Amount paid on Reservation Bill Table /////
+                $this->logger->error('Start Get Reservation Bills data');
 
-                        array_push($new_guest_data, $in_guest);
-                    }
+                $current_reservation_bill = DBHelpers::query_filter_first(
+                    ReservationBills::class,
+                    [
+                        'reservation_id' => $reservation_id,
+                    ]
+                );
 
-                    DBHelpers::update_query_v3(
-                        ReservationSplitBills::class,
-                        ['guests' => json_encode($new_guest_data)],
-                        [
-                            'reservation_id' => $reservation_id,
-                        ]
-                    );
-                } else {
-                    $this->logger->error('Transaction reference not found');
+                $this->logger->error('End Get Reservation Bills data');
+
+                $total_bill = $current_reservation_bill->total_bill;
+                $amount_paid = $current_reservation_bill->amount_paid;
+                $new_amount_paid = $amount + $amount_paid;
+
+                $this->logger->error(
+                    'Start Update Reservation Bills amount_paid'
+                );
+
+                DBHelpers::update_query_v3(
+                    ReservationBills::class,
+                    ['amount_paid' => $new_amount_paid],
+                    [
+                        'reservation_id' => $reservation_id,
+                    ]
+                );
+
+                $this->logger->error(
+                    'End Update Reservation Bills amount_paid'
+                );
+
+                // if ($new_amount_paid >= floatval($total_bill)) {
+                //     DBHelpers::update_query_v3(
+                //         ReservationBills::class,
+                //         ['status' => 4],
+                //         [
+                //             'reservation_id' => $reservation_id,
+                //         ]
+                //     );
+                // }
+
+                ////// Update reservation split bill table with amount paid //////
+                $this->logger->error('Start Get Reservation Spilt Bills ');
+
+                $current_reservation_split_bill = DBHelpers::query_filter_first(
+                    ReservationSplitBills::class,
+                    [
+                        'reservation_id' => $reservation_id,
+                    ]
+                );
+
+                $this->logger->error('End Get Reservation Spilt Bills');
+
+                $guests = json_decode($current_reservation_split_bill->guests);
+                $new_guest_data = [];
+
+                foreach ($guests as $value) {
+                    $in_guest = [
+                        'guest_email' => $value['guest_email'],
+                        'guest_name' => $value['guest_name'],
+                        'type' => $value['type'],
+                        'bill' => $value['bill'],
+                        'payment_url' => $value['auth_url'],
+                        'amount_paid' => $amount,
+                    ];
+
+                    array_push($new_guest_data, $in_guest);
                 }
+
+                $this->logger->error('Start Update Reservation Spilt Bills');
+
+                DBHelpers::update_query_v3(
+                    ReservationSplitBills::class,
+                    ['guests' => json_encode($new_guest_data)],
+                    [
+                        'reservation_id' => $reservation_id,
+                    ]
+                );
+
+                $this->logger->error('End Update Reservation Spilt Bills');
+            } else {
+                $this->logger->error('Transaction reference not found');
             }
+            //  }
         } else {
         }
 

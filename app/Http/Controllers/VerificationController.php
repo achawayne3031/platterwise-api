@@ -31,9 +31,11 @@ class VerificationController extends Controller
 
                 DBHelpers::update_query_v3(
                     Transactions::class,
-                    ['status' => 3, 'payment_extra' => $payment_data],
+                    ['payment_extra' => $payment_data],
                     ['ref' => $paystack_ref]
                 );
+
+                /// 'status' => 3,
 
                 break;
 
