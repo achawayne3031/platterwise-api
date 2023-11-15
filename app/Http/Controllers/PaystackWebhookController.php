@@ -8,6 +8,7 @@ use App\Models\Transactions;
 use App\Helpers\DBHelpers;
 use App\Models\ReservationBills;
 use App\Models\ReservationSplitBills;
+use App\Models\Reservation;
 
 class PaystackWebhookController extends Controller
 {
@@ -111,7 +112,7 @@ class PaystackWebhookController extends Controller
 
                 $total_bill = $current_reservation_bill->total_bill;
                 $amount_paid = $current_reservation_bill->amount_paid;
-                $new_amount_paid = $amount + $amount_paid;
+                $new_amount_paid = $amount + $amount_paid / 100;
 
                 \Log::info('Start Update Reservation Bills amount_paid');
 
@@ -125,15 +126,23 @@ class PaystackWebhookController extends Controller
 
                 \Log::info('End Update Reservation Bills amount_paid');
 
-                // if ($new_amount_paid >= floatval($total_bill)) {
-                //     DBHelpers::update_query_v3(
-                //         ReservationBills::class,
-                //         ['status' => 4],
-                //         [
-                //             'reservation_id' => $reservation_id,
-                //         ]
-                //     );
-                // }
+                if ($new_amount_paid >= floatval($total_bill)) {
+                    DBHelpers::update_query_v3(
+                        ReservationBills::class,
+                        ['status' => 2],
+                        [
+                            'reservation_id' => $reservation_id,
+                        ]
+                    );
+
+                    DBHelpers::update_query_v3(
+                        Reservation::class,
+                        ['status' => 4],
+                        [
+                            'reservation_id' => $reservation_id,
+                        ]
+                    );
+                }
 
                 ////// Update reservation split bill table with amount paid //////
                 \Log::info('Start Get Reservation Spilt Bills ');
