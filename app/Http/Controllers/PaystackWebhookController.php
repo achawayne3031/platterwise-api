@@ -156,7 +156,7 @@ class PaystackWebhookController extends Controller
                         'guest_name' => $value->guest_name,
                         'type' => $value->type,
                         'bill' => $value->bill,
-                        'payment_url' => $value->auth_url,
+                        'payment_url' => $value->payment_url,
                         'amount_paid' => $amount,
                     ];
 
