@@ -152,11 +152,11 @@ class PaystackWebhookController extends Controller
 
                 foreach ($guests as $value) {
                     $in_guest = [
-                        'guest_email' => $value['guest_email'],
-                        'guest_name' => $value['guest_name'],
-                        'type' => $value['type'],
-                        'bill' => $value['bill'],
-                        'payment_url' => $value['auth_url'],
+                        'guest_email' => $value->guest_email,
+                        'guest_name' => $value->guest_name,
+                        'type' => $value->type,
+                        'bill' => $value->bill,
+                        'payment_url' => $value->auth_url,
                         'amount_paid' => $amount,
                     ];
 
