@@ -139,7 +139,7 @@ class PaystackWebhookController extends Controller
                         Reservation::class,
                         ['status' => 4],
                         [
-                            'reservation_id' => $reservation_id,
+                            'id' => $reservation_id,
                         ]
                     );
                 }
