@@ -158,7 +158,7 @@ class PaystackWebhookController extends Controller
                             'type' => $value->type,
                             'bill' => $value->bill,
                             'payment_url' => $value->payment_url,
-                            'amount_paid' => $amount,
+                            'amount_paid' => $amount / 100,
                         ];
                         array_push($new_guest_data, $in_guest);
                     } else {
