@@ -164,10 +164,13 @@ class PaystackWebhookController extends Controller
                 }
 
                 \Log::info('Start Update Reservation Spilt Bills');
+                \Log::info($new_guest_data);
+
+                $encoded_guest = json_encode($new_guest_data);
 
                 DBHelpers::update_query_v3(
                     ReservationSplitBills::class,
-                    ['guests' => json_encode($new_guest_data)],
+                    ['guests' => $encoded_guest],
                     [
                         'reservation_id' => $reservation_id,
                     ]
