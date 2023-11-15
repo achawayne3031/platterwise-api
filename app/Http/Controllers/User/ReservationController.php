@@ -203,7 +203,7 @@ class ReservationController extends Controller
                         $dispatchData = [
                             'restaurant_id' => $resturant_data->id,
                             'restuarant' => $resturant_data,
-                            'restuarant_name' => $resturant_name,
+                            'restaurant_name' => $resturant_name,
                             'guests' => $request->guests,
                             'reservation_id' => $request->reservation_id,
                             'total_amount' => $request->total_amount,
@@ -216,14 +216,6 @@ class ReservationController extends Controller
                         dispatch($job);
                     } else {
                         if (count($request->guests) > 0) {
-                            // $dispatchData = [
-                            //     'restaurant_id' => $resturant_data->id,
-                            //     'restuarant' => $resturant_data,
-                            //     'guests' => $request->guests,
-                            //     'reservation_id' => $request->reservation_id,
-                            //     'total_amount' => $request->total_amount,
-                            // ];
-
                             $current_guest = $request->guests[0];
 
                             $payment_ref = Func::generate_reference(20);

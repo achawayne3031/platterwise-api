@@ -91,7 +91,6 @@ class SendBillPayment implements ShouldQueue
                     'description' => $desc,
                     'ref' => $reference,
                     'amount' => $value['bill'] * 100,
-                    'extra' => 'sdb',
                     'init_extra' => json_encode($paystack->data),
                     'payment_ref' => $payment_ref,
                 ];
@@ -105,7 +104,7 @@ class SendBillPayment implements ShouldQueue
                     'payment_link' => $auth_url,
                     'restaurant' => $this->details['restuarant'],
                     'restaurant_name' => $this->details['restaurant_name'],
-                    'guest_name' => $value['guest_email'],
+                    'guest_name' => $value['guest_name'],
                     'amount' => $value['bill'],
                 ];
 
