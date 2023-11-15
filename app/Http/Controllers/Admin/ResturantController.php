@@ -68,17 +68,9 @@ class ResturantController extends Controller
                             'phone',
                             'address',
                             'state',
-                            'cover_pic',
-                            'banner',
                             'descriptions',
-                            'working_days',
                             'opening_hour',
                             'closing_hour',
-                            'website',
-                            'latitude',
-                            'longitude',
-                            'local_govt',
-                            'landmark',
                         ])
                     );
 
