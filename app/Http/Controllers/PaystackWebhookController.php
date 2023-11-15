@@ -112,7 +112,7 @@ class PaystackWebhookController extends Controller
 
                 $total_bill = $current_reservation_bill->total_bill;
                 $amount_paid = $current_reservation_bill->amount_paid;
-                $new_amount_paid = $amount / 100 + $amount_paid;
+                $new_amount_paid = $amount_paid + $amount / 100;
 
                 \Log::info('Start Update Reservation Bills amount_paid');
 
