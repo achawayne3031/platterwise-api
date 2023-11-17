@@ -252,7 +252,7 @@ class ReservationController extends Controller
                                     'payment_url' => $auth_url,
                                 ];
 
-                                array_push($set_guest, $in_guest);
+                                //   array_push($set_guest, $in_guest);
 
                                 $transaction_data = [
                                     'restaurant_id' => $restaurant_id,
@@ -284,9 +284,7 @@ class ReservationController extends Controller
                                     $jobMailData = [
                                         'payment_link' => $auth_url,
 
-                                        'restaurant' =>
-                                            $this->details['restuarant'],
-
+                                        'restaurant' => $resturant_data,
                                         'restaurant_name' => $resturant_name,
                                         'guest_name' =>
                                             $current_guest['guest_email'],
