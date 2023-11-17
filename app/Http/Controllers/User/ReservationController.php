@@ -255,8 +255,9 @@ class ReservationController extends Controller
                                 //   array_push($set_guest, $in_guest);
 
                                 $transaction_data = [
-                                    'restaurant_id' => $restaurant_id,
-                                    'reservation_id' => $reservation_id,
+                                    'restaurant_id' => $resturant_data->id,
+                                    'reservation_id' =>
+                                        $request->reservation_id,
                                     'email' => $current_guest['guest_email'],
                                     'guest_name' =>
                                         $current_guest['guest_name'],
