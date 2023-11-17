@@ -222,7 +222,7 @@ class ReservationController extends Controller
 
                             $post_data = [
                                 'email' => $current_guest['guest_email'],
-                                'amount' => $value['bill'] * 100,
+                                'amount' => $current_guest['bill'] * 100,
                                 'callback_url' =>
                                     'https://api2.platterwise.com/verify-payment/' .
                                     $payment_ref,
