@@ -9,6 +9,8 @@ use App\Validations\User\PostValidator;
 use App\Validations\ErrorValidation;
 use App\Helpers\ResponseHelper;
 use App\Models\UserPosts;
+use App\Models\LikedPost;
+
 use App\Helpers\DBHelpers;
 use App\Helpers\Func;
 
@@ -18,6 +20,256 @@ use App\Services\Paystack;
 class PostController extends Controller
 {
     //
+
+    //// get my liked posts ///
+    public function get_my_liked_posts(Request $request)
+    {
+        if ($request->isMethod('get')) {
+            try {
+                $requestData = $request->all();
+                $uid = Auth::id();
+                $owner = Auth::user();
+
+                $data = DBHelpers::data_with_where_paginate(
+                    LikedPost::class,
+                    ['uid' => $uid],
+                    ['user', 'post']
+                );
+
+                return ResponseHelper::success_response(
+                    'Get my liked posts was successful',
+                    $data
+                );
+            } catch (Exception $e) {
+                return ResponseHelper::error_response(
+                    'Server Error',
+                    $e->getMessage(),
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
+    //// Delete Post ///
+    public function delete(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = PostValidator::validate_rules($request, 'delete');
+
+            if (!$validate->fails() && $validate->validated()) {
+                $uid = Auth::id();
+
+                if (
+                    !DBHelpers::exists(UserPosts::class, [
+                        'id' => $request->post_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Post not found',
+                        $validate->errors(),
+                        401
+                    );
+                }
+
+                if (
+                    !DBHelpers::exists(UserPosts::class, [
+                        'id' => $request->post_id,
+                        'user_id' => $uid,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Post not in your collections',
+                        $validate->errors(),
+                        401
+                    );
+                }
+
+                if (
+                    DBHelpers::exists(UserPosts::class, [
+                        'id' => $request->post_id,
+                        'user_id' => $uid,
+                    ])
+                ) {
+                    DBHelpers::delete_query_multi(UserPosts::class, [
+                        'id' => $request->post_id,
+                        'user_id' => $uid,
+                    ]);
+
+                    DBHelpers::delete_query_multi(LikedPost::class, [
+                        'post_id' => $request->post_id,
+                    ]);
+                }
+
+                return ResponseHelper::success_response(
+                    'Post deleted successfully',
+                    null
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['post_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
+    //// Like Post ///
+    public function unlike(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = PostValidator::validate_rules($request, 'unlike');
+
+            if (!$validate->fails() && $validate->validated()) {
+                $uid = Auth::id();
+
+                if (
+                    !DBHelpers::exists(UserPosts::class, [
+                        'id' => $request->post_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Post not found',
+                        $validate->errors(),
+                        401
+                    );
+                }
+
+                if (
+                    !DBHelpers::exists(LikedPost::class, [
+                        'post_id' => $request->post_id,
+                        'uid' => $uid,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Post not liked by you',
+                        $validate->errors(),
+                        401
+                    );
+                }
+
+                if (
+                    DBHelpers::exists(LikedPost::class, [
+                        'post_id' => $request->post_id,
+                        'uid' => $uid,
+                    ])
+                ) {
+                    DBHelpers::delete_query_multi(LikedPost::class, [
+                        'post_id' => $request->post_id,
+                        'uid' => $uid,
+                    ]);
+                }
+
+                $post = UserPosts::find($request->post_id);
+                // increment the value of the `follower` column by 1
+                $post->decrement('total_likes');
+
+                return ResponseHelper::success_response(
+                    'Post unliked successfully',
+                    null
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['post_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
+    //// Like Post ///
+    public function like(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = PostValidator::validate_rules($request, 'like');
+
+            if (!$validate->fails() && $validate->validated()) {
+                $uid = Auth::id();
+
+                if (
+                    !DBHelpers::exists(UserPosts::class, [
+                        'id' => $request->post_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Post not found',
+                        $validate->errors(),
+                        401
+                    );
+                }
+
+                if (
+                    DBHelpers::exists(LikedPost::class, [
+                        'post_id' => $request->post_id,
+                        'uid' => $uid,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Post liked already',
+                        $validate->errors(),
+                        401
+                    );
+                }
+
+                $requestData = $request->all();
+                $requestData['uid'] = Auth::id();
+
+                DBHelpers::create_query(LikedPost::class, $requestData);
+
+                $post = UserPosts::find($request->post_id);
+                // increment the value of the `follower` column by 1
+                $post->increment('total_likes');
+
+                return ResponseHelper::success_response(
+                    'Post Liked successfully',
+                    null
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['post_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
 
     public function get_my_posts(Request $request)
     {

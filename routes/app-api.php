@@ -122,7 +122,13 @@ Route::group(
     ],
     function ($router) {
         Route::post('/create', 'PostController@create');
+        Route::post('/like', 'PostController@like');
+        Route::post('/unlike', 'PostController@unlike');
+        Route::post('/delete', 'PostController@delete');
+
         Route::get('/all-posts', 'PostController@get_all_posts');
         Route::get('/my-posts', 'PostController@get_my_posts');
+
+        Route::get('/my-liked-posts', 'PostController@get_my_liked_posts');
     }
 );

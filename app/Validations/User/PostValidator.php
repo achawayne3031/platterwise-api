@@ -26,6 +26,17 @@ class PostValidator
             'reservation' => [
                 'reservation_id' => 'required|integer',
             ],
+
+            'like' => [
+                'post_id' => 'required|integer',
+            ],
+            'unlike' => [
+                'post_id' => 'required|integer',
+            ],
+
+            'delete' => [
+                'post_id' => 'required|integer',
+            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);
