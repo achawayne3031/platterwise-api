@@ -71,6 +71,8 @@ class ResturantController extends Controller
                             'descriptions',
                             'opening_hour',
                             'closing_hour',
+                            'banner',
+                            'cover_pic',
                         ])
                     );
 
