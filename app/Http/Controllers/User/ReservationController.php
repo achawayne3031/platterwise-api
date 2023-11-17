@@ -238,9 +238,9 @@ class ReservationController extends Controller
                                 $reference = $paystack->data->reference;
 
                                 $desc =
-                                    $value['guest_name'] .
+                                    $current_guest['guest_name'] .
                                     ' Payment of  ' .
-                                    $value['bill'];
+                                    $current_guest['bill'];
 
                                 $in_guest = [
                                     'guest_email' =>
