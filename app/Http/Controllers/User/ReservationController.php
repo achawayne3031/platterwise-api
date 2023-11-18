@@ -190,6 +190,10 @@ class ReservationController extends Controller
                         );
                     }
 
+
+
+
+
                     $reservation_id = $request->reservation_id;
                     $reservation_data = DBHelpers::with_where_query_filter_first(
                         Reservation::class,
@@ -242,17 +246,8 @@ class ReservationController extends Controller
                                     ' Payment of  ' .
                                     $current_guest['bill'];
 
-                                $in_guest = [
-                                    'guest_email' =>
-                                        $current_guest['guest_email'],
-                                    'guest_name' =>
-                                        $current_guest['guest_name'],
-                                    'type' => $current_guest['type'],
-                                    'bill' => $current_guest['bill'],
-                                    'payment_url' => $auth_url,
-                                ];
 
-                                //   array_push($set_guest, $in_guest);
+
 
                                 $transaction_data = [
                                     'restaurant_id' => $resturant_data->id,
@@ -275,6 +270,27 @@ class ReservationController extends Controller
                                     Transactions::class,
                                     $transaction_data
                                 );
+
+                                $set_guest = [];
+
+                                $in_guest = [
+                                    'guest_email' => $current_guest['guest_email'],
+                                    'guest_name' => $current_guest['guest_name'],
+                                    'type' => $current_guest['type'],
+                                    'bill' => $current_guest['bill'],
+                                    'payment_url' => $auth_url,
+                                    'amount_paid' => 0,
+                                ];
+
+                                array_push($set_guest, $in_guest);
+
+                                $create_data = [
+                                    'reservation_id' => $request->reservation_id,
+                                    'total_amount' => $request->total_amount,
+                                    'guests' => json_encode($set_guest),
+                                ];
+
+                                DBHelpers::create_query(ReservationSplitBills::class, $create_data);
 
                                 if ($current_guest['type'] == 'owner') {
                                     return ResponseHelper::success_response(
