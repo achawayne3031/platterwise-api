@@ -9,6 +9,7 @@ use App\Helpers\DBHelpers;
 use App\Models\ReservationBills;
 use App\Models\ReservationSplitBills;
 use App\Models\Reservation;
+use App\Models\Resturant;
 
 class PaystackWebhookController extends Controller
 {
@@ -62,13 +63,10 @@ class PaystackWebhookController extends Controller
 
                 global $email;
                 global $amount;
+                global $guest_name;
 
                 $amount = $event->data->amount;
                 $email = $event->data->customer->email;
-
-                \Log::info(
-                    'Start Update Transaction status, amount_paid, payment_extra'
-                );
 
                 DBHelpers::update_query_v3(
                     Transactions::class,
@@ -80,10 +78,6 @@ class PaystackWebhookController extends Controller
                     ['ref' => $ref]
                 );
 
-                \Log::info(
-                    'End Update Transaction status, amount_paid, payment_extra'
-                );
-
                 ////// Get current Transaction from Transaction Table //////
                 \Log::info('Start Transaction data');
 
@@ -93,10 +87,18 @@ class PaystackWebhookController extends Controller
                         'ref' => $ref,
                     ]
                 );
+
                 \Log::info('End Transaction data');
 
                 $reservation_id = $current_transaction->reservation_id;
                 $restaurant_id = $current_transaction->restaurant_id;
+
+                $current_restaurant = DBHelpers::query_filter_first(
+                    Resturant::class,
+                    [
+                        'id' => $restaurant_id,
+                    ]
+                );
 
                 /////// Add Amount paid on Reservation Bill Table /////
                 \Log::info('Start Get Reservation Bills data');
@@ -161,6 +163,7 @@ class PaystackWebhookController extends Controller
 
                 foreach ($guests as $value) {
                     if ($value->guest_email == $email) {
+                        $guest_name = $value->guest_name;
                         $in_guest = [
                             'guest_email' => $value->guest_email,
                             'guest_name' => $value->guest_name,
@@ -183,6 +186,22 @@ class PaystackWebhookController extends Controller
                         array_push($new_guest_data, $in_guest);
                     }
                 }
+
+                $cre = Carbon::now();
+                $formattedTime = $cre->toDayDateTimeString();
+                $array_time = explode(' ', $formattedTime);
+                $payment_date = $cre->toFormattedDateString();
+
+                $paymentCompletedData = [
+                    'restaurant_name' => $current_restaurant->name,
+                    'guest_name' => $guest_name,
+                    'amount' => $amount / 100,
+                    'payment_date' => $payment_date,
+                ];
+
+                \Mail::to($email)->send(
+                    new \App\Mail\PaymentCompleted($paymentCompletedData)
+                );
 
                 \Log::info('Start Update Reservation Spilt Bills');
                 \Log::info($new_guest_data);

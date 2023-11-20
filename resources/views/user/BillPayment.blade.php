@@ -133,7 +133,7 @@
           <div class="inner-wrapper">
             <h5 class="inner-title">Bill Payment</h5>
 
-            <p class="mail-inner-text">Hi ,</p>
+            <p class="mail-inner-text">Hi {{ $mailMessageData['guest_name'] }},</p>
 
             <p class="mail-inner-text">We are delighted to extend <b></b> dining invitation to you at <b>Restaurant</b>.</p>
 
