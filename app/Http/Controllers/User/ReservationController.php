@@ -183,16 +183,17 @@ class ReservationController extends Controller
                             'reservation_id' => $request->reservation_id,
                         ])
                     ) {
+                        $split_bills = DBHelpers::where_query(
+                            ReservationSplitBills::class,
+                            ['reservation_id' => $request->reservation_id]
+                        );
+
                         return ResponseHelper::error_response(
                             'Reservation has been splitted already',
-                            null,
+                            $split_bills,
                             401
                         );
                     }
-
-
-
-
 
                     $reservation_id = $request->reservation_id;
                     $reservation_data = DBHelpers::with_where_query_filter_first(
@@ -246,9 +247,6 @@ class ReservationController extends Controller
                                     ' Payment of  ' .
                                     $current_guest['bill'];
 
-
-
-
                                 $transaction_data = [
                                     'restaurant_id' => $resturant_data->id,
                                     'reservation_id' =>
@@ -274,8 +272,10 @@ class ReservationController extends Controller
                                 $set_guest = [];
 
                                 $in_guest = [
-                                    'guest_email' => $current_guest['guest_email'],
-                                    'guest_name' => $current_guest['guest_name'],
+                                    'guest_email' =>
+                                        $current_guest['guest_email'],
+                                    'guest_name' =>
+                                        $current_guest['guest_name'],
                                     'type' => $current_guest['type'],
                                     'bill' => $current_guest['bill'],
                                     'payment_url' => $auth_url,
@@ -285,12 +285,16 @@ class ReservationController extends Controller
                                 array_push($set_guest, $in_guest);
 
                                 $create_data = [
-                                    'reservation_id' => $request->reservation_id,
+                                    'reservation_id' =>
+                                        $request->reservation_id,
                                     'total_amount' => $request->total_amount,
                                     'guests' => json_encode($set_guest),
                                 ];
 
-                                DBHelpers::create_query(ReservationSplitBills::class, $create_data);
+                                DBHelpers::create_query(
+                                    ReservationSplitBills::class,
+                                    $create_data
+                                );
 
                                 if ($current_guest['type'] == 'owner') {
                                     return ResponseHelper::success_response(

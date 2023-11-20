@@ -199,10 +199,25 @@ class PaystackWebhookController extends Controller
 
                 \Log::info('End Update Reservation Spilt Bills');
             } else {
+                DBHelpers::update_query_v3(
+                    Transactions::class,
+                    ['status' => 0],
+                    [
+                        'ref' => $ref,
+                    ]
+                );
+
                 \Log::info('Transaction reference not found');
             }
             //  }
         } else {
+            DBHelpers::update_query_v3(
+                Transactions::class,
+                ['status' => 0],
+                [
+                    'ref' => $ref,
+                ]
+            );
         }
 
         exit();
