@@ -21,6 +21,54 @@ class PostController extends Controller
 {
     //
 
+    public function get_post(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = PostValidator::validate_rules($request, 'get_post');
+
+            if (!$validate->fails() && $validate->validated()) {
+                try {
+                    $data = UserPosts::where(['id' => $request->post_id])
+                        ->with([
+                            'comments' => function ($query) {
+                                $query->with('user');
+                            },
+                        ])
+                        ->get()
+                        ->first();
+
+                    return ResponseHelper::success_response(
+                        'Get post was successful',
+                        $data
+                    );
+                } catch (Exception $e) {
+                    return ResponseHelper::error_response(
+                        'Server Error',
+                        $e->getMessage(),
+                        401
+                    );
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['post_id'];
+
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     //// get my liked posts ///
     public function get_my_liked_posts(Request $request)
     {
@@ -315,6 +363,7 @@ class PostController extends Controller
 
                 $data = DBHelpers::data_with_paginate(UserPosts::class, [
                     'user',
+                    'admin',
                 ]);
 
                 return ResponseHelper::success_response(
@@ -346,6 +395,8 @@ class PostController extends Controller
                 try {
                     $requestData = $request->all();
                     $requestData['user_id'] = Auth::id();
+                    $requestData['type'] = 'user';
+
                     $owner = Auth::user();
 
                     $register = DBHelpers::create_query(

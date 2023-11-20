@@ -125,10 +125,23 @@ Route::group(
         Route::post('/like', 'PostController@like');
         Route::post('/unlike', 'PostController@unlike');
         Route::post('/delete', 'PostController@delete');
+        Route::post('/get-post', 'PostController@get_post');
 
         Route::get('/all-posts', 'PostController@get_all_posts');
         Route::get('/my-posts', 'PostController@get_my_posts');
 
         Route::get('/my-liked-posts', 'PostController@get_my_liked_posts');
+    }
+);
+
+///// Post Comment /////
+Route::group(
+    [
+        'middleware' => ['cors', 'jwt.verify'],
+        'prefix' => 'post-comment',
+        'namespace' => 'App\Http\Controllers\User',
+    ],
+    function ($router) {
+        Route::post('/create', 'CommentController@create');
     }
 );

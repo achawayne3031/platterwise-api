@@ -8,10 +8,10 @@
  * @version	1.0
  */
 
-namespace App\Validations\User;
+namespace App\Validations\Admin;
 use App\Helpers\Func;
 
-class PostValidator
+class AdminPostValidator
 {
     protected static $validation_rules = [];
 
@@ -35,10 +35,6 @@ class PostValidator
             ],
 
             'delete' => [
-                'post_id' => 'required|integer',
-            ],
-
-            'get_post' => [
                 'post_id' => 'required|integer',
             ],
         ];

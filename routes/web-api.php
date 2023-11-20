@@ -92,3 +92,24 @@ Route::group(
         Route::post('/reservation', 'TransactionController@reservation');
     }
 );
+
+///// Admin Post /////
+Route::group(
+    [
+        'middleware' => ['cors', 'jwt.verify'],
+        'prefix' => 'admin-post',
+        'namespace' => 'App\Http\Controllers\Admin',
+    ],
+    function ($router) {
+        Route::post('/create', 'AdminPostController@create');
+
+        Route::post('/like', 'PostController@like');
+        Route::post('/unlike', 'PostController@unlike');
+        Route::post('/delete', 'PostController@delete');
+
+        Route::get('/all-posts', 'PostController@get_all_posts');
+        Route::get('/my-posts', 'PostController@get_my_posts');
+
+        Route::get('/my-liked-posts', 'PostController@get_my_liked_posts');
+    }
+);

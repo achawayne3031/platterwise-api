@@ -11,7 +11,7 @@
 namespace App\Validations\User;
 use App\Helpers\Func;
 
-class PostValidator
+class PostCommentValidator
 {
     protected static $validation_rules = [];
 
@@ -19,8 +19,8 @@ class PostValidator
     {
         self::$validation_rules = [
             'create' => [
-                'content_post' => 'required',
-                'content_type' => 'required',
+                'comment' => 'required',
+                'post_id' => 'required',
                 // 'contentUrl' => 'required',
             ],
             'reservation' => [
@@ -35,10 +35,6 @@ class PostValidator
             ],
 
             'delete' => [
-                'post_id' => 'required|integer',
-            ],
-
-            'get_post' => [
                 'post_id' => 'required|integer',
             ],
         ];

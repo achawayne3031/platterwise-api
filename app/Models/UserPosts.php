@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\User\AppUser;
+use App\Models\Admin\AdminUser;
+use App\Models\PostComments;
 
 class UserPosts extends Model
 {
@@ -20,10 +22,23 @@ class UserPosts extends Model
         'contentUrl',
         'total_likes',
         'status',
+        'type',
+        'total_comments',
+        'admin_uid',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(AppUser::class, 'user_id');
+    }
+
+    public function admin(): BelongsTo
+    {
+        return $this->belongsTo(AdminUser::class, 'admin_uid');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(PostComments::class, 'post_id');
     }
 }

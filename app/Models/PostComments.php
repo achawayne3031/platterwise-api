@@ -13,10 +13,10 @@ class PostComments extends Model
 
     protected $table = 'post_comments';
 
-    protected $fillable = ['commenter', 'comment', 'status'];
+    protected $fillable = ['user', 'post_id', 'comment', 'status'];
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(AppUser::class, 'commenter');
+        return $this->belongsTo(AppUser::class, 'user');
     }
 }
