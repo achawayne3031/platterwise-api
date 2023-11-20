@@ -179,9 +179,6 @@
 
         </div>
 
-
-
-
             <p class="mail-inner-text mt-3">Thank you for using Platterwise!</p>
 
             <p class="mail-inner-text">

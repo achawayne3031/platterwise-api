@@ -211,6 +211,7 @@ class RestaurantController extends Controller
                     ['user'],
                     ['restaurant_id' => $request->restaurant_id]
                 );
+                
                 $current->review = $reviews;
 
                 return ResponseHelper::success_response(

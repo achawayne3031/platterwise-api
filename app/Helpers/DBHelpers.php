@@ -346,12 +346,14 @@ class DBHelpers
                 return $dataModel
                     ::query()
                     ->with($with_clause)
+                    ->orderBy('id', 'DESC')
                     ->get();
             } else {
                 return $dataModel
                     ::query()
                     ->with($with_clause)
                     ->where($where)
+                    ->orderBy('id', 'DESC')
                     ->get();
             }
         } catch (Exception $e) {
