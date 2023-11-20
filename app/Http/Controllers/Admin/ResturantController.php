@@ -15,6 +15,8 @@ use App\Models\RestaurantSeatType;
 use App\Models\RestaurantImages;
 use App\Models\RestaurantReviews;
 use App\Models\Reservation;
+use App\Models\Transactions;
+
 use App\Helpers\DBHelpers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -168,6 +170,48 @@ class ResturantController extends Controller
                         );
                     }
 
+                    $weekly_month = [
+                        'mon' => Transactions::where([
+                            'id' => $request->restaurant_id,
+                        ])
+                            ->monday()
+                            ->sum('amount'),
+
+                        'tue' => Transactions::where([
+                            'id' => $request->restaurant_id,
+                        ])
+                            ->tuesday()
+                            ->sum('amount'),
+
+                        'wed' => Transactions::where([
+                            'id' => $request->restaurant_id,
+                        ])
+                            ->wednesday()
+                            ->sum('amount'),
+                        'thur' => Transactions::where([
+                            'id' => $request->restaurant_id,
+                        ])
+                            ->thursday()
+                            ->sum('amount'),
+                        'fri' => Transactions::where([
+                            'id' => $request->restaurant_id,
+                        ])
+                            ->friday()
+                            ->sum('amount'),
+
+                        'sat' => Transactions::where([
+                            'id' => $request->restaurant_id,
+                        ])
+                            ->saturday()
+                            ->sum('amount'),
+
+                        'sun' => Transactions::where([
+                            'id' => $request->restaurant_id,
+                        ])
+                            ->sunday()
+                            ->sum('amount'),
+                    ];
+
                     $data = [
                         'total_pending_reservation' => Reservation::where([
                             'restaurant_id' => $request->restaurant_id,
@@ -199,6 +243,8 @@ class ResturantController extends Controller
                             RestaurantReviews::class,
                             ['restaurant_id' => $request->restaurant_id]
                         ),
+
+                        'weekly_income' => $weekly_month,
                     ];
 
                     return ResponseHelper::success_response(

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\User\AppUser;
+use Carbon\Carbon;
 
 class Transactions extends Model
 {
@@ -45,5 +46,40 @@ class Transactions extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(AppUser::class, 'user');
+    }
+
+    public function scopeSunday($query)
+    {
+        return $query->where('created_at', Carbon::now()->addWeekdays(0));
+    }
+
+    public function scopeMonday($query)
+    {
+        return $query->where('created_at', Carbon::now()->addWeekdays(1));
+    }
+
+    public function scopeTuesday($query)
+    {
+        return $query->where('created_at', Carbon::now()->addWeekdays(2));
+    }
+
+    public function scopeWednesday($query)
+    {
+        return $query->where('created_at', Carbon::now()->addWeekdays(3));
+    }
+
+    public function scopeThursday($query)
+    {
+        return $query->where('created_at', Carbon::now()->addWeekdays(4));
+    }
+
+    public function scopeFriday($query)
+    {
+        return $query->where('created_at', Carbon::now()->addWeekdays(5));
+    }
+
+    public function scopeSaturday($query)
+    {
+        return $query->where('created_at', Carbon::now()->addWeekdays(6));
     }
 }
