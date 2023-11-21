@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\User\AppUser;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class Transactions extends Model
 {
@@ -50,27 +51,57 @@ class Transactions extends Model
 
     public function scopeSunday($query)
     {
-        return $query->where('created_at', Carbon::now()->addWeekdays(0));
+        return $query->where(
+            'created_at',
+            CarbonPeriod::between(
+                now()->startOfMonth(),
+                now()->endOfMonth()
+            )->filter(fn($date) => $date->isSunday())
+        );
     }
 
     public function scopeMonday($query)
     {
-        return $query->where('created_at', Carbon::now()->addWeekdays(1));
+        return $query->where(
+            'created_at',
+            CarbonPeriod::between(
+                now()->startOfMonth(),
+                now()->endOfMonth()
+            )->filter(fn($date) => $date->isMonday())
+        );
     }
 
     public function scopeTuesday($query)
     {
-        return $query->where('created_at', Carbon::now()->addWeekdays(2));
+        return $query->where(
+            'created_at',
+            CarbonPeriod::between(
+                now()->startOfMonth(),
+                now()->endOfMonth()
+            )->filter(fn($date) => $date->isTuesday())
+        );
     }
 
     public function scopeWednesday($query)
     {
-        return $query->where('created_at', Carbon::now()->addWeekdays(3));
+        return $query->where(
+            'created_at',
+            CarbonPeriod::between(
+                now()->startOfMonth(),
+                now()->endOfMonth()
+            )->filter(fn($date) => $date->isWednesday())
+        );
     }
 
     public function scopeThursday($query)
     {
-        return $query->where('created_at', Carbon::now()->addWeekdays(4));
+        return $query->where(
+            'created_at',
+            CarbonPeriod::between(
+                now()->startOfMonth(),
+                now()->endOfMonth()
+            )->filter(fn($date) => $date->isThursday())
+        );
     }
 
     public function scopeFriday($query)

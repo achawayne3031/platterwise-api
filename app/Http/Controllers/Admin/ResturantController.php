@@ -20,6 +20,7 @@ use App\Models\Transactions;
 use App\Helpers\DBHelpers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\CarbonPeriod;
 
 class ResturantController extends Controller
 {
@@ -170,46 +171,134 @@ class ResturantController extends Controller
                         );
                     }
 
+                    global $mon_amount;
+                    global $tue_amount;
+                    global $wed_amount;
+                    global $thur_amount;
+                    global $fri_amount;
+                    global $sat_amount;
+                    global $sun_amount;
+
+                    $mon = CarbonPeriod::between(
+                        now()->startOfMonth(),
+                        now()->endOfMonth()
+                    )->filter(fn($date) => $date->isTuesday());
+                    foreach ($mon as $value) {
+                        $ex = explode('T', $value);
+                        $fir = explode(' ', $ex[0]);
+
+                        $mons = Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->whereDate('created_at', $fir[0])
+                            ->sum('amount');
+                        $mon_amount += $mons;
+                    }
+
+                    $tue = CarbonPeriod::between(
+                        now()->startOfMonth(),
+                        now()->endOfMonth()
+                    )->filter(fn($date) => $date->isTuesday());
+                    foreach ($tue as $value) {
+                        $ex = explode('T', $value);
+                        $fir = explode(' ', $ex[0]);
+
+                        $tues = Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->whereDate('created_at', $fir[0])
+                            ->sum('amount');
+                        $tue_amount += $tues;
+                    }
+
+                    $wed = CarbonPeriod::between(
+                        now()->startOfMonth(),
+                        now()->endOfMonth()
+                    )->filter(fn($date) => $date->isWednesday());
+                    foreach ($wed as $value) {
+                        $ex = explode('T', $value);
+                        $fir = explode(' ', $ex[0]);
+
+                        $weds = Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->whereDate('created_at', $fir[0])
+                            ->sum('amount');
+                        $wed_amount += $weds;
+                    }
+
+                    $thur = CarbonPeriod::between(
+                        now()->startOfMonth(),
+                        now()->endOfMonth()
+                    )->filter(fn($date) => $date->isThursday());
+                    foreach ($thur as $value) {
+                        $ex = explode('T', $value);
+                        $fir = explode(' ', $ex[0]);
+
+                        $thurs = Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->whereDate('created_at', $fir[0])
+                            ->sum('amount');
+                        $thur_amount += $thurs;
+                    }
+
+                    $fri = CarbonPeriod::between(
+                        now()->startOfMonth(),
+                        now()->endOfMonth()
+                    )->filter(fn($date) => $date->isFriday());
+                    foreach ($fri as $value) {
+                        $ex = explode('T', $value);
+                        $fir = explode(' ', $ex[0]);
+
+                        $fris = Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->whereDate('created_at', $fir[0])
+                            ->sum('amount');
+                        $fri_amount += $fris;
+                    }
+
+                    $sat = CarbonPeriod::between(
+                        now()->startOfMonth(),
+                        now()->endOfMonth()
+                    )->filter(fn($date) => $date->isSaturday());
+                    foreach ($sat as $value) {
+                        $ex = explode('T', $value);
+                        $fir = explode(' ', $ex[0]);
+
+                        $sats = Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->whereDate('created_at', $fir[0])
+                            ->sum('amount');
+                        $sat_amount += $sats;
+                    }
+
+                    $sun = CarbonPeriod::between(
+                        now()->startOfMonth(),
+                        now()->endOfMonth()
+                    )->filter(fn($date) => $date->isSunday());
+                    foreach ($sun as $value) {
+                        $ex = explode('T', $value);
+                        $fir = explode(' ', $ex[0]);
+
+                        $suns = Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->whereDate('created_at', $fir[0])
+                            ->sum('amount');
+                        $sun_amount += $suns;
+                    }
+
                     $weekly_month = [
-                        'mon' => Transactions::where([
-                            'id' => $request->restaurant_id,
-                        ])
-                            ->monday()
-                            ->sum('amount'),
-
-                        'tue' => Transactions::where([
-                            'id' => $request->restaurant_id,
-                        ])
-                            ->tuesday()
-                            ->sum('amount'),
-
-                        'wed' => Transactions::where([
-                            'id' => $request->restaurant_id,
-                        ])
-                            ->wednesday()
-                            ->sum('amount'),
-                        'thur' => Transactions::where([
-                            'id' => $request->restaurant_id,
-                        ])
-                            ->thursday()
-                            ->sum('amount'),
-                        'fri' => Transactions::where([
-                            'id' => $request->restaurant_id,
-                        ])
-                            ->friday()
-                            ->sum('amount'),
-
-                        'sat' => Transactions::where([
-                            'id' => $request->restaurant_id,
-                        ])
-                            ->saturday()
-                            ->sum('amount'),
-
-                        'sun' => Transactions::where([
-                            'id' => $request->restaurant_id,
-                        ])
-                            ->sunday()
-                            ->sum('amount'),
+                        'mon' => $mon_amount,
+                        'tue' => $tue_amount,
+                        'wed' => $wed_amount,
+                        'thur' => $thur_amount,
+                        'fri' => $fri_amount,
+                        'sat' => $sat_amount,
+                        'sun' => $sun_amount,
                     ];
 
                     $data = [
