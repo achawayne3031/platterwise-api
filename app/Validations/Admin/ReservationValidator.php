@@ -46,6 +46,10 @@ class ReservationValidator
                 'total_bill' => 'required',
                 'set_picture' => 'required',
             ],
+
+            'weekly_reservation_count' => [
+                'restaurant_id' => 'required|integer',
+            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);

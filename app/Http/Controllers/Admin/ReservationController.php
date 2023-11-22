@@ -15,12 +15,194 @@ use App\Models\Reservation;
 use App\Models\ReservationBills;
 use Carbon\Carbon;
 use App\Models\User\AppUser;
+use Carbon\CarbonPeriod;
 
 use Illuminate\Support\Facades\Auth;
 
 class ReservationController extends Controller
 {
     //
+
+    public function weekly_reservation_count(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ReservationValidator::validate_rules(
+                $request,
+                'weekly_reservation_count'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                try {
+                    $user = auth('web-api')->user();
+                    $uid = $user->id;
+
+                    if (
+                        !DBHelpers::exists(Resturant::class, [
+                            'admin_uid' => $uid,
+                            'id' => $request->restaurant_id,
+                        ])
+                    ) {
+                        return ResponseHelper::error_response(
+                            'Restaurant not found on your collection',
+                            null,
+                            401
+                        );
+                    }
+
+                    global $mon_amount;
+                    global $tue_amount;
+                    global $wed_amount;
+                    global $thur_amount;
+                    global $fri_amount;
+                    global $sat_amount;
+                    global $sun_amount;
+
+                    $mon = CarbonPeriod::between(
+                        now()->startOfMonth(),
+                        now()->endOfMonth()
+                    )->filter(fn($date) => $date->isTuesday());
+
+                    foreach ($mon as $value) {
+                        $ex = explode('T', $value);
+                        $fir = explode(' ', $ex[0]);
+
+                        $mon_amount = Reservation::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->whereDate('created_at', $fir[0])
+                            ->count();
+                    }
+
+                    $tue = CarbonPeriod::between(
+                        now()->startOfMonth(),
+                        now()->endOfMonth()
+                    )->filter(fn($date) => $date->isTuesday());
+                    foreach ($tue as $value) {
+                        $ex = explode('T', $value);
+                        $fir = explode(' ', $ex[0]);
+
+                        $tue_amount = Reservation::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->whereDate('created_at', $fir[0])
+                            ->count();
+                    }
+
+                    $wed = CarbonPeriod::between(
+                        now()->startOfMonth(),
+                        now()->endOfMonth()
+                    )->filter(fn($date) => $date->isWednesday());
+                    foreach ($wed as $value) {
+                        $ex = explode('T', $value);
+                        $fir = explode(' ', $ex[0]);
+
+                        $wed_amount = Reservation::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->whereDate('created_at', $fir[0])
+                            ->count();
+                    }
+
+                    $thur = CarbonPeriod::between(
+                        now()->startOfMonth(),
+                        now()->endOfMonth()
+                    )->filter(fn($date) => $date->isThursday());
+                    foreach ($thur as $value) {
+                        $ex = explode('T', $value);
+                        $fir = explode(' ', $ex[0]);
+
+                        $thur_amount = Reservation::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->whereDate('created_at', $fir[0])
+                            ->count();
+                    }
+
+                    $fri = CarbonPeriod::between(
+                        now()->startOfMonth(),
+                        now()->endOfMonth()
+                    )->filter(fn($date) => $date->isFriday());
+                    foreach ($fri as $value) {
+                        $ex = explode('T', $value);
+                        $fir = explode(' ', $ex[0]);
+
+                        $fri_amount = Reservation::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->whereDate('created_at', $fir[0])
+                            ->count();
+                    }
+
+                    $sat = CarbonPeriod::between(
+                        now()->startOfMonth(),
+                        now()->endOfMonth()
+                    )->filter(fn($date) => $date->isSaturday());
+                    foreach ($sat as $value) {
+                        $ex = explode('T', $value);
+                        $fir = explode(' ', $ex[0]);
+
+                        $sat_amount = Reservation::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->whereDate('created_at', $fir[0])
+                            ->count();
+                    }
+
+                    $sun = CarbonPeriod::between(
+                        now()->startOfMonth(),
+                        now()->endOfMonth()
+                    )->filter(fn($date) => $date->isSunday());
+                    foreach ($sun as $value) {
+                        $ex = explode('T', $value);
+                        $fir = explode(' ', $ex[0]);
+
+                        $sun_amount = Reservation::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->whereDate('created_at', $fir[0])
+                            ->count();
+                    }
+
+                    $weekly_month = [
+                        'mon' => $mon_amount,
+                        'tue' => $tue_amount,
+                        'wed' => $wed_amount,
+                        'thur' => $thur_amount,
+                        'fri' => $fri_amount,
+                        'sat' => $sat_amount,
+                        'sun' => $sun_amount,
+                    ];
+
+                    $data = [
+                        'weekly_reservations' => $weekly_month,
+                    ];
+
+                    return ResponseHelper::success_response(
+                        'Reservation dashboard analysis data fetched was successfully',
+                        $data
+                    );
+                } catch (\Throwable $error) {
+                    return ResponseHelper::error_response($error);
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
 
     public function create_bill(Request $request)
     {

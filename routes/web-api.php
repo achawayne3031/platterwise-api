@@ -77,6 +77,11 @@ Route::group(
         Route::post('/edit', 'ReservationController@edit');
         Route::post('/check-in', 'ReservationController@check_in');
         Route::post('/create-bill', 'ReservationController@create_bill');
+
+        Route::post(
+            '/weekly-reservation-count',
+            'ReservationController@weekly_reservation_count'
+        );
     }
 );
 
@@ -102,11 +107,9 @@ Route::group(
     ],
     function ($router) {
         Route::post('/create', 'AdminPostController@create');
-
         Route::post('/like', 'PostController@like');
         Route::post('/unlike', 'PostController@unlike');
         Route::post('/delete', 'PostController@delete');
-
         Route::get('/all-posts', 'PostController@get_all_posts');
         Route::get('/my-posts', 'PostController@get_my_posts');
 
