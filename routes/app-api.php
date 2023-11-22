@@ -110,6 +110,9 @@ Route::group(
 
         Route::post('/follow', 'UserController@follow');
         Route::post('/unfollow', 'UserController@unfollow');
+
+        Route::post('/other-user', 'UserController@other_user');
+
     }
 );
 
@@ -126,11 +129,12 @@ Route::group(
         Route::post('/unlike', 'PostController@unlike');
         Route::post('/delete', 'PostController@delete');
         Route::post('/get-post', 'PostController@get_post');
-
+        Route::post('/search-post', 'PostController@search_post');
         Route::get('/all-posts', 'PostController@get_all_posts');
         Route::get('/my-posts', 'PostController@get_my_posts');
-
         Route::get('/my-liked-posts', 'PostController@get_my_liked_posts');
+        Route::get('/top-commented', 'PostController@top_commented');
+        Route::get('/top-liked', 'PostController@top_liked');
     }
 );
 

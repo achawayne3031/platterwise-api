@@ -19,7 +19,82 @@ use App\Services\Paystack;
 
 class PostController extends Controller
 {
-    //
+    //////
+
+    public function top_commented()
+    {
+        $top_commented = UserPosts::query()
+            ->with([
+                'comments' => function ($query) {
+                    $query->with('user');
+                },
+            ])
+            ->orderBy('total_comments', 'DESC')
+            ->limit(10)
+            ->get();
+
+        return ResponseHelper::success_response(
+            'Top commented post',
+            $top_commented
+        );
+    }
+
+    public function top_liked()
+    {
+        $top_liked = UserPosts::query()
+            ->with([
+                'comments' => function ($query) {
+                    $query->with('user');
+                },
+            ])
+            ->orderBy('total_likes', 'DESC')
+            ->limit(10)
+            ->get();
+
+        return ResponseHelper::success_response('Top liked post', $top_liked);
+    }
+
+    public function search_post(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = PostValidator::validate_rules($request, 'search');
+
+            if (!$validate->fails() && $validate->validated()) {
+                $data = UserPosts::where(
+                    'content_post',
+                    'LIKE',
+                    "%{$request->search}%"
+                )
+                    ->with([
+                        'comments' => function ($query) {
+                            $query->with('user');
+                        },
+                    ])
+                    ->get();
+
+                return ResponseHelper::success_response(
+                    'Search post by content',
+                    $data
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['search'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
 
     public function get_post(Request $request)
     {

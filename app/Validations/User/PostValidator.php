@@ -41,6 +41,10 @@ class PostValidator
             'get_post' => [
                 'post_id' => 'required|integer',
             ],
+
+            'search' => [
+                'search' => 'required',
+            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);

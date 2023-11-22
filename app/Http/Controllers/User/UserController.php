@@ -12,16 +12,80 @@ use App\Models\Resturant;
 use App\Models\Reservation;
 use App\Models\RestaurantFollowers;
 use App\Models\UserFollowers;
-
 use App\Helpers\DBHelpers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User\AppUser;
 use App\Validations\UserAuthValidator;
 use App\Validations\User\UserFollowerValidator;
+use App\Models\UserPosts;
+use App\Models\LikedPost;
 
 class UserController extends Controller
 {
     //
+
+    public function other_user(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = UserAuthValidator::validate_rules(
+                $request,
+                'other_user'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                if (
+                    !DBHelpers::exists(AppUser::class, [
+                        'id' => $request->user_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'User not found',
+                        null,
+                        401
+                    );
+                }
+
+                $profile = DBHelpers::query_filter_first(AppUser::class, [
+                    'id' => $request->user_id,
+                ]);
+
+                $user_post = UserPosts::where([
+                    'user_id' => $request->user_id,
+                ])->get();
+
+                $liked_post = LikedPost::where(['uid' => $request->user_id])
+                    ->with(['post'])
+                    ->get();
+
+                $res_data = [
+                    'profile' => $profile,
+                    'user_post' => $user_post,
+                    'liked_post' => $liked_post,
+                ];
+
+                return ResponseHelper::success_response(
+                    'User profile fetched successfully',
+                    $res_data
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['user_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
 
     //// unfollow user ///
     public function unfollow(Request $request)
