@@ -191,7 +191,7 @@ class ResturantController extends Controller
                             'restaurant_id' => $request->restaurant_id,
                         ])
                             ->whereDate('created_at', $fir[0])
-                            ->sum('amount');
+                            ->sum('amount_paid');
                         $mon_amount += $mons;
                     }
 
@@ -207,7 +207,7 @@ class ResturantController extends Controller
                             'restaurant_id' => $request->restaurant_id,
                         ])
                             ->whereDate('created_at', $fir[0])
-                            ->sum('amount');
+                            ->sum('amount_paid');
                         $tue_amount += $tues;
                     }
 
@@ -223,7 +223,7 @@ class ResturantController extends Controller
                             'restaurant_id' => $request->restaurant_id,
                         ])
                             ->whereDate('created_at', $fir[0])
-                            ->sum('amount');
+                            ->sum('amount_paid');
                         $wed_amount += $weds;
                     }
 
@@ -239,7 +239,7 @@ class ResturantController extends Controller
                             'restaurant_id' => $request->restaurant_id,
                         ])
                             ->whereDate('created_at', $fir[0])
-                            ->sum('amount');
+                            ->sum('amount_paid');
                         $thur_amount += $thurs;
                     }
 
@@ -255,7 +255,7 @@ class ResturantController extends Controller
                             'restaurant_id' => $request->restaurant_id,
                         ])
                             ->whereDate('created_at', $fir[0])
-                            ->sum('amount');
+                            ->sum('amount_paid');
                         $fri_amount += $fris;
                     }
 
@@ -271,7 +271,7 @@ class ResturantController extends Controller
                             'restaurant_id' => $request->restaurant_id,
                         ])
                             ->whereDate('created_at', $fir[0])
-                            ->sum('amount');
+                            ->sum('amount_paid');
                         $sat_amount += $sats;
                     }
 
@@ -287,7 +287,7 @@ class ResturantController extends Controller
                             'restaurant_id' => $request->restaurant_id,
                         ])
                             ->whereDate('created_at', $fir[0])
-                            ->sum('amount');
+                            ->sum('amount_paid');
                         $sun_amount += $suns;
                     }
 
