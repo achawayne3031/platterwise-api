@@ -23,7 +23,8 @@ class PostController extends Controller
 
     public function top_commented()
     {
-        $top_commented = UserPosts::query()->with(['user', 'admin'])
+        $top_commented = UserPosts::query()
+            ->with(['user', 'admin'])
             ->with([
                 'comments' => function ($query) {
                     $query->with('user');
@@ -41,7 +42,8 @@ class PostController extends Controller
 
     public function top_liked()
     {
-        $top_liked = UserPosts::query()->with(['user', 'admin'])
+        $top_liked = UserPosts::query()
+            ->with(['user', 'admin'])
             ->with([
                 'comments' => function ($query) {
                     $query->with('user');
@@ -70,6 +72,7 @@ class PostController extends Controller
                             $query->with('user');
                         },
                     ])
+                    ->with(['user', 'admin'])
                     ->get();
 
                 return ResponseHelper::success_response(
@@ -103,7 +106,7 @@ class PostController extends Controller
 
             if (!$validate->fails() && $validate->validated()) {
                 try {
-                    $data = UserPosts::where(['id' => $request->post_id])
+                    $data = UserPosts::where(['id' => $request->post_id])->with(['user', 'admin'])
                         ->with([
                             'comments' => function ($query) {
                                 $query->with('user');
