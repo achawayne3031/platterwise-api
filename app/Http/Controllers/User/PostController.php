@@ -23,7 +23,7 @@ class PostController extends Controller
 
     public function top_commented()
     {
-        $top_commented = UserPosts::query()
+        $top_commented = UserPosts::query()->with(['user', 'admin'])
             ->with([
                 'comments' => function ($query) {
                     $query->with('user');
@@ -41,7 +41,7 @@ class PostController extends Controller
 
     public function top_liked()
     {
-        $top_liked = UserPosts::query()
+        $top_liked = UserPosts::query()->with(['user', 'admin'])
             ->with([
                 'comments' => function ($query) {
                     $query->with('user');
