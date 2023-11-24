@@ -96,11 +96,9 @@ class UserController extends Controller
 
                 $user_post = UserPosts::where([
                     'user_id' => $request->user_id,
-                ])->paginate();
-
-                $liked_post = LikedPost::where(['uid' => $request->user_id])
-                    ->with(['post'])
-                    ->get();
+                ])
+                    ->with(['user', 'admin'])
+                    ->paginate(30);
 
                 return ResponseHelper::success_response(
                     'User post fetched successfully',
