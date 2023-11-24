@@ -23,6 +23,78 @@ class ReservationController extends Controller
 {
     //
 
+    public function monthly_reservation_count(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ReservationValidator::validate_rules(
+                $request,
+                'weekly_reservation_count'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                try {
+                    $user = auth('web-api')->user();
+                    $uid = $user->id;
+
+                    if (
+                        !DBHelpers::exists(Resturant::class, [
+                            'admin_uid' => $uid,
+                            'id' => $request->restaurant_id,
+                        ])
+                    ) {
+                        return ResponseHelper::error_response(
+                            'Restaurant not found on your collection',
+                            null,
+                            401
+                        );
+                    }
+
+                    $monthly = [
+                        'jan' => Reservation::jan()->count(),
+                        'feb' => Reservation::feb()->count(),
+                        'mar' => Reservation::mar()->count(),
+                        'april' => Reservation::april()->count(),
+                        'may' => Reservation::may()->count(),
+                        'june' => Reservation::june()->count(),
+                        'july' => Reservation::july()->count(),
+                        'aug' => Reservation::aug()->count(),
+                        'sept' => Reservation::sept()->count(),
+                        'oct' => Reservation::oct()->count(),
+                        'nov' => Reservation::nov()->count(),
+                        'dec' => Reservation::dec()->count(),
+                    ];
+
+                    $data = [
+                        'monthly_reservations' => $monthly,
+                    ];
+
+                    return ResponseHelper::success_response(
+                        'Reservation dashboard analysis data fetched was successfully',
+                        $data
+                    );
+                } catch (\Throwable $error) {
+                    return ResponseHelper::error_response($error);
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function weekly_reservation_count(Request $request)
     {
         if ($request->isMethod('post')) {

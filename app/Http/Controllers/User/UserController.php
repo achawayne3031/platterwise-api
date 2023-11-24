@@ -24,6 +24,108 @@ class UserController extends Controller
 {
     //
 
+    public function other_user_liked_posts(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = UserAuthValidator::validate_rules(
+                $request,
+                'other_user'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                if (
+                    !DBHelpers::exists(AppUser::class, [
+                        'id' => $request->user_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'User not found',
+                        null,
+                        401
+                    );
+                }
+
+                $liked_post = LikedPost::where(['uid' => $request->user_id])
+                    ->with(['post'])
+                    ->paginate(30);
+
+                return ResponseHelper::success_response(
+                    'User liked post fetched successfully',
+                    $liked_post
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['user_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
+    public function other_user_posts(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = UserAuthValidator::validate_rules(
+                $request,
+                'other_user'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                if (
+                    !DBHelpers::exists(AppUser::class, [
+                        'id' => $request->user_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'User not found',
+                        null,
+                        401
+                    );
+                }
+
+                $user_post = UserPosts::where([
+                    'user_id' => $request->user_id,
+                ])->paginate();
+
+                $liked_post = LikedPost::where(['uid' => $request->user_id])
+                    ->with(['post'])
+                    ->get();
+
+                return ResponseHelper::success_response(
+                    'User post fetched successfully',
+                    $user_post
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['user_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function other_user(Request $request)
     {
         if ($request->isMethod('post')) {

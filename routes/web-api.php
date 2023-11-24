@@ -82,6 +82,11 @@ Route::group(
             '/weekly-reservation-count',
             'ReservationController@weekly_reservation_count'
         );
+
+        Route::post(
+            '/monthly-reservation-count',
+            'ReservationController@monthly_reservation_count'
+        );
     }
 );
 

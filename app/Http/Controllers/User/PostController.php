@@ -106,7 +106,8 @@ class PostController extends Controller
 
             if (!$validate->fails() && $validate->validated()) {
                 try {
-                    $data = UserPosts::where(['id' => $request->post_id])->with(['user', 'admin'])
+                    $data = UserPosts::where(['id' => $request->post_id])
+                        ->with(['user', 'admin'])
                         ->with([
                             'comments' => function ($query) {
                                 $query->with('user');
@@ -443,6 +444,20 @@ class PostController extends Controller
                     'user',
                     'admin',
                 ]);
+
+                $mylikedpost = (array) LikedPost::where(['uid' => $uid])->pluck(
+                    'post_id'
+                );
+
+                $post_data = $data->items();
+
+                foreach ($post_data as $value) {
+                    if (in_array($value->id, $mylikedpost)) {
+                        $value->is_liked = true;
+                    } else {
+                        $value->is_liked = false;
+                    }
+                }
 
                 return ResponseHelper::success_response(
                     'Get posts was successful',

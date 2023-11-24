@@ -26,6 +26,7 @@ class ResturantController extends Controller
 {
     //
 
+  
     public function edit_restaurant(Request $request)
     {
         if ($request->isMethod('post')) {

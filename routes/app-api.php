@@ -112,6 +112,11 @@ Route::group(
         Route::post('/unfollow', 'UserController@unfollow');
 
         Route::post('/other-user', 'UserController@other_user');
+        Route::post('/other-user-posts', 'UserController@other_user_posts');
+
+        Route::post('/other-user-liked-posts', 'UserController@other_user_liked_posts');
+
+
 
     }
 );
