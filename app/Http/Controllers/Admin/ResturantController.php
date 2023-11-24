@@ -26,7 +26,126 @@ class ResturantController extends Controller
 {
     //
 
-  
+    public function monthly_income(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ResturantValidator::validate_rules(
+                $request,
+                'dashboard'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                try {
+                    $user = auth('web-api')->user();
+                    $uid = $user->id;
+
+                    if (
+                        !DBHelpers::exists(Resturant::class, [
+                            'admin_uid' => $uid,
+                            'id' => $request->restaurant_id,
+                        ])
+                    ) {
+                        return ResponseHelper::error_response(
+                            'Restaurant not found on your collection',
+                            null,
+                            401
+                        );
+                    }
+
+                    $monthly = [
+                        'jan' => Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->jan()
+                            ->sum('amount_paid'),
+                        'feb' => Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->feb()
+                            ->sum('amount_paid'),
+                        'mar' => Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->mar()
+                            ->sum('amount_paid'),
+                        'april' => Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->april()
+                            ->sum('amount_paid'),
+                        'may' => Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->may()
+                            ->sum('amount_paid'),
+                        'june' => Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->june()
+                            ->sum('amount_paid'),
+                        'july' => Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->july()
+                            ->sum('amount_paid'),
+                        'aug' => Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->aug()
+                            ->sum('amount_paid'),
+                        'sept' => Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->sept()
+                            ->sum('amount_paid'),
+                        'oct' => Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->oct()
+                            ->sum('amount_paid'),
+                        'nov' => Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->nov()
+                            ->sum('amount_paid'),
+                        'dec' => Transactions::where([
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                            ->dec()
+                            ->sum('amount_paid'),
+                    ];
+
+                    $data = [
+                        'monthly_income' => $monthly,
+                    ];
+
+                    return ResponseHelper::success_response(
+                        'Monthly income dashboard analysis data fetched was successfully',
+                        $data
+                    );
+                } catch (\Throwable $error) {
+                    return ResponseHelper::error_response($error);
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function edit_restaurant(Request $request)
     {
         if ($request->isMethod('post')) {

@@ -113,4 +113,64 @@ class Transactions extends Model
     {
         return $query->where('created_at', Carbon::now()->addWeekdays(6));
     }
+
+    public function scopeJan($query)
+    {
+        return $query->whereMonth('created_at', '01');
+    }
+
+    public function scopeFeb($query)
+    {
+        return $query->whereMonth('created_at', '02');
+    }
+
+    public function scopeMar($query)
+    {
+        return $query->whereMonth('created_at', '03');
+    }
+
+    public function scopeApril($query)
+    {
+        return $query->whereMonth('created_at', '04');
+    }
+
+    public function scopeMay($query)
+    {
+        return $query->whereMonth('created_at', '05');
+    }
+
+    public function scopeJune($query)
+    {
+        return $query->whereMonth('created_at', '06');
+    }
+
+    public function scopeJuly($query)
+    {
+        return $query->whereMonth('created_at', '07');
+    }
+
+    public function scopeAug($query)
+    {
+        return $query->whereMonth('created_at', '08');
+    }
+
+    public function scopeSept($query)
+    {
+        return $query->whereMonth('created_at', '09');
+    }
+
+    public function scopeOct($query)
+    {
+        return $query->whereMonth('created_at', '10');
+    }
+
+    public function scopeNov($query)
+    {
+        return $query->whereMonth('created_at', '11');
+    }
+
+    public function scopeDec($query)
+    {
+        return $query->whereMonth('created_at', '12');
+    }
 }

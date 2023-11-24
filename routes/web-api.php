@@ -59,6 +59,8 @@ Route::group(
         Route::post('/view', 'ResturantController@view_restaurant');
         Route::post('/dashboard', 'ResturantController@dashboard');
         Route::post('/edit-restaurant', 'ResturantController@edit_restaurant');
+
+        Route::post('/monthly-income', 'ResturantController@monthly_income');
     }
 );
 
