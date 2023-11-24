@@ -23,7 +23,7 @@ class PostController extends Controller
 
     public function top_commented()
     {
-        $top_commented = UserPosts::query()
+        $data = UserPosts::query()
             ->with(['user', 'admin'])
             ->with([
                 'comments' => function ($query) {
@@ -31,18 +31,30 @@ class PostController extends Controller
                 },
             ])
             ->orderBy('total_comments', 'DESC')
-            ->limit(10)
-            ->get();
+            ->paginate(30);
 
-        return ResponseHelper::success_response(
-            'Top commented post',
-            $top_commented
-        );
+        $mylikedpost = LikedPost::where([
+            'uid' => $uid,
+        ])
+            ->pluck('post_id')
+            ->toArray();
+
+        $post_data = $data->items();
+
+        foreach ($post_data as $value) {
+            if (in_array($value->id, $mylikedpost)) {
+                $value->is_liked = true;
+            } else {
+                $value->is_liked = false;
+            }
+        }
+
+        return ResponseHelper::success_response('Top commented post', $data);
     }
 
     public function top_liked()
     {
-        $top_liked = UserPosts::query()
+        $data = UserPosts::query()
             ->with(['user', 'admin'])
             ->with([
                 'comments' => function ($query) {
@@ -50,10 +62,25 @@ class PostController extends Controller
                 },
             ])
             ->orderBy('total_likes', 'DESC')
-            ->limit(10)
-            ->get();
+            ->paginate(30);
 
-        return ResponseHelper::success_response('Top liked post', $top_liked);
+        $mylikedpost = LikedPost::where([
+            'uid' => $uid,
+        ])
+            ->pluck('post_id')
+            ->toArray();
+
+        $post_data = $data->items();
+
+        foreach ($post_data as $value) {
+            if (in_array($value->id, $mylikedpost)) {
+                $value->is_liked = true;
+            } else {
+                $value->is_liked = false;
+            }
+        }
+
+        return ResponseHelper::success_response('Top liked post', $data);
     }
 
     public function search_post(Request $request)
@@ -73,7 +100,23 @@ class PostController extends Controller
                         },
                     ])
                     ->with(['user', 'admin'])
-                    ->get();
+                    ->paginate(30);
+
+                $mylikedpost = LikedPost::where([
+                    'uid' => $uid,
+                ])
+                    ->pluck('post_id')
+                    ->toArray();
+
+                $post_data = $data->items();
+
+                foreach ($post_data as $value) {
+                    if (in_array($value->id, $mylikedpost)) {
+                        $value->is_liked = true;
+                    } else {
+                        $value->is_liked = false;
+                    }
+                }
 
                 return ResponseHelper::success_response(
                     'Search post by content',
@@ -115,6 +158,18 @@ class PostController extends Controller
                         ])
                         ->get()
                         ->first();
+
+                    $mylikedpost = LikedPost::where([
+                        'uid' => $uid,
+                    ])
+                        ->pluck('post_id')
+                        ->toArray();
+
+                    if (in_array($data->id, $mylikedpost)) {
+                        $data->is_liked = true;
+                    } else {
+                        $data->is_liked = false;
+                    }
 
                     return ResponseHelper::success_response(
                         'Get post was successful',
@@ -412,6 +467,22 @@ class PostController extends Controller
                     ['user']
                 );
 
+                $mylikedpost = LikedPost::where([
+                    'uid' => $uid,
+                ])
+                    ->pluck('post_id')
+                    ->toArray();
+
+                $post_data = $data->items();
+
+                foreach ($post_data as $value) {
+                    if (in_array($value->id, $mylikedpost)) {
+                        $value->is_liked = true;
+                    } else {
+                        $value->is_liked = false;
+                    }
+                }
+
                 return ResponseHelper::success_response(
                     'Get my posts was successful',
                     $data
@@ -445,9 +516,11 @@ class PostController extends Controller
                     'admin',
                 ]);
 
-                $mylikedpost = (array) LikedPost::where(['uid' => $uid])->pluck(
-                    'post_id'
-                );
+                $mylikedpost = LikedPost::where([
+                    'uid' => $uid,
+                ])
+                    ->pluck('post_id')
+                    ->toArray();
 
                 $post_data = $data->items();
 
