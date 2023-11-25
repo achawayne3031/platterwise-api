@@ -159,17 +159,17 @@ class PostController extends Controller
                         ->get()
                         ->first();
 
-                    $mylikedpost = LikedPost::where([
-                        'uid' => $uid,
-                    ])
-                        ->pluck('post_id')
-                        ->toArray();
+                    // $mylikedpost = LikedPost::where([
+                    //     'uid' => $uid,
+                    // ])
+                    //     ->pluck('post_id')
+                    //     ->toArray();
 
-                    if (in_array($data->id, $mylikedpost)) {
-                        $data->is_liked = true;
-                    } else {
-                        $data->is_liked = false;
-                    }
+                    // if (in_array($data->id, $mylikedpost)) {
+                    //     $data->is_liked = true;
+                    // } else {
+                    //     $data->is_liked = false;
+                    // }
 
                     return ResponseHelper::success_response(
                         'Get post was successful',
