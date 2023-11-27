@@ -32,6 +32,8 @@ class UserController extends Controller
                 'other_user'
             );
 
+            $uid = Auth::id();
+
             if (!$validate->fails() && $validate->validated()) {
                 if (
                     !DBHelpers::exists(AppUser::class, [
@@ -46,8 +48,24 @@ class UserController extends Controller
                 }
 
                 $liked_post = LikedPost::where(['uid' => $request->user_id])
-                    ->with(['post', 'user']) 
+                    ->with(['post', 'user'])
                     ->paginate(30);
+
+                $mylikedpost = LikedPost::where([
+                    'uid' => $uid,
+                ])
+                    ->pluck('post_id')
+                    ->toArray();
+
+                $post_data = $liked_post->items();
+
+                foreach ($post_data as $value) {
+                    if (in_array($value->post_id, $mylikedpost)) {
+                        $value->is_liked = true;
+                    } else {
+                        $value->is_liked = false;
+                    }
+                }
 
                 return ResponseHelper::success_response(
                     'User liked post fetched successfully',
@@ -99,6 +117,26 @@ class UserController extends Controller
                 ])
                     ->with(['user', 'admin'])
                     ->paginate(30);
+
+                $liked_post = LikedPost::where(['uid' => $request->user_id])
+                    ->with(['post', 'user'])
+                    ->paginate(30);
+
+                $mylikedpost = LikedPost::where([
+                    'uid' => $uid,
+                ])
+                    ->pluck('post_id')
+                    ->toArray();
+
+                $post_data = $user_post->items();
+
+                foreach ($post_data as $value) {
+                    if (in_array($value->id, $mylikedpost)) {
+                        $value->is_liked = true;
+                    } else {
+                        $value->is_liked = false;
+                    }
+                }
 
                 return ResponseHelper::success_response(
                     'User post fetched successfully',
