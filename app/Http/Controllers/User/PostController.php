@@ -94,7 +94,6 @@ class PostController extends Controller
 
             $uid = Auth::id();
 
-
             if (!$validate->fails() && $validate->validated()) {
                 $data = UserPosts::where(
                     'content_post',
@@ -155,7 +154,6 @@ class PostController extends Controller
             $validate = PostValidator::validate_rules($request, 'get_post');
 
             $uid = Auth::id();
-
 
             if (!$validate->fails() && $validate->validated()) {
                 try {
