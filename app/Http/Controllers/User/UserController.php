@@ -46,7 +46,7 @@ class UserController extends Controller
                 }
 
                 $liked_post = LikedPost::where(['uid' => $request->user_id])
-                    ->with(['post', 'user'])
+                    ->with(['post', 'user']) 
                     ->paginate(30);
 
                 return ResponseHelper::success_response(

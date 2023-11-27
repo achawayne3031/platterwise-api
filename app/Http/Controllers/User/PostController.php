@@ -23,6 +23,8 @@ class PostController extends Controller
 
     public function top_commented()
     {
+        $uid = Auth::id();
+
         $data = UserPosts::query()
             ->with(['user', 'admin'])
             ->with([
@@ -54,6 +56,8 @@ class PostController extends Controller
 
     public function top_liked()
     {
+        $uid = Auth::id();
+
         $data = UserPosts::query()
             ->with(['user', 'admin'])
             ->with([
@@ -87,6 +91,9 @@ class PostController extends Controller
     {
         if ($request->isMethod('post')) {
             $validate = PostValidator::validate_rules($request, 'search');
+
+            $uid = Auth::id();
+
 
             if (!$validate->fails() && $validate->validated()) {
                 $data = UserPosts::where(
@@ -146,6 +153,9 @@ class PostController extends Controller
     {
         if ($request->isMethod('post')) {
             $validate = PostValidator::validate_rules($request, 'get_post');
+
+            $uid = Auth::id();
+
 
             if (!$validate->fails() && $validate->validated()) {
                 try {
