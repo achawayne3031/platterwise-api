@@ -61,9 +61,9 @@ class UserController extends Controller
 
                 foreach ($post_data as $value) {
                     if (in_array($value->post_id, $mylikedpost)) {
-                        $value->is_liked = true;
+                        $value->post->is_liked = true;
                     } else {
-                        $value->is_liked = false;
+                        $value->post->is_liked = false;
                     }
                 }
 
