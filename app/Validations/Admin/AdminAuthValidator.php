@@ -22,6 +22,17 @@ class AdminAuthValidator
                 'email' => 'required',
                 'password' => 'required',
             ],
+            'validate_email' => [
+                'email' => 'required',
+            ],
+            'reset_password' => [
+                'email' => 'required',
+                'password' => 'required',
+                'token' => 'required',
+            ],
+            'reset_token' => [
+                'email' => 'required',
+            ],
 
             'token' => [
                 'token' => 'required',
@@ -31,11 +42,11 @@ class AdminAuthValidator
                 'password' => 'required',
             ],
 
-            'reset_password' => [
-                'password' => 'required',
-                'otp' => 'required',
-                'verify_password' => 'required|same:password',
-            ],
+            // 'reset_password' => [
+            //     'password' => 'required',
+            //     'otp' => 'required',
+            //     'verify_password' => 'required|same:password',
+            // ],
 
             'register' => [
                 'phone' => 'required',

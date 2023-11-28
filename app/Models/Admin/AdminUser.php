@@ -30,6 +30,7 @@ class AdminUser extends Authenticatable implements JWTSubject
         'img_url',
         'location',
         'username',
+        'reset_password_token',
     ];
 
     /**
