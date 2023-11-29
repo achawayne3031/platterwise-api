@@ -37,6 +37,25 @@ class RestaurantController extends Controller
     {
         $top_rated = DBHelpers::top_column(Resturant::class, 'total_rating', 3);
 
+        if (count($top_rated) > 0) {
+            $uid = Auth::id();
+            $following_data = RestaurantFollowers::where([
+                'uid' => $uid,
+            ])
+                ->pluck('restaurant_id')
+                ->toArray();
+
+            $restaurant_data = $top_rated;
+
+            foreach ($restaurant_data as $value) {
+                if (in_array($value->id, $following_data)) {
+                    $value->following = true;
+                } else {
+                    $value->following = false;
+                }
+            }
+        }
+
         return ResponseHelper::success_response(
             'Top rated restaurant',
             $top_rated
@@ -55,6 +74,25 @@ class RestaurantController extends Controller
                     $request->search,
                     ['menu_pic', 'seat_type', 'review']
                 );
+
+                if (count($current) > 0) {
+                    $uid = Auth::id();
+                    $following_data = RestaurantFollowers::where([
+                        'uid' => $uid,
+                    ])
+                        ->pluck('restaurant_id')
+                        ->toArray();
+
+                    $restaurant_data = $current;
+
+                    foreach ($restaurant_data as $value) {
+                        if (in_array($value->id, $following_data)) {
+                            $value->following = true;
+                        } else {
+                            $value->following = false;
+                        }
+                    }
+                }
 
                 return ResponseHelper::success_response(
                     'Search restaurant by name',
@@ -89,14 +127,6 @@ class RestaurantController extends Controller
             );
 
             if (!$validate->fails() && $validate->validated()) {
-                // $current = DBHelpers::with_where_query_filter(
-                //     Resturant::class,
-                //     ['menu_pic', 'seat_type', 'review'],
-                //     ['state' => $request->state]
-                // );
-
-                // return $current;
-
                 $distance = 100;
 
                 $haversine =
@@ -122,6 +152,25 @@ class RestaurantController extends Controller
                     ->with(['menu_pic', 'seat_type', 'review'])
                     ->orderby('distance', 'desc')
                     ->get();
+
+                if (count($restaurant) > 0) {
+                    $uid = Auth::id();
+                    $following_data = RestaurantFollowers::where([
+                        'uid' => $uid,
+                    ])
+                        ->pluck('restaurant_id')
+                        ->toArray();
+
+                    $restaurant_data = $restaurant;
+
+                    foreach ($restaurant_data as $value) {
+                        if (in_array($value->id, $following_data)) {
+                            $value->following = true;
+                        } else {
+                            $value->following = false;
+                        }
+                    }
+                }
 
                 return ResponseHelper::success_response(
                     'Restaurant by state',
@@ -158,6 +207,25 @@ class RestaurantController extends Controller
             40
         );
 
+        if (count($restaurant->items()) > 0) {
+            $uid = Auth::id();
+            $following_data = RestaurantFollowers::where([
+                'uid' => $uid,
+            ])
+                ->pluck('restaurant_id')
+                ->toArray();
+
+            $restaurant_data = $restaurant->item();
+
+            foreach ($restaurant_data as $value) {
+                if (in_array($value->id, $following_data)) {
+                    $value->following = true;
+                } else {
+                    $value->following = false;
+                }
+            }
+        }
+
         return ResponseHelper::success_response(
             'All saved restaurant fetched successfully',
             $restaurant
@@ -174,6 +242,25 @@ class RestaurantController extends Controller
             ['restaurant'],
             40
         );
+
+        if (count($restaurant->items()) > 0) {
+            $uid = Auth::id();
+            $following_data = RestaurantFollowers::where([
+                'uid' => $uid,
+            ])
+                ->pluck('restaurant_id')
+                ->toArray();
+
+            $restaurant_data = $restaurant->item();
+
+            foreach ($restaurant_data as $value) {
+                if (in_array($value->id, $following_data)) {
+                    $value->following = true;
+                } else {
+                    $value->following = false;
+                }
+            }
+        }
 
         return ResponseHelper::success_response(
             'All followed restaurant fetched successfully',
@@ -211,8 +298,22 @@ class RestaurantController extends Controller
                     ['user'],
                     ['restaurant_id' => $request->restaurant_id]
                 );
-                
+
                 $current->review = $reviews;
+
+                $uid = Auth::id();
+
+                $following_data = RestaurantFollowers::where([
+                    'uid' => $uid,
+                ])
+                    ->pluck('restaurant_id')
+                    ->toArray();
+
+                if (in_array($current->id, $following_data)) {
+                    $current->following = true;
+                } else {
+                    $current->following = false;
+                }
 
                 return ResponseHelper::success_response(
                     'View restaurant',
@@ -590,6 +691,25 @@ class RestaurantController extends Controller
                         ->orderby('distance', 'desc')
                         ->get();
 
+                    if (count($restaurant) > 0) {
+                        $uid = Auth::id();
+                        $following_data = RestaurantFollowers::where([
+                            'uid' => $uid,
+                        ])
+                            ->pluck('restaurant_id')
+                            ->toArray();
+
+                        $restaurant_data = $restaurant;
+
+                        foreach ($restaurant_data as $value) {
+                            if (in_array($value->id, $following_data)) {
+                                $value->following = true;
+                            } else {
+                                $value->following = false;
+                            }
+                        }
+                    }
+
                     return ResponseHelper::success_response(
                         'All restaurant near you fetched successfully',
                         $restaurant
@@ -635,6 +755,23 @@ class RestaurantController extends Controller
             ['owner'],
             40
         );
+
+        if (count($restaurant->items()) > 0) {
+            $uid = Auth::id();
+            $following_data = RestaurantFollowers::where([
+                'uid' => $uid,
+            ])
+                ->pluck('restaurant_id')
+                ->toArray();
+            $restaurant_data = $restaurant->items();
+            foreach ($restaurant_data as $value) {
+                if (in_array($value->id, $following_data)) {
+                    $value->following = true;
+                } else {
+                    $value->following = false;
+                }
+            }
+        }
 
         return ResponseHelper::success_response(
             'All restaurant fetched successfully',

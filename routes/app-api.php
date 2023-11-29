@@ -114,7 +114,13 @@ Route::group(
         Route::post('/other-user', 'UserController@other_user');
         Route::post('/other-user-posts', 'UserController@other_user_posts');
 
-        Route::post('/other-user-liked-posts', 'UserController@other_user_liked_posts');
+        Route::post(
+            '/other-user-liked-posts',
+            'UserController@other_user_liked_posts'
+        );
+
+        Route::get('/user-followers', 'UserController@user_followers');
+        Route::get('/user-following', 'UserController@user_following');
 
 
 

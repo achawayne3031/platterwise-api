@@ -24,6 +24,78 @@ class UserController extends Controller
 {
     //
 
+    public function user_following(Request $request)
+    {
+        $uid = Auth::id();
+
+        $following = DBHelpers::data_with_where_paginate(
+            UserFollowers::class,
+            ['follower' => $uid],
+            ['user'],
+            20
+        );
+
+        if (count($following->items()) > 0) {
+            $uid = Auth::id();
+            $following_data = UserFollowers::where([
+                'user' => $uid,
+            ])
+                ->pluck('follower')
+                ->toArray();
+
+            $followers_data = $following->items();
+
+            foreach ($followers_data as $value) {
+                if (in_array($value->follower, $following_data)) {
+                    $value->following = true;
+                } else {
+                    $value->following = false;
+                }
+            }
+        }
+
+        return ResponseHelper::success_response(
+            'All user following fetched successfully',
+            $following
+        );
+    }
+
+    public function user_followers(Request $request)
+    {
+        $uid = Auth::id();
+
+        $followers = DBHelpers::data_with_where_paginate(
+            UserFollowers::class,
+            ['user' => $uid],
+            ['follower'],
+            20
+        );
+
+        if (count($followers->items()) > 0) {
+            $uid = Auth::id();
+            $following_data = UserFollowers::where([
+                'user' => $uid,
+            ])
+                ->pluck('follower')
+                ->toArray();
+
+            $followers_data = $followers->items();
+
+            foreach ($followers_data as $value) {
+                if (in_array($value->user, $following_data)) {
+                    $value->following = true;
+                } else {
+                    $value->following = false;
+                }
+            }
+        }
+
+        return ResponseHelper::success_response(
+            'All user followers fetched successfully',
+            $followers
+        );
+    }
+
     public function other_user_liked_posts(Request $request)
     {
         if ($request->isMethod('post')) {
