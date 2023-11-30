@@ -14,12 +14,12 @@ class UserFollowers extends Model
 
     protected $fillable = ['user', 'follower'];
 
-    public function follower()
+    public function owner()
     {
         return $this->hasOne(AppUser::class, 'id', 'user');
     }
 
-    public function user()
+    public function follower()
     {
         return $this->hasOne(AppUser::class, 'id', 'follower');
     }

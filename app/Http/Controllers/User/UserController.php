@@ -26,74 +26,120 @@ class UserController extends Controller
 
     public function user_following(Request $request)
     {
-        $uid = Auth::id();
+        if ($request->isMethod('post')) {
+            $validate = UserAuthValidator::validate_rules(
+                $request,
+                'other_user'
+            );
 
-        $following = DBHelpers::data_with_where_paginate(
-            UserFollowers::class,
-            ['follower' => $uid],
-            ['user'],
-            20
-        );
+            if (!$validate->fails() && $validate->validated()) {
+                $following = DBHelpers::data_with_where_paginate(
+                    UserFollowers::class,
+                    ['follower' => $request->user_id],
+                    ['owner'],
+                    20
+                );
 
-        if (count($following->items()) > 0) {
-            $uid = Auth::id();
-            $following_data = UserFollowers::where([
-                'user' => $uid,
-            ])
-                ->pluck('follower')
-                ->toArray();
+                return ResponseHelper::success_response(
+                    'All user following fetched successfully',
+                    $following
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['user_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
 
-            $followers_data = $following->items();
-
-            foreach ($followers_data as $value) {
-                if (in_array($value->follower, $following_data)) {
-                    $value->following = true;
-                } else {
-                    $value->following = false;
-                }
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
             }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
         }
 
-        return ResponseHelper::success_response(
-            'All user following fetched successfully',
-            $following
-        );
+        // if (count($following->items()) > 0) {
+        //     $uid = Auth::id();
+        //     $following_data = UserFollowers::where([
+        //         'user' => $uid,
+        //     ])
+        //         ->pluck('follower')
+        //         ->toArray();
+
+        //     $followers_data = $following->items();
+
+        //     foreach ($followers_data as $value) {
+        //         if (in_array($value->follower, $following_data)) {
+        //             $value->following = true;
+        //         } else {
+        //             $value->following = false;
+        //         }
+        //     }
+        // }
     }
 
     public function user_followers(Request $request)
     {
-        $uid = Auth::id();
+        if ($request->isMethod('post')) {
+            $validate = UserAuthValidator::validate_rules(
+                $request,
+                'other_user'
+            );
 
-        $followers = DBHelpers::data_with_where_paginate(
-            UserFollowers::class,
-            ['user' => $uid],
-            ['follower'],
-            20
-        );
+            if (!$validate->fails() && $validate->validated()) {
+                $followers = DBHelpers::data_with_where_paginate(
+                    UserFollowers::class,
+                    ['user' => $request->user_id],
+                    ['follower'],
+                    20
+                );
 
-        if (count($followers->items()) > 0) {
-            $uid = Auth::id();
-            $following_data = UserFollowers::where([
-                'user' => $uid,
-            ])
-                ->pluck('follower')
-                ->toArray();
+                // if (count($followers->items()) > 0) {
+                //     $uid = Auth::id();
+                //     $following_data = UserFollowers::where([
+                //         'user' => $uid,
+                //     ])
+                //         ->pluck('follower')
+                //         ->toArray();
 
-            $followers_data = $followers->items();
+                //     $followers_data = $followers->items();
 
-            foreach ($followers_data as $value) {
-                if (in_array($value->user, $following_data)) {
-                    $value->following = true;
-                } else {
-                    $value->following = false;
-                }
+                //     foreach ($followers_data as $value) {
+                //         if (in_array($value->user, $following_data)) {
+                //             $value->following = true;
+                //         } else {
+                //             $value->following = false;
+                //         }
+                //     }
+                // }
+
+                return ResponseHelper::success_response(
+                    'All user followers fetched successfully',
+                    $followers
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['user_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
             }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
         }
-
-        return ResponseHelper::success_response(
-            'All user followers fetched successfully',
-            $followers
-        );
     }
 
     public function other_user_liked_posts(Request $request)

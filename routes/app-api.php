@@ -119,11 +119,8 @@ Route::group(
             'UserController@other_user_liked_posts'
         );
 
-        Route::get('/user-followers', 'UserController@user_followers');
-        Route::get('/user-following', 'UserController@user_following');
-
-
-
+        Route::post('/user-followers', 'UserController@user_followers');
+        Route::post('/user-following', 'UserController@user_following');
     }
 );
 
