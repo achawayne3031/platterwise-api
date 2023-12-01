@@ -170,7 +170,7 @@ class UserController extends Controller
                     ->paginate(30);
 
                 $mylikedpost = LikedPost::where([
-                    'uid' => $uid,
+                    'uid' => $request->user_id,
                 ])
                     ->pluck('post_id')
                     ->toArray();
@@ -241,7 +241,7 @@ class UserController extends Controller
                     ->paginate(30);
 
                 $mylikedpost = LikedPost::where([
-                    'uid' => $uid,
+                    'uid' => $request->user_id,
                 ])
                     ->pluck('post_id')
                     ->toArray();
