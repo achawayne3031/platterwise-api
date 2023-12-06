@@ -215,7 +215,7 @@ class RestaurantController extends Controller
                 ->pluck('restaurant_id')
                 ->toArray();
 
-            $restaurant_data = $restaurant->item();
+            $restaurant_data = $restaurant->items();
 
             foreach ($restaurant_data as $value) {
                 if (in_array($value->id, $following_data)) {
@@ -251,7 +251,7 @@ class RestaurantController extends Controller
                 ->pluck('restaurant_id')
                 ->toArray();
 
-            $restaurant_data = $restaurant->item();
+            $restaurant_data = $restaurant->items();
 
             foreach ($restaurant_data as $value) {
                 if (in_array($value->id, $following_data)) {
