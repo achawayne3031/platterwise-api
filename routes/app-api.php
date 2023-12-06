@@ -36,7 +36,7 @@ Route::group(
 ///// Restuarant /////
 Route::group(
     [
-        'middleware' => ['cors', 'jwt.verify'],
+        'middleware' => ['cors', 'jwt.verify', 'user.verified'],
         'prefix' => 'restaurant',
         'namespace' => 'App\Http\Controllers\User',
     ],
@@ -61,7 +61,7 @@ Route::group(
 ///// Reservation /////
 Route::group(
     [
-        'middleware' => ['cors', 'jwt.verify'],
+        'middleware' => ['cors', 'jwt.verify', 'user.verified'],
         'prefix' => 'reservation',
         'namespace' => 'App\Http\Controllers\User',
     ],
@@ -99,7 +99,7 @@ Route::group(
 ///// User /////
 Route::group(
     [
-        'middleware' => ['cors', 'jwt.verify'],
+        'middleware' => ['cors', 'jwt.verify', 'user.verified'],
         'prefix' => 'user',
         'namespace' => 'App\Http\Controllers\User',
     ],
@@ -127,7 +127,7 @@ Route::group(
 ///// Post /////
 Route::group(
     [
-        'middleware' => ['cors', 'jwt.verify'],
+        'middleware' => ['cors', 'jwt.verify', 'user.verified'],
         'prefix' => 'post',
         'namespace' => 'App\Http\Controllers\User',
     ],
@@ -149,7 +149,7 @@ Route::group(
 ///// Post Comment /////
 Route::group(
     [
-        'middleware' => ['cors', 'jwt.verify'],
+        'middleware' => ['cors', 'jwt.verify', 'user.verified'],
         'prefix' => 'post-comment',
         'namespace' => 'App\Http\Controllers\User',
     ],

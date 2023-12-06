@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Validations\UserAuthValidator;
 use App\Validations\ErrorValidation;
+
 use App\Helpers\ResponseHelper;
 use App\Models\User\AppUser;
 use App\Helpers\DBHelpers;
@@ -53,7 +54,7 @@ class AuthController extends Controller
                         );
 
                         return ResponseHelper::success_response(
-                            'Registration was successful',
+                            'Registration was successful, verification link sent to your email',
                             null
                         );
                     } else {
@@ -136,7 +137,7 @@ class AuthController extends Controller
                         );
 
                         return ResponseHelper::error_response(
-                            'Email not verified yet',
+                            'Email not verified yet, verification link sent to your email',
                             null,
                             401
                         );
