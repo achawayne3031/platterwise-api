@@ -49,9 +49,15 @@ class VerificationController extends Controller
 
     public function verify_user($user, $token)
     {
-        $status = false;
+        // 0 = not found
+        // 1 = success
+        // 2 = invalid token
+        /// 3 = verified already
+
+        $status = 0;
 
         if (!DBHelpers::exists(AppUser::class, ['id' => $user])) {
+            $status = 0;
             return view('user.VerifyUserStatusPage')->with([
                 'status' => $status,
             ]);
@@ -61,16 +67,25 @@ class VerificationController extends Controller
             'id' => $user,
         ]);
 
+        if ($current_user->is_verified == 1) {
+            $status = 3;
+            return view('user.VerifyUserStatusPage')->with([
+                'status' => $status,
+            ]);
+        }
+
         if (
             $current_user->verify_token != null &&
             $current_user->verify_token == $token
         ) {
-            $status = true;
+            $status = 1;
             DBHelpers::update_query_v2(
                 AppUser::class,
                 ['is_verified' => 1, 'verify_token' => null],
                 $user
             );
+        } else {
+            $status = 2;
         }
 
         return view('user.VerifyUserStatusPage')->with(['status' => $status]);

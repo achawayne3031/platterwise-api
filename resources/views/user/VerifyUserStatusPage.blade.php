@@ -88,11 +88,10 @@
 
 
 
-        @if($status)
+
             <div class="d-flex justify-content-center mt-4">
                 <div class="inner-wrapper">
-                    <h5 class="inner-title">Email Address Verified</h5>
-
+                    {{-- <h5 class="inner-title">Email Address Verified</h5> --}}
                     <div class="d-flex justify-content-center mt-4 mb-4">
                     <img
                         src="https://plugin.markaimg.com/public/58c7dacf/orbLiZ8ANoRuEFanBRRclR9btGDyB4.png"
@@ -100,12 +99,43 @@
                     />
                     </div>
 
+                    @if($status == 0)
+                        <p class="mail-inner-text">
+                        "Your email was not found!
+                        <br />
+                        Try to register and verify again"
+                        </p>
+                    @endif
+
+                    @if($status == 1)
+                        <p class="mail-inner-text">
+                        "Your email is verified!
+                        <br />
+                        Welcome to Platterwise – get ready for delightful dining
+                        experiences!"
+                        </p>
+                    @endif
+
+                    @if($status == 2)
+                        <p class="mail-inner-text">
+                        "Your token is invalid
+                        <br />
+                        Try verifying again"
+                        </p>
+                    @endif
+
+                    @if($status == 3)
                     <p class="mail-inner-text">
-                    "Your email is verified!
-                    <br />
-                    Welcome to Platterwise – get ready for delightful dining
-                    experiences!"
+                        "Your email has been verified already
+                        <br />
+                        Welcome to Platterwise – get ready for delightful dining
+                        experiences!"
                     </p>
+                @endif
+
+
+
+
                     <p class="mail-inner-text mt-3">Thank you for using Platterwise!</p>
                     <p class="mail-inner-text">
                     Best,
@@ -114,7 +144,6 @@
                     </p>
                 </div>
             </div>
-        @endif
 
 
 
