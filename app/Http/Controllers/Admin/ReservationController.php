@@ -23,8 +23,6 @@ class ReservationController extends Controller
 {
     //
 
-  
-
     public function weekly_reservation_count(Request $request)
     {
         if ($request->isMethod('post')) {
@@ -59,20 +57,33 @@ class ReservationController extends Controller
                     global $sat_amount;
                     global $sun_amount;
 
+                    $mon_amount = 0;
+                    $tue_amount = 0;
+                    $wed_amount = 0;
+                    $thur_amount = 0;
+                    $fri_amount = 0;
+                    $sat_amount = 0;
+                    $sun_amount = 0;
+
                     $mon = CarbonPeriod::between(
                         now()->startOfMonth(),
                         now()->endOfMonth()
                     )->filter(fn($date) => $date->isTuesday());
 
+                    $re = [];
+                    $rese = [];
+
                     foreach ($mon as $value) {
                         $ex = explode('T', $value);
                         $fir = explode(' ', $ex[0]);
 
-                        $mon_amount = Reservation::where([
+                        $mon_amount_count = Reservation::where([
                             'restaurant_id' => $request->restaurant_id,
                         ])
-                            ->whereDate('created_at', $fir[0])
+                            ->whereDate('created_at', '=', $fir[0])
                             ->count();
+
+                        $mon_amount += $mon_amount_count;
                     }
 
                     $tue = CarbonPeriod::between(
@@ -83,11 +94,13 @@ class ReservationController extends Controller
                         $ex = explode('T', $value);
                         $fir = explode(' ', $ex[0]);
 
-                        $tue_amount = Reservation::where([
+                        $tue_amount_count = Reservation::where([
                             'restaurant_id' => $request->restaurant_id,
                         ])
                             ->whereDate('created_at', $fir[0])
                             ->count();
+
+                        $tue_amount += $tue_amount_count;
                     }
 
                     $wed = CarbonPeriod::between(
@@ -98,11 +111,13 @@ class ReservationController extends Controller
                         $ex = explode('T', $value);
                         $fir = explode(' ', $ex[0]);
 
-                        $wed_amount = Reservation::where([
+                        $wed_amount_count = Reservation::where([
                             'restaurant_id' => $request->restaurant_id,
                         ])
                             ->whereDate('created_at', $fir[0])
                             ->count();
+
+                        $wed_amount += $wed_amount_count;
                     }
 
                     $thur = CarbonPeriod::between(
@@ -113,11 +128,13 @@ class ReservationController extends Controller
                         $ex = explode('T', $value);
                         $fir = explode(' ', $ex[0]);
 
-                        $thur_amount = Reservation::where([
+                        $thur_amount_count = Reservation::where([
                             'restaurant_id' => $request->restaurant_id,
                         ])
                             ->whereDate('created_at', $fir[0])
                             ->count();
+
+                        $thur_amount += $thur_amount_count;
                     }
 
                     $fri = CarbonPeriod::between(
@@ -128,11 +145,13 @@ class ReservationController extends Controller
                         $ex = explode('T', $value);
                         $fir = explode(' ', $ex[0]);
 
-                        $fri_amount = Reservation::where([
+                        $fri_amount_count = Reservation::where([
                             'restaurant_id' => $request->restaurant_id,
                         ])
                             ->whereDate('created_at', $fir[0])
                             ->count();
+
+                        $fri_amount += $fri_amount_count;
                     }
 
                     $sat = CarbonPeriod::between(
@@ -143,11 +162,13 @@ class ReservationController extends Controller
                         $ex = explode('T', $value);
                         $fir = explode(' ', $ex[0]);
 
-                        $sat_amount = Reservation::where([
+                        $sat_amount_count = Reservation::where([
                             'restaurant_id' => $request->restaurant_id,
                         ])
                             ->whereDate('created_at', $fir[0])
                             ->count();
+
+                        $sat_amount += $sat_amount_count;
                     }
 
                     $sun = CarbonPeriod::between(
@@ -158,11 +179,13 @@ class ReservationController extends Controller
                         $ex = explode('T', $value);
                         $fir = explode(' ', $ex[0]);
 
-                        $sun_amount = Reservation::where([
+                        $sun_amount_count = Reservation::where([
                             'restaurant_id' => $request->restaurant_id,
                         ])
                             ->whereDate('created_at', $fir[0])
                             ->count();
+
+                        $sun_amount += $sun_amount_count;
                     }
 
                     $weekly_month = [
