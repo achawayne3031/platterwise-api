@@ -165,8 +165,10 @@ class UserController extends Controller
                     );
                 }
 
-                $liked_post = LikedPost::where(['uid' => $request->user_id])
-                    ->with(['post', 'user'])
+                $liked_post = LikedPost::where([
+                    'uid' => $request->user_id,
+                ])
+                    ->with(['post'])
                     ->paginate(30);
 
                 $mylikedpost = LikedPost::where([
@@ -178,6 +180,11 @@ class UserController extends Controller
                 $post_data = $liked_post->items();
 
                 foreach ($post_data as $value) {
+                    $value->user = DBHelpers::query_filter_first(
+                        AppUser::class,
+                        ['id' => $value->post->user_id]
+                    );
+
                     if (in_array($value->post_id, $mylikedpost)) {
                         $value->post->is_liked = true;
                     } else {
