@@ -30,6 +30,9 @@ Route::group(
         Route::post('/token', 'AuthController@token_user');
         Route::post('/set-password', 'AuthController@set_password');
         Route::post('/register', 'AuthController@register');
+
+        Route::post('/validate-email', 'AuthController@validate_email');
+        Route::post('/reset-password', 'AuthController@reset_password');
     }
 );
 
@@ -121,6 +124,8 @@ Route::group(
 
         Route::post('/user-followers', 'UserController@user_followers');
         Route::post('/user-following', 'UserController@user_following');
+
+        Route::post('/logout', 'AuthController@logout');
     }
 );
 

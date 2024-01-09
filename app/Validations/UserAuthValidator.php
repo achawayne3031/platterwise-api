@@ -56,6 +56,15 @@ class UserAuthValidator
             'other_user' => [
                 'user_id' => 'required|integer',
             ],
+
+            'validate_email' => [
+                'email' => 'required',
+            ],
+            'reset_password' => [
+                'email' => 'required',
+                'password' => 'required',
+                'token' => 'required',
+            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);

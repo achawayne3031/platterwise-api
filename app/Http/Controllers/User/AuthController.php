@@ -17,6 +17,188 @@ class AuthController extends Controller
 {
     //
 
+    public function reset_token(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = AdminAuthValidator::validate_rules(
+                $request,
+                'reset_token'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                if (
+                    DBHelpers::exists(AdminUser::class, [
+                        'email' => $request->email,
+                    ])
+                ) {
+                    DBHelpers::update_query_v3(
+                        AdminUser::class,
+                        ['reset_password_token' => null],
+                        ['email' => $request->email]
+                    );
+
+                    return ResponseHelper::success_response(
+                        'Reset token successfully',
+                        null,
+                        null
+                    );
+                } else {
+                    return ResponseHelper::error_response(
+                        'Email not found',
+                        null,
+                        401
+                    );
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['email'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
+    public function reset_password(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = UserAuthValidator::validate_rules(
+                $request,
+                'reset_password'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                if (
+                    DBHelpers::exists(AppUser::class, [
+                        'email' => $request->email,
+                    ])
+                ) {
+                    $admin = DBHelpers::query_filter_first(AppUser::class, [
+                        'email' => $request->email,
+                    ]);
+                    if ($admin->reset_password_token != $request->token) {
+                        return ResponseHelper::error_response(
+                            'Invalid token',
+                            null,
+                            401
+                        );
+                    }
+
+                    DBHelpers::update_query_v3(
+                        AppUser::class,
+                        [
+                            'password' => bcrypt($request->password),
+                            'reset_password_token' => null,
+                        ],
+                        ['email' => $request->email]
+                    );
+
+                    // DBHelpers::update_query_v3(
+                    //     AppUser::class,
+                    //     ['reset_password_token' => null],
+                    //     ['email' => $request->email]
+                    // );
+
+                    return ResponseHelper::success_response(
+                        'Reset password successfully',
+                        null,
+                        null
+                    );
+                } else {
+                    return ResponseHelper::error_response(
+                        'Email not found',
+                        null,
+                        401
+                    );
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['email', 'password', 'token'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
+    public function validate_email(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = UserAuthValidator::validate_rules(
+                $request,
+                'validate_email'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                if (
+                    DBHelpers::exists(AppUser::class, [
+                        'email' => $request->email,
+                    ])
+                ) {
+                    $token = Func::generate_reference(5, 'numeric');
+                    DBHelpers::update_query_v3(
+                        AppUser::class,
+                        ['reset_password_token' => $token],
+                        ['email' => $request->email]
+                    );
+
+                    $jobMailData = [
+                        'token' => $token,
+                    ];
+
+                    \Mail::to($request->email)->send(
+                        new \App\Mail\AdminResetPasswordToken($jobMailData)
+                    );
+
+                    return ResponseHelper::success_response(
+                        'Reset password token sent to your mail, token will expiry in the next 5 minutes',
+                        null,
+                        null
+                    );
+                } else {
+                    return ResponseHelper::error_response(
+                        'Email not found',
+                        null,
+                        401
+                    );
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['email', 'password'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function register(Request $request)
     {
         if ($request->isMethod('post')) {

@@ -33,6 +33,7 @@ class AppUser extends Authenticatable implements JWTSubject
         'location',
         'guests',
         'all_guests',
+        'reset_password_token',
     ];
 
     /**
