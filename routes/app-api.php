@@ -33,7 +33,21 @@ Route::group(
 
         Route::post('/validate-email', 'AuthController@validate_email');
         Route::post('/reset-password', 'AuthController@reset_password');
+
+        /////// Restaurant Team //////
+
+        Route::post('/team-login', 'AuthController@team_login');
     }
+);
+
+///// Restaurant Team /////
+Route::group(
+    [
+        'middleware' => ['cors', 'jwt.verify', 'user.verified'],
+        'prefix' => 'post-comment',
+        'namespace' => 'App\Http\Controllers\User',
+    ],
+    function ($router) {}
 );
 
 ///// Restuarant /////

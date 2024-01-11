@@ -47,6 +47,10 @@ return [
             'driver' => 'jwt',
             'provider' => 'admin_users',
         ],
+        'team-api' => [
+            'driver' => 'jwt',
+            'provider' => 'team_users',
+        ],
     ],
 
     /*
@@ -75,6 +79,11 @@ return [
         'admin_users' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin\AdminUser::class,
+        ],
+
+        'team_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\RestaurantTeam::class,
         ],
 
         // 'users' => [

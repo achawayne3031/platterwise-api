@@ -67,6 +67,18 @@ Route::group(
     }
 );
 
+///// Restaurant Team /////
+Route::group(
+    [
+        'middleware' => ['cors', 'jwt.verify'],
+        'prefix' => 'restaurant-team',
+        'namespace' => 'App\Http\Controllers\Admin',
+    ],
+    function ($router) {
+        Route::post('/register', 'TeamController@register');
+    }
+);
+
 ///// Reservation /////
 Route::group(
     [
@@ -122,7 +134,6 @@ Route::group(
         Route::post('/delete', 'PostController@delete');
         Route::get('/all-posts', 'PostController@get_all_posts');
         Route::get('/my-posts', 'PostController@get_my_posts');
-
         Route::get('/my-liked-posts', 'PostController@get_my_liked_posts');
     }
 );

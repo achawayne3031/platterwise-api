@@ -1,3 +1,7 @@
+
+
+
+
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -11,7 +15,7 @@
     />
 
     <link href="http://fonts.cdnfonts.com/css/verdana" rel="stylesheet" />
-    <title>Password Reset</title>
+    <title>Restaurant Team</title>
 
     <style>
       html {
@@ -129,9 +133,9 @@
 
         <div class="d-flex justify-content-center mt-4">
           <div class="inner-wrapper">
-            <h5 class="inner-title">Password Token</h5>
+            <h5 class="inner-title">Your Password</h5>
 
-            <p class="mail-inner-text">{{ $mailMessageData['token'] }}</p>
+            <p class="mail-inner-text">{{ $mailMessageData['password'] }}</p>
 
             <p class="mail-inner-text mt-3">Thank you for using Platterwise!</p>
 
