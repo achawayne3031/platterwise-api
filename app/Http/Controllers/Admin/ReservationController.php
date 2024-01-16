@@ -384,9 +384,15 @@ class ReservationController extends Controller
 
                         $owner_email = $res_data->owner->email;
 
-                        \Mail::to($owner_email)->send(
-                            new \App\Mail\ReservationConfirmed($mailData)
-                        );
+                        try {
+                            //code...
+
+                            \Mail::to($owner_email)->send(
+                                new \App\Mail\ReservationConfirmed($mailData)
+                            );
+                        } catch (\Throwable $th) {
+                            //throw $th;
+                        }
 
                         ///  $guests = json_decode($res_data->guests);
 
@@ -468,9 +474,6 @@ class ReservationController extends Controller
             if (!$validate->fails() && $validate->validated()) {
                 $user = auth('web-api')->user();
                 $uid = $user->id;
-                // \Mail::to('achawayne@gmail.com')->send(
-                //     new \App\Mail\MailTester()
-                // );
 
                 if (
                     !DBHelpers::exists(Resturant::class, [
@@ -628,10 +631,6 @@ class ReservationController extends Controller
                 $user = auth('web-api')->user();
                 $uid = $user->id;
 
-                // \Mail::to('achawayne@gmail.com')->send(
-                //     new \App\Mail\MailTester()
-                // );
-
                 if (
                     !DBHelpers::exists(Resturant::class, [
                         'admin_uid' => $uid,
@@ -719,11 +718,17 @@ class ReservationController extends Controller
                         'book_time' => $book_time,
                     ];
 
-                    $job = (new \App\Jobs\SendDinnerInvite(
-                        $jobMailData
-                    ))->delay(now()->addSeconds(2));
+                    try {
+                        //code...
 
-                    dispatch($job);
+                        $job = (new \App\Jobs\SendDinnerInvite(
+                            $jobMailData
+                        ))->delay(now()->addSeconds(2));
+
+                        dispatch($job);
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                    }
                 }
 
                 return ResponseHelper::success_response(
@@ -810,9 +815,15 @@ class ReservationController extends Controller
 
                 $owner_email = $res_data->owner->email;
 
-                \Mail::to($owner_email)->send(
-                    new \App\Mail\ReservationCancelled($mailData)
-                );
+                try {
+                    //code...
+
+                    \Mail::to($owner_email)->send(
+                        new \App\Mail\ReservationCancelled($mailData)
+                    );
+                } catch (\Throwable $th) {
+                    //throw $th;
+                }
 
                 return ResponseHelper::success_response(
                     'Reservation cancelled was successful',

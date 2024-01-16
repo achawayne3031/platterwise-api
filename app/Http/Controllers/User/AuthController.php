@@ -215,9 +215,14 @@ class AuthController extends Controller
                         'token' => $token,
                     ];
 
-                    \Mail::to($request->email)->send(
-                        new \App\Mail\AdminResetPasswordToken($jobMailData)
-                    );
+                    try {
+                        //code...
+                        \Mail::to($request->email)->send(
+                            new \App\Mail\AdminResetPasswordToken($jobMailData)
+                        );
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                    }
 
                     return ResponseHelper::success_response(
                         'Reset password token sent to your mail, token will expiry in the next 5 minutes',
@@ -282,9 +287,15 @@ class AuthController extends Controller
                             'verify_token' => $verify_token,
                         ];
 
-                        \Mail::to($request->email)->send(
-                            new \App\Mail\UserEmailVerification($data)
-                        );
+                        try {
+                            //code...
+
+                            \Mail::to($request->email)->send(
+                                new \App\Mail\UserEmailVerification($data)
+                            );
+                        } catch (\Throwable $th) {
+                            //throw $th;
+                        }
 
                         return ResponseHelper::success_response(
                             'Registration was successful, verification link sent to your email',
@@ -365,9 +376,14 @@ class AuthController extends Controller
                             $check_user->id
                         );
 
-                        \Mail::to($request->email)->send(
-                            new \App\Mail\UserEmailVerification($data)
-                        );
+                        try {
+                            //code...
+                            \Mail::to($request->email)->send(
+                                new \App\Mail\UserEmailVerification($data)
+                            );
+                        } catch (\Throwable $th) {
+                            //throw $th;
+                        }
 
                         return ResponseHelper::error_response(
                             'Email not verified yet, verification link sent to your email',

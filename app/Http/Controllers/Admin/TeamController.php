@@ -16,6 +16,66 @@ class TeamController extends Controller
 {
     //
 
+    public function remove_team(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = RestaurantTeamValidator::validate_rules(
+                $request,
+                'remove_team'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                try {
+                    if (
+                        DBHelpers::exists(RestaurantTeam::class, [
+                            'id' => $request->id,
+                            'restaurant_id' => $request->restaurant_id,
+                        ])
+                    ) {
+                        DBHelpers::delete_query_multi(RestaurantTeam::class, [
+                            'id' => $request->id,
+                            'restaurant_id' => $request->restaurant_id,
+                        ]);
+
+                        return ResponseHelper::success_response(
+                            'Team member deleted successful',
+                            null,
+                            null
+                        );
+                    } else {
+                        return ResponseHelper::error_response(
+                            'User not found',
+                            'Team member not found',
+                            401
+                        );
+                    }
+                } catch (Exception $e) {
+                    return ResponseHelper::error_response(
+                        'Server Error',
+                        $e->getMessage(),
+                        401
+                    );
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['id', 'restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function register(Request $request)
     {
         if ($request->isMethod('post')) {
@@ -44,9 +104,15 @@ class TeamController extends Controller
                             'password' => $gen_password,
                         ];
 
-                        \Mail::to($request->email)->send(
-                            new \App\Mail\TeamRegisterMail($mailData)
-                        );
+                        try {
+                            //code...
+
+                            \Mail::to($request->email)->send(
+                                new \App\Mail\TeamRegisterMail($mailData)
+                            );
+                        } catch (\Throwable $th) {
+                            //throw $th;
+                        }
 
                         return ResponseHelper::success_response(
                             'Registration was Successful',

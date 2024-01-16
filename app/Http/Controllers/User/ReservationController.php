@@ -214,11 +214,17 @@ class ReservationController extends Controller
                             'total_amount' => $request->total_amount,
                         ];
 
-                        $job = (new \App\Jobs\SendBillPayment(
-                            $dispatchData
-                        ))->delay(now());
+                        try {
+                            //code...
 
-                        dispatch($job);
+                            $job = (new \App\Jobs\SendBillPayment(
+                                $dispatchData
+                            ))->delay(now());
+
+                            dispatch($job);
+                        } catch (\Throwable $th) {
+                            //throw $th;
+                        }
                     } else {
                         if (count($request->guests) > 0) {
                             $current_guest = $request->guests[0];
@@ -312,11 +318,19 @@ class ReservationController extends Controller
                                         'amount' => $current_guest['bill'],
                                     ];
 
-                                    \Mail::to(
-                                        $current_guest['guest_email']
-                                    )->send(
-                                        new \App\Mail\BillPayment($jobMailData)
-                                    );
+                                    try {
+                                        //code...
+
+                                        \Mail::to(
+                                            $current_guest['guest_email']
+                                        )->send(
+                                            new \App\Mail\BillPayment(
+                                                $jobMailData
+                                            )
+                                        );
+                                    } catch (\Throwable $th) {
+                                        //throw $th;
+                                    }
                                 }
                             }
                         }

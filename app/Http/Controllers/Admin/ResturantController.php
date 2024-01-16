@@ -563,9 +563,6 @@ class ResturantController extends Controller
             if (!$validate->fails() && $validate->validated()) {
                 $user = auth('web-api')->user();
                 $uid = $user->id;
-                // \Mail::to('achawayne@gmail.com')->send(
-                //     new \App\Mail\MailTester()
-                // );
 
                 if (
                     !DBHelpers::exists(Resturant::class, [
@@ -630,9 +627,6 @@ class ResturantController extends Controller
             if (!$validate->fails() && $validate->validated()) {
                 $user = auth('web-api')->user();
                 $uid = $user->id;
-                // \Mail::to('achawayne@gmail.com')->send(
-                //     new \App\Mail\MailTester()
-                // );
 
                 if (
                     !DBHelpers::exists(Resturant::class, [
@@ -702,10 +696,6 @@ class ResturantController extends Controller
             if (!$validate->fails() && $validate->validated()) {
                 $user = auth('web-api')->user();
                 $uid = $user->id;
-
-                // \Mail::to('achawayne@gmail.com')->send(
-                //     new \App\Mail\MailTester()
-                // );
 
                 if (
                     DBHelpers::exists(Resturant::class, [

@@ -27,6 +27,11 @@ class RestaurantTeamValidator
                 'reservation_id' => 'required|integer',
             ],
 
+            'remove_team' => [
+                'id' => 'required|integer',
+                'restaurant_id' => 'required|integer',
+            ],
+
             'check_in' => [
                 'reservation_id' => 'required|integer',
                 'restaurant_id' => 'required|integer',

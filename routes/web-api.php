@@ -76,6 +76,8 @@ Route::group(
     ],
     function ($router) {
         Route::post('/register', 'TeamController@register');
+
+        Route::post('/remove-team', 'TeamController@remove_team');
     }
 );
 

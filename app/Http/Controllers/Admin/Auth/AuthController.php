@@ -299,9 +299,16 @@ class AuthController extends Controller
                         'token' => $token,
                     ];
 
-                    \Mail::to($request->email)->send(
-                        new \App\Mail\AdminResetPasswordToken($jobMailData)
-                    );
+                    try {
+                        //code...
+                        \Mail::to($request->email)->send(
+                            new \App\Mail\AdminResetPasswordToken($jobMailData)
+                        );
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                    }
+
+
 
                     return ResponseHelper::success_response(
                         'Reset password token sent to your mail, token will expiry in the next 5 minutes',
