@@ -11,10 +11,74 @@ use App\Helpers\ResponseHelper;
 use App\Models\RestaurantTeam;
 use App\Helpers\DBHelpers;
 use App\Helpers\Func;
+use App\Models\Resturant;
 
 class TeamController extends Controller
 {
     //
+
+    public function all_team(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = RestaurantTeamValidator::validate_rules(
+                $request,
+                'all_team'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                try {
+                    $user = auth('web-api')->user();
+                    $uid = $user->id;
+
+                    if (
+                        !DBHelpers::exists(Resturant::class, [
+                            'admin_uid' => $uid,
+                            'id' => $request->restaurant_id,
+                        ])
+                    ) {
+                        return ResponseHelper::error_response(
+                            'Restaurant not found on your collection',
+                            null,
+                            401
+                        );
+                    }
+
+                    $all_team = DBHelpers::data_where_paginate(
+                        RestaurantTeam::class,
+                        ['restaurant_id' => $request->restaurant_id],
+                        40
+                    );
+
+                    return ResponseHelper::success_response(
+                        'All restaurant team',
+                        $all_team
+                    );
+                } catch (Exception $e) {
+                    return ResponseHelper::error_response(
+                        'Server Error',
+                        $e->getMessage(),
+                        401
+                    );
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
 
     public function remove_team(Request $request)
     {

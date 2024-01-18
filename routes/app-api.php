@@ -35,7 +35,6 @@ Route::group(
         Route::post('/reset-password', 'AuthController@reset_password');
 
         /////// Restaurant Team //////
-
         Route::post('/team-login', 'AuthController@team_login');
     }
 );

@@ -782,7 +782,7 @@ class ResturantController extends Controller
                     ])
                 ) {
                     return ResponseHelper::error_response(
-                        'Restaurant has been deletd',
+                        'Restaurant has been deleted',
                         null,
                         401
                     );

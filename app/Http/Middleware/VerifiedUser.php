@@ -41,9 +41,14 @@ class VerifiedUser
                 $check_user->id
             );
 
-            \Mail::to($check_user->email)->send(
-                new \App\Mail\UserEmailVerification($data)
-            );
+            try {
+                //code...
+                \Mail::to($check_user->email)->send(
+                    new \App\Mail\UserEmailVerification($data)
+                );
+            } catch (\Throwable $th) {
+                //throw $th;
+            }
 
             return ResponseHelper::error_response(
                 'Email not verified yet, verification link sent to your email',
