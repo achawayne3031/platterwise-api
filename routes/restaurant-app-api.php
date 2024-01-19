@@ -9,7 +9,6 @@ Route::group(
     ],
     function ($router) {
         Route::post('/team-login', 'AuthController@team_login');
-
         Route::get('/test', 'AuthController@test');
     }
 );
@@ -17,7 +16,7 @@ Route::group(
 ///// Restaurant Team /////
 Route::group(
     [
-        'middleware' => ['cors', 'jwt.verify:team-api'],
+        'middleware' => ['cors', 'jwt.verify', 'team.user'],
         'prefix' => 'reservations',
         'namespace' => 'App\Http\Controllers\Team',
     ],

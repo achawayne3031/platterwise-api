@@ -232,7 +232,7 @@ class ReservationController extends Controller
                             'restaurant_id' => $request->restaurant_id,
                             'status' => 1,
                         ],
-                        ['restaurant'],
+                        ['restaurant', 'owner'],
                         40
                     );
 

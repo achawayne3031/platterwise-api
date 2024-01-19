@@ -68,6 +68,7 @@ class Kernel extends HttpKernel
         'cors' => \App\Http\Middleware\Cors::class, // added
         'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
         'user.verified' => \App\Http\Middleware\VerifiedUser::class,
-
+        'team.user' => \App\Http\Middleware\TeamAuth::class,
+        'web.user' => \App\Http\Middleware\WebAuth::class,
     ];
 }
