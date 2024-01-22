@@ -26,6 +26,11 @@ Route::group(
             'ReservationController@pending_reservations'
         );
 
+        Route::post(
+            '/approved-reservations',
+            'ReservationController@approved_reservations'
+        );
+
         Route::get(
             '/view-reservation/{id}',
             'ReservationController@view_reservation'

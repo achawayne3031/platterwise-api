@@ -21,6 +21,57 @@ class ReservationController extends Controller
 {
     //
 
+    public function approved_reservations(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ReservationValidators::validate_rules(
+                $request,
+                'reservations'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                try {
+                    $pending_reservations = DBHelpers::data_with_where_paginate(
+                        Reservation::class,
+                        [
+                            'restaurant_id' => $request->restaurant_id,
+                            'status' => 2,
+                        ],
+                        ['restaurant', 'owner'],
+                        40
+                    );
+
+                    return ResponseHelper::success_response(
+                        'All approved reservations team',
+                        $pending_reservations
+                    );
+                } catch (Exception $e) {
+                    return ResponseHelper::error_response(
+                        'Server Error',
+                        $e->getMessage(),
+                        401
+                    );
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['restaurant_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function check_in(Request $request)
     {
         if ($request->isMethod('post')) {

@@ -24,6 +24,8 @@ class RestaurantTeam extends Authenticatable implements JWTSubject
         'status',
     ];
 
+    protected $hidden = ['password'];
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
