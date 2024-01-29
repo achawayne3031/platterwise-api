@@ -68,7 +68,7 @@ class ReservationController extends Controller
                     $mon = CarbonPeriod::between(
                         now()->startOfMonth(),
                         now()->endOfMonth()
-                    )->filter(fn($date) => $date->isTuesday());
+                    )->filter(fn($date) => $date->isMonday());
 
                     $re = [];
                     $rese = [];
