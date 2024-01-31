@@ -700,12 +700,59 @@ class RestaurantController extends Controller
                             ->toArray();
 
                         $restaurant_data = $restaurant;
-
                         foreach ($restaurant_data as $value) {
                             if (in_array($value->id, $following_data)) {
                                 $value->following = true;
                             } else {
                                 $value->following = false;
+                            }
+                        }
+                    } else {
+                        if (isset($request->state)) {
+                            $restaurant = DBHelpers::where_query(
+                                Resturant::class,
+                                ['state' => $request->state]
+                            );
+
+                            $uid = Auth::id();
+                            $following_data = RestaurantFollowers::where([
+                                'uid' => $uid,
+                            ])
+                                ->pluck('restaurant_id')
+                                ->toArray();
+
+                            $restaurant_data = $restaurant;
+                            foreach ($restaurant_data as $value) {
+                                if (in_array($value->id, $following_data)) {
+                                    $value->following = true;
+                                } else {
+                                    $value->following = false;
+                                }
+                            }
+                        }
+
+                        if (count($restaurant) == 0) {
+                            $restaurant = DBHelpers::data_with_paginate(
+                                Resturant::class,
+                                ['owner'],
+                                40
+                            );
+
+                            if (count($restaurant->items()) > 0) {
+                                $uid = Auth::id();
+                                $following_data = RestaurantFollowers::where([
+                                    'uid' => $uid,
+                                ])
+                                    ->pluck('restaurant_id')
+                                    ->toArray();
+                                $restaurant_data = $restaurant->items();
+                                foreach ($restaurant_data as $value) {
+                                    if (in_array($value->id, $following_data)) {
+                                        $value->following = true;
+                                    } else {
+                                        $value->following = false;
+                                    }
+                                }
                             }
                         }
                     }
