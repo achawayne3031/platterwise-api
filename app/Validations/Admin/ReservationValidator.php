@@ -50,6 +50,10 @@ class ReservationValidator
             'weekly_reservation_count' => [
                 'restaurant_id' => 'required|integer',
             ],
+
+            'view_reservation' => [
+                'reservation_id' => 'required|integer',
+            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);

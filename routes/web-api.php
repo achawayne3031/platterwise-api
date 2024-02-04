@@ -62,7 +62,6 @@ Route::group(
         Route::post('/view', 'ResturantController@view_restaurant');
         Route::post('/dashboard', 'ResturantController@dashboard');
         Route::post('/edit-restaurant', 'ResturantController@edit_restaurant');
-
         Route::post('/monthly-income', 'ResturantController@monthly_income');
     }
 );
@@ -96,6 +95,11 @@ Route::group(
         Route::post('/edit', 'ReservationController@edit');
         Route::post('/check-in', 'ReservationController@check_in');
         Route::post('/create-bill', 'ReservationController@create_bill');
+
+        Route::post(
+            '/view-reservation',
+            'ReservationController@view_reservation'
+        );
 
         Route::post(
             '/weekly-reservation-count',

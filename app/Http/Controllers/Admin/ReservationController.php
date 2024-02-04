@@ -23,6 +23,45 @@ class ReservationController extends Controller
 {
     //
 
+    public function view_reservation(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ReservationValidator::validate_rules(
+                $request,
+                'view_reservation'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                $reservation = DBHelpers::with_where_query_filter(
+                    Reservation::class,
+                    ['reservation_bill', 'restaurant', 'owner'],
+                    ['id' => $request->reservation_id]
+                );
+
+                return ResponseHelper::success_response(
+                    'View reservation',
+                    $reservation
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['reservation_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function weekly_reservation_count(Request $request)
     {
         if ($request->isMethod('post')) {
@@ -255,6 +294,14 @@ class ReservationController extends Controller
                         401
                     );
                 }
+
+                DBHelpers::update_query_v3(
+                    Reservation::class,
+                    ['status' => 5],
+                    [
+                        'id' => $request->reservation_id,
+                    ]
+                );
 
                 $create = ReservationBills::create($request->all());
 
