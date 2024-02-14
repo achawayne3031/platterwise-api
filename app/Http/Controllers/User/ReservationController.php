@@ -520,6 +520,10 @@ class ReservationController extends Controller
                         }
                     }
 
+                    $reservation_code =
+                        Func::generate_reference(3, 'upper') .
+                        Func::generate_reference(10, 'numeric');
+
                     $create_data = [
                         'uid' => Auth::id(),
                         'reservation_date' => $request->reservation_date,
@@ -528,6 +532,7 @@ class ReservationController extends Controller
                         'guests' => json_encode($request->guest),
                         'all_guests' => json_encode($all_guest_data),
                         'guest_no' => count($all_guest_data),
+                        'code' => $reservation_code,
                     ];
 
                     $register = DBHelpers::create_query(

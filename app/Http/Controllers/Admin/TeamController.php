@@ -175,6 +175,12 @@ class TeamController extends Controller
                                 new \App\Mail\TeamRegisterMail($mailData)
                             );
                         } catch (\Throwable $th) {
+                            return ResponseHelper::error_response(
+                                'Registration failed, Database insertion issues',
+                                $th,
+                                401
+                            );
+
                             //throw $th;
                         }
 
