@@ -150,7 +150,7 @@ class TeamController extends Controller
 
             if (!$validate->fails() && $validate->validated()) {
                 try {
-                    $gen_password = Func::generate_reference(10, 'numeric');
+                    $gen_password = Func::generate_reference(4, 'numeric');
                     $data = [
                         'full_name' => $request->full_name,
                         'email' => $request->email,

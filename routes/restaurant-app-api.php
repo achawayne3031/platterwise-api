@@ -36,6 +36,11 @@ Route::group(
             'ReservationController@view_reservation'
         );
 
+        Route::get(
+            '/view-reservation-code/{code}',
+            'ReservationController@code'
+        );
+
         Route::post('/check-in-reservations', 'ReservationController@check_in');
 
         ////   Route::post('/team-login', 'AuthController@team_login');

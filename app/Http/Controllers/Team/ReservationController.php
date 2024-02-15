@@ -21,6 +21,28 @@ class ReservationController extends Controller
 {
     //
 
+    public function code($code)
+    {
+        if (!DBHelpers::exists(Reservation::class, ['code' => $code])) {
+            return ResponseHelper::error_response(
+                'Reservation not found',
+                null,
+                401
+            );
+        }
+
+        $reservation = DBHelpers::with_where_query_filter_first(
+            Reservation::class,
+            ['restaurant', 'owner', 'reservation_bill'],
+            ['code' => $code]
+        );
+
+        return ResponseHelper::success_response(
+            'Current reservations fetched successfully',
+            $reservation
+        );
+    }
+
     public function approved_reservations(Request $request)
     {
         if ($request->isMethod('post')) {
