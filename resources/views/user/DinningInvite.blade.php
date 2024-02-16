@@ -135,7 +135,7 @@
 
             <p class="mail-inner-text">Hi {{ $mailMessageData['guest_name'] }},</p>
 
-            <p class="mail-inner-text">We are delighted to extend <b>{{ $mailMessageData['owner_name'] }}</b> dining invitation to you at <b>{{ $mailMessageData['restaurant'] }} Restaurant</b>.</p>
+            <p class="mail-inner-text">We are delighted to extend <b>{{ $mailMessageData['owner_name'] }}'s</b> dining invitation to you at <b>{{ $mailMessageData['restaurant'] }} Restaurant</b>.</p>
 
             <h5 class="semi-inner-title">Here are the details:</h5>
 

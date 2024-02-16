@@ -23,6 +23,7 @@ class Reservation extends Model
         'all_guests',
         'cancel_reason',
         'code',
+        'is_splitted',
     ];
 
     public function owner()

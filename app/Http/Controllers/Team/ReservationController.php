@@ -21,6 +21,122 @@ class ReservationController extends Controller
 {
     //
 
+    public function view_reservation_code_v2(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ReservationValidators::validate_rules(
+                $request,
+                'code_v2'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                $user = auth('team-api')->user();
+                $restaurant_id = $user->restaurant_id;
+
+                if (
+                    !DBHelpers::exists(Reservation::class, [
+                        'code' => $request->reservation_code,
+                        'restaurant_id' => $restaurant_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant not found on your collection',
+                        null,
+                        401
+                    );
+                }
+
+                $reservation = DBHelpers::with_where_query_filter_first(
+                    Reservation::class,
+                    ['restaurant', 'owner', 'reservation_bill'],
+                    [
+                        'code' => $request->reservation_code,
+                        'restaurant_id' => $restaurant_id,
+                    ]
+                );
+
+                return ResponseHelper::success_response(
+                    'Current reservations fetched successfully',
+                    $reservation
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['reservation_code'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
+    public function view_reservation_v2(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = ReservationValidators::validate_rules(
+                $request,
+                'view_v2'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                $user = auth('team-api')->user();
+                $restaurant_id = $user->restaurant_id;
+
+                if (
+                    !DBHelpers::exists(Reservation::class, [
+                        'id' => $request->reservation_id,
+                        'restaurant_id' => $restaurant_id,
+                    ])
+                ) {
+                    return ResponseHelper::error_response(
+                        'Restaurant not found on your collection',
+                        null,
+                        401
+                    );
+                }
+
+                $reservation = DBHelpers::with_where_query_filter_first(
+                    Reservation::class,
+                    ['restaurant', 'owner', 'reservation_bill'],
+                    [
+                        'id' => $request->reservation_id,
+                        'restaurant_id' => $restaurant_id,
+                    ]
+                );
+
+                return ResponseHelper::success_response(
+                    'Current reservations fetched successfully',
+                    $reservation
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['reservation_id'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function code($code)
     {
         if (!DBHelpers::exists(Reservation::class, ['code' => $code])) {

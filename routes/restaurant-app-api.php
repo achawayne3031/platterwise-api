@@ -43,6 +43,21 @@ Route::group(
 
         Route::post('/check-in-reservations', 'ReservationController@check_in');
 
+        Route::post(
+            '/view-reservation-v2',
+            'ReservationController@view_reservation_v2'
+        );
+
+        Route::post(
+            '/view-reservation-v2',
+            'ReservationController@view_reservation_v2'
+        );
+
+        Route::post(
+            '/view-reservation-code-v2',
+            'ReservationController@view_reservation_code_v2'
+        );
+
         ////   Route::post('/team-login', 'AuthController@team_login');
     }
 );

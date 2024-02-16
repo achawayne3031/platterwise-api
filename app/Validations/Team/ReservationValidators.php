@@ -25,6 +25,12 @@ class ReservationValidators
                 'reservation_id' => 'required|integer',
                 'restaurant_id' => 'required|integer',
             ],
+            'view_v2' => [
+                'reservation_id' => 'required|integer',
+            ],
+            'code_v2' => [
+                'reservation_code' => 'required',
+            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);

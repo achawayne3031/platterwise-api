@@ -336,6 +336,14 @@ class ReservationController extends Controller
                         }
                     }
 
+                    DBHelpers::update_query_v3(
+                        Reservation::class,
+                        ['is_splitted' => 1],
+                        [
+                            'id' => $request->reservation_id,
+                        ]
+                    );
+
                     return ResponseHelper::success_response(
                         'Reservation split bills was successful',
                         null

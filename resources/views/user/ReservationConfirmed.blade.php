@@ -130,9 +130,7 @@
             <h5 class="inner-title">Reservation Confirmed</h5>
 
             <p class="mail-inner-text">Hi {{ $mailMessageData['owner_name']}},</p>
-
-            <p class="mail-inner-text">You reservations has been scheduled at <b> {{ $mailMessageData['restaurant'] }} Restaurant.</b></p>
-
+            <p class="mail-inner-text">Your reservations has been scheduled at <b> {{ $mailMessageData['restaurant'] }} Restaurant.</b></p>
             <h5 class="semi-inner-title">Reservation details:</h5>
 
                 <table class="inner-bill" width="100%" border="0" cellpadding="0" cellspacing="0">
