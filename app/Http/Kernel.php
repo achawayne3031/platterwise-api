@@ -70,5 +70,6 @@ class Kernel extends HttpKernel
         'user.verified' => \App\Http\Middleware\VerifiedUser::class,
         'team.user' => \App\Http\Middleware\TeamAuth::class,
         'web.user' => \App\Http\Middleware\WebAuth::class,
+        'super.admin' => \App\Http\Middleware\SuperAdmin::class,
     ];
 }

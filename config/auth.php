@@ -51,6 +51,10 @@ return [
             'driver' => 'jwt',
             'provider' => 'team_users',
         ],
+        'super-admin-api' => [
+            'driver' => 'jwt',
+            'provider' => 'super_admin',
+        ],
     ],
 
     /*
@@ -84,6 +88,10 @@ return [
         'team_users' => [
             'driver' => 'eloquent',
             'model' => App\Models\RestaurantTeam::class,
+        ],
+        'super_admin' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\SuperAdmin\SuperAdmin::class,
         ],
 
         // 'users' => [

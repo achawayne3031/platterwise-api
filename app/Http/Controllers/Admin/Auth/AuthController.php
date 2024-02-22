@@ -308,8 +308,6 @@ class AuthController extends Controller
                         //throw $th;
                     }
 
-
-
                     return ResponseHelper::success_response(
                         'Reset password token sent to your mail, token will expiry in the next 5 minutes',
                         null,

@@ -71,4 +71,9 @@ class AppUser extends Authenticatable implements JWTSubject
     {
         // return $this->hasMany(Resturant::class, 'id', 'restaurant_id');
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 1);
+    }
 }
