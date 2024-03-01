@@ -50,24 +50,28 @@ Route::group(
 ///// Restuarant /////
 Route::group(
     [
-        'middleware' => ['cors', 'jwt.verify'],
+        'middleware' => ['cors', 'super.admin'],
         'prefix' => 'restaurant',
-        'namespace' => 'App\Http\Controllers\User',
+        'namespace' => 'App\Http\Controllers\SuperAdmin',
     ],
     function ($router) {
         Route::get('/index', 'RestaurantController@index');
+        Route::get('/all-restaurants', 'RestaurantController@all_restaurants');
     }
 );
 
 ///// Reservation /////
 Route::group(
     [
-        'middleware' => ['cors', 'jwt.verify'],
+        'middleware' => ['cors', 'super.admin'],
         'prefix' => 'reservation',
-        'namespace' => 'App\Http\Controllers\User',
+        'namespace' => 'App\Http\Controllers\SuperAdmin',
     ],
     function ($router) {
-        Route::post('/create', 'ReservationController@create');
+        Route::get(
+            '/all-reservations',
+            'ReservationController@all_reservations'
+        );
     }
 );
 

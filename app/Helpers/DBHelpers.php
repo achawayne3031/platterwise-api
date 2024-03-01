@@ -270,6 +270,28 @@ class DBHelpers
         }
     }
 
+    public static function with_take_query(
+        $dataModel,
+        $with_clause = [],
+        $take = 8
+    ) {
+        try {
+            return $dataModel
+                ::query()
+                ->with($with_clause)
+                ->orderBy('id', 'DESC')
+                ->take($take)
+                ->get();
+        } catch (Exception $e) {
+            return ResponseHelper::error_response(
+                'Server Error',
+                $e->getMessage(),
+                401,
+                $e->getLine()
+            );
+        }
+    }
+
     public static function with_query($dataModel, $with_clause = [])
     {
         try {
@@ -407,6 +429,25 @@ class DBHelpers
     {
         try {
             return $dataModel::first();
+        } catch (Exception $e) {
+            return ResponseHelper::error_response(
+                'Server Error',
+                $e->getMessage(),
+                401,
+                $e->getLine()
+            );
+        }
+    }
+
+    ////// get all query data
+    public static function data_desc_take($dataModel, $take = 5)
+    {
+        try {
+            return $dataModel
+                ::query()
+                ->orderBy('id', 'DESC')
+                ->take($take)
+                ->get();
         } catch (Exception $e) {
             return ResponseHelper::error_response(
                 'Server Error',

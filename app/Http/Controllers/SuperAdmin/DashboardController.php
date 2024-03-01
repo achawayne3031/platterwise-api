@@ -4,9 +4,9 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
 use App\Helpers\DBHelpers;
 use App\Helpers\ResponseHelper;
-
 use App\Models\Resturant;
 use App\Models\RestaurantSeatType;
 use App\Models\RestaurantImages;
@@ -21,7 +21,12 @@ class DashboardController extends Controller
 
     public function dashboard(Request $request)
     {
+        $recent_reservation = DBHelpers::with_take_query(Reservation::class, [
+            'restaurant',
+        ]);
+
         $data = [
+            'recent_reservation' => $recent_reservation,
             'total_reservations' => Reservation::count(),
             'total_users' => AppUser::count(),
             'total_active_users' => AppUser::active()->count(),

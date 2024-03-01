@@ -24,6 +24,7 @@ class Reservation extends Model
         'cancel_reason',
         'code',
         'is_splitted',
+        'total_amount',
     ];
 
     public function owner()
