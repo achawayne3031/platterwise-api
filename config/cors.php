@@ -20,6 +20,7 @@ return [
         'web-api/*',
         'app-api/*',
         'restaurant-app-api/*',
+        'admin-api/*',
     ],
 
     'allowed_methods' => ['*'],
