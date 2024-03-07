@@ -596,6 +596,10 @@ class ResturantController extends Controller
                     'id' => $request->id,
                 ]);
 
+                DBHelpers::delete_query_multi(Resturant::class, [
+                    'id' => $request->restaurant_id,
+                ]);
+
                 return ResponseHelper::success_response(
                     'Restaurant menu picture deleted successfully',
                     null
