@@ -14,6 +14,8 @@ use App\Models\RestaurantReviews;
 use App\Models\Reservation;
 use App\Models\Transactions;
 use App\Models\User\AppUser;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -25,6 +27,17 @@ class DashboardController extends Controller
             'restaurant',
         ]);
 
+        $users_analytics = DB::table('users')
+            ->selectRaw('month(created_at) as month')
+            ->selectRaw('count(*) as count')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('count', 'month');
+
+        // foreach ($users_analytics as $key => $value) {
+        //     $key = Carbon::parse($key)->someMethodName();
+        // }
+
         $data = [
             'recent_reservation' => $recent_reservation,
             'total_reservations' => Reservation::count(),
@@ -32,6 +45,7 @@ class DashboardController extends Controller
             'total_active_users' => AppUser::active()->count(),
             'total_restaurants' => Resturant::count(),
             'total_income' => Transactions::sum('amount_paid'),
+            'users_analytics' => $users_analytics,
         ];
 
         return ResponseHelper::success_response(

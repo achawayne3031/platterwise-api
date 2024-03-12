@@ -197,6 +197,7 @@ class ResturantController extends Controller
                             'closing_hour',
                             'banner',
                             'cover_pic',
+                            'working_days',
                         ])
                     );
 

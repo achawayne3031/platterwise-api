@@ -49,6 +49,12 @@ class Transactions extends Model
         return $this->belongsTo(AppUser::class, 'user');
     }
 
+    function scopefirstWeek($query)
+    {
+        $date = Carbon::parse('this sunday')->toDateString();
+        return $query->where('created_at', '<', $date);
+    }
+
     public function scopeSunday($query)
     {
         return $query->where(
