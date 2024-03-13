@@ -33,6 +33,10 @@ class RestaurantController extends Controller
                 Reservation::class,
                 ['restaurant_id' => $value->id, 'status' => 0]
             );
+
+            $value->total_amount_paid = Transactions::where([
+                'restaurant_id' => $value->id,
+            ])->sum('amount_paid');
         }
 
         return ResponseHelper::success_response(
@@ -53,6 +57,10 @@ class RestaurantController extends Controller
                 Reservation::class,
                 ['restaurant_id' => $value->id, 'status' => 0]
             );
+
+            $value->total_amount_paid = Transactions::where([
+                'restaurant_id' => $value->id,
+            ])->sum('amount_paid');
         }
 
         $first_week = Carbon::parse('first sunday')->toDateString();

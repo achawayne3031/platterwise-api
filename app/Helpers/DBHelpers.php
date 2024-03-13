@@ -151,7 +151,7 @@ class DBHelpers
     ) {
         try {
             return $dataModel
-                ::where($column, 'LIKE', "%{$value}%")
+                ::where($column, 'LIKE', "%{$value}")
                 ->with($with)
                 ->get();
         } catch (Exception $e) {
@@ -168,7 +168,7 @@ class DBHelpers
     {
         try {
             return $dataModel
-                ::where($column, 'LIKE', "%{$value}%")
+                ::where($column, 'LIKE', "%{$value}")
                 ->with(['user'])
                 ->get();
         } catch (Exception $e) {
