@@ -34,6 +34,13 @@ class DashboardController extends Controller
             ->orderBy('month')
             ->pluck('count', 'month');
 
+        $reservation_analytics = DB::table('reservations')
+            ->selectRaw('month(created_at) as month')
+            ->selectRaw('count(*) as count')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('count', 'month');
+
         // foreach ($users_analytics as $key => $value) {
         //     $key = Carbon::parse($key)->someMethodName();
         // }
@@ -46,6 +53,7 @@ class DashboardController extends Controller
             'total_restaurants' => Resturant::count(),
             'total_income' => Transactions::sum('amount_paid'),
             'users_analytics' => $users_analytics,
+            'reservation_analytics' => $reservation_analytics,
         ];
 
         return ResponseHelper::success_response(

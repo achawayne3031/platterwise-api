@@ -47,7 +47,7 @@ class RestaurantController extends Controller
 
     public function index(Request $request)
     {
-        $recent_restaurant = DBHelpers::data_desc_take(Resturant::class, 8);
+        $recent_restaurant = DBHelpers::data_desc_take(Resturant::class, [], 8);
 
         foreach ($recent_restaurant as $value) {
             $value->total_reservation = DBHelpers::count(Reservation::class, [

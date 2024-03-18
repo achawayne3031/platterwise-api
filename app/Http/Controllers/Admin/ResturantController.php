@@ -597,10 +597,6 @@ class ResturantController extends Controller
                     'id' => $request->id,
                 ]);
 
-                DBHelpers::delete_query_multi(Resturant::class, [
-                    'id' => $request->restaurant_id,
-                ]);
-
                 return ResponseHelper::success_response(
                     'Restaurant menu picture deleted successfully',
                     null
@@ -648,10 +644,9 @@ class ResturantController extends Controller
                 }
 
                 if (
-                    DBHelpers::exists(Resturant::class, [
+                    !DBHelpers::exists(Resturant::class, [
                         'id' => $request->restaurant_id,
                         'admin_uid' => $uid,
-                        'status' => 0,
                     ])
                 ) {
                     return ResponseHelper::error_response(
@@ -661,14 +656,9 @@ class ResturantController extends Controller
                     );
                 }
 
-                DBHelpers::update_query_v3(
-                    Resturant::class,
-                    ['status' => 0],
-                    [
-                        'id' => $request->restaurant_id,
-                        'admin_uid' => $uid,
-                    ]
-                );
+                DBHelpers::delete_query_multi(Resturant::class, [
+                    'id' => $request->restaurant_id,
+                ]);
 
                 return ResponseHelper::success_response(
                     'Restaurant deleted successfully',

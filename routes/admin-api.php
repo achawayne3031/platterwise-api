@@ -18,10 +18,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/test', function (Request $request) {
-    return 'hello world';
-});
-
 ///// Auth /////
 Route::group(
     [
@@ -75,50 +71,18 @@ Route::group(
     }
 );
 
-///// Transactions /////
+///// Dashboard /////
 Route::group(
     [
-        'middleware' => ['cors', 'jwt.verify'],
-        'prefix' => 'transactions',
-        'namespace' => 'App\Http\Controllers\User',
+        'middleware' => ['cors', 'super.admin'],
+        'prefix' => 'user-list',
+        'namespace' => 'App\Http\Controllers\SuperAdmin',
     ],
     function ($router) {
-        Route::post('/reservation', 'TransactionController@reservation');
-    }
-);
+        Route::get('/index', 'UserController@index');
 
-///// User /////
-Route::group(
-    [
-        'middleware' => ['cors', 'jwt.verify', 'user.verified'],
-        'prefix' => 'user',
-        'namespace' => 'App\Http\Controllers\User',
-    ],
-    function ($router) {
-        Route::get('/profile', 'UserController@profile');
-    }
-);
-
-///// Post /////
-Route::group(
-    [
-        'middleware' => ['cors', 'jwt.verify', 'user.verified'],
-        'prefix' => 'post',
-        'namespace' => 'App\Http\Controllers\User',
-    ],
-    function ($router) {
-        Route::get('/top-liked', 'PostController@top_liked');
-    }
-);
-
-///// Post Comment /////
-Route::group(
-    [
-        'middleware' => ['cors', 'jwt.verify', 'user.verified'],
-        'prefix' => 'post-comment',
-        'namespace' => 'App\Http\Controllers\User',
-    ],
-    function ($router) {
-        Route::post('/create', 'CommentController@create');
+        Route::get('/all', 'UserController@user_list');
+        Route::post('/delete-user', 'UserController@delete_user');
+        Route::post('/view-user', 'UserController@view_user');
     }
 );
