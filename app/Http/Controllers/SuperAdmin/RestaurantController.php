@@ -20,6 +20,50 @@ class RestaurantController extends Controller
 {
     //
 
+    public function top_performing()
+    {
+        $restaurant = DBHelpers::all_data(Resturant::class);
+        $res_data = [];
+        $top_performer = [];
+        $response_data = [];
+
+        if (count($restaurant) > 0) {
+            foreach ($restaurant as $value) {
+                $data = [
+                    'total_reservation' => DBHelpers::count(
+                        Reservation::class,
+                        [
+                            'restaurant_id' => $value->id,
+                        ]
+                    ),
+                    'name' => $value->name,
+                    'email' => $value->email,
+                    'phone' => $value->phone,
+                    'address' => $value->address,
+                ];
+
+                array_push($res_data, $data);
+            }
+
+            /////// Sorting //////////
+            usort($res_data, function ($a, $b) {
+                //Sort the array using a user defined function
+                return $a['total_reservation'] > $b['total_reservation']
+                    ? -1
+                    : 1; //Compare the scores
+            });
+
+            $arrange = [
+                'top_performer' => $res_data[0],
+            ];
+        }
+
+        return ResponseHelper::success_response(
+            'Top performing restuarant',
+            $arrange
+        );
+    }
+
     public function all_restaurants(Request $request)
     {
         $recent_restaurant = DBHelpers::data_paginate(Resturant::class, 30);

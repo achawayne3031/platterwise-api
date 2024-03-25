@@ -185,7 +185,7 @@ class UserController extends Controller
 
     public function user_list(Request $request)
     {
-        $users = DBHelpers::data_paginate(Resturant::class, 30);
+        $users = DBHelpers::data_paginate(AppUser::class, 30);
         $user_data = $users->items();
 
         foreach ($user_data as $value) {

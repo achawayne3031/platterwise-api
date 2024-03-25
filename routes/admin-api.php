@@ -53,6 +53,8 @@ Route::group(
     function ($router) {
         Route::get('/index', 'RestaurantController@index');
         Route::get('/all-restaurants', 'RestaurantController@all_restaurants');
+
+        Route::get('/top-performing', 'RestaurantController@top_performing');
     }
 );
 
