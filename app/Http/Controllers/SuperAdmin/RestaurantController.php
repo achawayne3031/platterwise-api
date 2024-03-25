@@ -26,9 +26,11 @@ class RestaurantController extends Controller
         $res_data = [];
         $top_performer = [];
         $response_data = [];
+        $top_sales = [];
 
         if (count($restaurant) > 0) {
             foreach ($restaurant as $value) {
+                ///// Top performer /////
                 $data = [
                     'total_reservation' => DBHelpers::count(
                         Reservation::class,
@@ -43,9 +45,26 @@ class RestaurantController extends Controller
                 ];
 
                 array_push($res_data, $data);
+
+                ///// top sales /////
+                Transactions::where(['restaurant_id' => $value->id])->sum(
+                    'amount_paid'
+                );
+
+                $sales_data = [
+                    'total_sales' => Transactions::where([
+                        'restaurant_id' => $value->id,
+                    ])->sum('amount_paid'),
+                    'name' => $value->name,
+                    'email' => $value->email,
+                    'phone' => $value->phone,
+                    'address' => $value->address,
+                ];
+
+                array_push($top_sales, $sales_data);
             }
 
-            /////// Sorting //////////
+            /////// Sorting Top performer //////////
             usort($res_data, function ($a, $b) {
                 //Sort the array using a user defined function
                 return $a['total_reservation'] > $b['total_reservation']
@@ -53,8 +72,17 @@ class RestaurantController extends Controller
                     : 1; //Compare the scores
             });
 
+            /////// Sorting Top Sales //////////
+            if (count($top_sales) > 0) {
+                usort($top_sales, function ($a, $b) {
+                    //Sort the array using a user defined function
+                    return $a['total_sales'] > $b['total_sales'] ? -1 : 1; //Compare the scores
+                });
+            }
+
             $arrange = [
-                'top_performer' => $res_data[0],
+                'top_performer' => count($res_data) > 0 ? $res_data[0] : [],
+                'top_sales' => count($top_sales) > 0 ? $top_sales[0] : [],
             ];
         }
 
