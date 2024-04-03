@@ -55,6 +55,11 @@ Route::group(
         Route::get('/all-restaurants', 'RestaurantController@all_restaurants');
 
         Route::get('/top-performing', 'RestaurantController@top_performing');
+
+        Route::post(
+            '/all-sales-restaurant',
+            'RestaurantController@all_sales_restaurant'
+        );
     }
 );
 

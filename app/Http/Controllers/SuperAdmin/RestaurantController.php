@@ -16,9 +16,78 @@ use App\Models\Transactions;
 use App\Models\User\AppUser;
 use Carbon\Carbon;
 
+use App\Validations\SuperAdmin\RestaurantValidator;
+use App\Validations\ErrorValidation;
+use App\Helpers\Func;
+
 class RestaurantController extends Controller
 {
     //
+
+    public function all_sales_restaurant(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = RestaurantValidator::validate_rules(
+                $request,
+                'all_sales'
+            );
+
+            if (!$validate->fails() && $validate->validated()) {
+                ////   return Carbon::parse('1 April')->month;
+
+                $month_statement =
+                    'first day of ' . $request->month . ' ' . date('Y');
+
+                $first_week = Carbon::parse($month_statement)->addWeeks(1);
+                $second_week = Carbon::parse($month_statement)->addWeeks(2);
+                $third_week = Carbon::parse($month_statement)->addWeeks(3);
+                $fourth_week = Carbon::parse($month_statement)->addWeeks(4);
+
+                $first_week_sales = Transactions::where(['status' => 3])
+                    ->where('created_at', '>=', $first_week)
+                    ->sum('amount_paid');
+
+                $second_week_sales = Transactions::where(['status' => 3])
+                    ->whereBetween('created_at', [$first_week, $second_week])
+                    ->sum('amount_paid');
+
+                $third_week_sales = Transactions::where(['status' => 3])
+                    ->whereBetween('created_at', [$second_week, $third_week])
+                    ->sum('amount_paid');
+
+                $fourth_week_sales = Transactions::where(['status' => 3])
+                    ->whereBetween('created_at', [$third_week, $fourth_week])
+                    ->sum('amount_paid');
+
+                $res_data = [
+                    'first_week' => $first_week_sales,
+                    'second_week' => $second_week_sales,
+                    'third_week' => $third_week_sales,
+                    'fourth_week' => $fourth_week_sales,
+                ];
+
+                return ResponseHelper::success_response(
+                    'Monthly sales',
+                    $res_data
+                );
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = ['month'];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
 
     public function top_performing()
     {
