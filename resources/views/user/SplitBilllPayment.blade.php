@@ -113,7 +113,7 @@
           <div class="col-12">
             <div class="logo-wrapper">
               <img
-                src="https://plugin.markaimg.com/public/f4702e25/pt4aJOyqx8g8Y0yr6XcGkygNmYQGvr.png"
+                src="https://tabilli.com/Tabili.png"
                 width="241"
                 style="
                   max-width: 241px;
@@ -131,8 +131,6 @@
 
 
         <div class="d-flex justify-content-center mt-4">
-
-
             <div class="inner-wrapper">
                 <h5 class="inner-title">Your Split Payment</h5>
                 <p class="mail-inner-text">Hi {{ $mailMessageData['guest_name'] }}.</p>
@@ -143,7 +141,6 @@
                 <br />
                 Click the link below to make payment
                 </p>
-
                 <div style="text-align: center; margin-top: 10px; margin-bottom: 10px">
                     @php
                         echo "<a href=".$mailMessageData['payment_link']." target='_blank' class='verify-btn'>Make Payment</a>";
@@ -151,12 +148,12 @@
                 </div>
 
 
-                <p class="mail-inner-text mt-3">Thank you for using Platterwise!</p>
+                <p class="mail-inner-text mt-3">Thank you for using Tabilli!</p>
 
                 <p class="mail-inner-text">
                 Best,
                 <br />
-                Platterwise Team
+                Tabilli Team
                 </p>
             </div>
 

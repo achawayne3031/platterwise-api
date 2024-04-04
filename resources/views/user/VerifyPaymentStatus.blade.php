@@ -73,7 +73,7 @@
           <div class="col-12">
             <div class="logo-wrapper">
               <img
-                src="https://plugin.markaimg.com/public/f4702e25/pt4aJOyqx8g8Y0yr6XcGkygNmYQGvr.png"
+                src="https://tabilli.com/Tabili.png"
                 width="241"
                 style="
                   max-width: 241px;
