@@ -10,7 +10,7 @@
     />
 
     <link href="http://fonts.cdnfonts.com/css/verdana" rel="stylesheet" />
-    <title>Platerwise Payment Verification</title>
+    <title>Tabilli Payment Verification</title>
 
     <style>
       .main-wrapper {

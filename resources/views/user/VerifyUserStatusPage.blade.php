@@ -10,7 +10,7 @@
     />
 
     <link href="http://fonts.cdnfonts.com/css/verdana" rel="stylesheet" />
-    <title>Platerwise Verification</title>
+    <title>Tabilli Verification</title>
 
     <style>
       .main-wrapper {
