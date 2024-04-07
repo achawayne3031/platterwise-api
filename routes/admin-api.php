@@ -40,6 +40,10 @@ Route::group(
     ],
     function ($router) {
         Route::get('/index', 'DashboardController@dashboard');
+        Route::post(
+            '/reservtaion-reports',
+            'DashboardController@reservation_report'
+        );
     }
 );
 
