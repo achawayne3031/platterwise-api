@@ -22,7 +22,6 @@ use App\Helpers\Func;
 
 class DashboardController extends Controller
 {
-    //
 
     public function reservation_report(Request $request)
     {

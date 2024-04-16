@@ -344,6 +344,14 @@ class AuthController extends Controller
                         );
                     }
 
+                    if ($check_user->is_suspended == 1) {
+                        return ResponseHelper::error_response(
+                            'Your Account has been suspended, contact support',
+                            null,
+                            401
+                        );
+                    }
+
                     return ResponseHelper::success_response(
                         'Login Successful',
                         $user,

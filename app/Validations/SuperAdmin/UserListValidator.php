@@ -24,6 +24,23 @@ class UserListValidator
             'view_user' => [
                 'user_id' => 'required|integer',
             ],
+
+            'suspend_user' => [
+                'user_id' => 'required|integer',
+            ],
+
+            'activate_suspended_user' => [
+                'user_id' => 'required|integer',
+            ],
+
+            'remove_user_post' => [
+                'user_id' => 'required|integer',
+                'post_id' => 'required|integer',
+            ],
+
+            'user_reservation_activities' => [
+                'user_id' => 'required|integer',
+            ],
         ];
 
         return Func::run_validation($request, self::$validation_rules[$arg]);

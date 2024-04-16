@@ -595,7 +595,7 @@ class UserController extends Controller
                     } else {
                         return ResponseHelper::error_response(
                             'Update failed, Database insertion issues',
-                            $validate->errors(),
+                            null,
                             401
                         );
                     }

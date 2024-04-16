@@ -82,7 +82,7 @@ Route::group(
     }
 );
 
-///// Dashboard /////
+///// User /////
 Route::group(
     [
         'middleware' => ['cors', 'super.admin'],
@@ -95,5 +95,19 @@ Route::group(
         Route::get('/all', 'UserController@user_list');
         Route::post('/delete-user', 'UserController@delete_user');
         Route::post('/view-user', 'UserController@view_user');
+
+        Route::post('/suspend-user', 'UserController@suspend_user');
+
+        Route::post(
+            '/activate-suspended-user',
+            'UserController@activate_suspended_user'
+        );
+
+        Route::post('/remove-user-post', 'UserController@remove_user_post');
+
+        Route::get(
+            '/user-reservation-activities/{user}',
+            'UserController@user_reservation_activities'
+        );
     }
 );
