@@ -24,6 +24,7 @@ class UserPosts extends Model
         'status',
         'type',
         'total_comments',
+        'total_views',
         'admin_uid',
     ];
 

@@ -36,6 +36,38 @@ class UserController extends Controller
 
     /////  is_suspened
 
+    public function user_post_activities(Request $request, $user)
+    {
+        if ($request->isMethod('get')) {
+            if (
+                !DBHelpers::exists(AppUser::class, [
+                    'id' => $user,
+                ])
+            ) {
+                return ResponseHelper::error_response(
+                    'User not found',
+                    null,
+                    401
+                );
+            }
+
+            $posts = DBHelpers::data_where_paginate(UserPosts::class, [
+                'user_id' => $user,
+            ]);
+
+            return ResponseHelper::success_response(
+                'User post activities fetched successfully',
+                $posts
+            );
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function user_reservation_activities(Request $request, $user)
     {
         if ($request->isMethod('get')) {

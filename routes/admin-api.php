@@ -109,5 +109,10 @@ Route::group(
             '/user-reservation-activities/{user}',
             'UserController@user_reservation_activities'
         );
+
+        Route::get(
+            '/user-post-activities/{user}',
+            'UserController@user_post_activities'
+        );
     }
 );

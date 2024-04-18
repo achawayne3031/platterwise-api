@@ -167,6 +167,10 @@ class PostController extends Controller
                         ->get()
                         ->first();
 
+                    $post = UserPosts::find($request->post_id);
+                    // increment the value of the `follower` column by 1
+                    $post->increment('total_views');
+
                     // $mylikedpost = LikedPost::where([
                     //     'uid' => $uid,
                     // ])
