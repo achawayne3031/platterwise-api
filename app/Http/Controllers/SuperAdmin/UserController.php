@@ -51,9 +51,13 @@ class UserController extends Controller
                 );
             }
 
-            $posts = DBHelpers::data_where_paginate(UserPosts::class, [
-                'user_id' => $user,
-            ]);
+            $posts = DBHelpers::data_with_where_paginate(
+                UserPosts::class,
+                [
+                    'user_id' => $user,
+                ],
+                ['user']
+            );
 
             return ResponseHelper::success_response(
                 'User post activities fetched successfully',
