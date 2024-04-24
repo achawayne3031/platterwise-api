@@ -9,6 +9,9 @@ Route::group(
     ],
     function ($router) {
         Route::post('/team-login', 'AuthController@team_login');
+
+        Route::post('/team-logout', 'AuthController@logout');
+
         Route::get('/test', 'AuthController@test');
     }
 );
