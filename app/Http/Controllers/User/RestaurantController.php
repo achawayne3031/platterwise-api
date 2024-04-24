@@ -68,12 +68,20 @@ class RestaurantController extends Controller
             $validate = RestaurantValidator::validate_rules($request, 'search');
 
             if (!$validate->fails() && $validate->validated()) {
-                $current = DBHelpers::query_like_with_filter(
-                    Resturant::class,
+                // $current = DBHelpers::query_like_with_filter(
+                //     Resturant::class,
+                //     'name',
+                //     $request->name,
+                //     ['menu_pic', 'seat_type', 'review']
+                // );
+
+                $current = Resturant::where(
                     'name',
-                    $request->search,
-                    ['menu_pic', 'seat_type', 'review']
-                );
+                    'LIKE',
+                    "%{$request->name}%"
+                )
+                    ->with(['menu_pic', 'seat_type', 'review'])
+                    ->get();
 
                 if (count($current) > 0) {
                     $uid = Auth::id();
