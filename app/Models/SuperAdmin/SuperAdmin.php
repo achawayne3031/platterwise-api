@@ -20,7 +20,12 @@ class SuperAdmin extends Authenticatable implements JWTSubject
      *
      * @var array<int, string>
      */
-    protected $fillable = ['full_name', 'email', 'password'];
+    protected $fillable = [
+        'full_name',
+        'email',
+        'password',
+        'reset_password_token',
+    ];
 
     /**
      * The attributes that should be hidden for serialization.

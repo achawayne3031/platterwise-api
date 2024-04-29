@@ -28,6 +28,9 @@ Route::group(
     function ($router) {
         Route::post('/login', 'AuthController@login');
         Route::post('/register', 'AuthController@register');
+
+        Route::post('/validate-email', 'AuthController@validate_email');
+        Route::post('/reset-password', 'AuthController@reset_password');
     }
 );
 
