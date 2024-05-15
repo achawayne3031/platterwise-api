@@ -18,6 +18,40 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
+
+///// Promotional Ads /////
+Route::group(
+    [
+        'middleware' => ['cors', 'super.admin'],
+        'prefix' => 'promotional-ads',
+        'namespace' => 'App\Http\Controllers\SuperAdmin',
+    ],
+    function ($router) {
+        Route::post(
+            '/create',
+            'PromtionalAdsController@create'
+        );
+
+        Route::get(
+            '/get-all-promotional-ads',
+            'PromtionalAdsController@get_all_promotional_ads'
+        );
+
+
+        Route::post(
+            '/get-promotional-ad',
+            'PromtionalAdsController@get_promotional_ad'
+        );
+
+
+
+        
+        
+    }
+);
+
+
 ///// Auth /////
 Route::group(
     [
@@ -69,6 +103,7 @@ Route::group(
         );
     }
 );
+
 
 ///// Reservation /////
 Route::group(
