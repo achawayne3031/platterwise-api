@@ -161,6 +161,10 @@ Route::group(
         Route::get('/my-liked-posts', 'PostController@get_my_liked_posts');
         Route::get('/top-commented', 'PostController@top_commented');
         Route::get('/top-liked', 'PostController@top_liked');
+
+
+        Route::post('/report-post', 'PostController@report_post');
+
     }
 );
 
