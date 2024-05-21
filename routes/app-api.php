@@ -161,8 +161,6 @@ Route::group(
         Route::get('/my-liked-posts', 'PostController@get_my_liked_posts');
         Route::get('/top-commented', 'PostController@top_commented');
         Route::get('/top-liked', 'PostController@top_liked');
-
-
         Route::post('/report-post', 'PostController@report_post');
 
     }
@@ -177,5 +175,21 @@ Route::group(
     ],
     function ($router) {
         Route::post('/create', 'CommentController@create');
+    }
+);
+
+
+
+
+///// Promotional Ads //////
+Route::group(
+    [
+        'middleware' => ['cors', 'jwt.verify', 'user.verified'],
+        'prefix' => 'promotional-advert',
+        'namespace' => 'App\Http\Controllers\User',
+    ],
+    function ($router) {
+        Route::post('/get-promotional-ad', 'PromotionalAdsController@get_promotional_ad');
+        Route::get('/get-all-promotional-ads', 'PromotionalAdsController@get_all_promotional_ads');
     }
 );
