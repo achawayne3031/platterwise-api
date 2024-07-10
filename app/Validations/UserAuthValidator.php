@@ -34,12 +34,12 @@ class UserAuthValidator
             'reset_password' => [
                 'password' => 'required',
                 'otp' => 'required',
-                'verify_password' => 'required|same:password',
+                'verify_password' => 'required',
             ],
 
             'change_password' => [
                 'old_password' => 'required',
-                'new_password' => 'required|same:password',
+                'new_password' => 'required',
             ],
 
 
