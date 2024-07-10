@@ -37,6 +37,12 @@ class UserAuthValidator
                 'verify_password' => 'required|same:password',
             ],
 
+            'change_password' => [
+                'old_password' => 'required',
+                'new_password' => 'required|same:password',
+            ],
+
+
             'register' => [
                 'phone' => 'required',
                 'full_name' => 'required',

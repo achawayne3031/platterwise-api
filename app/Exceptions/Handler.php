@@ -81,6 +81,11 @@ class Handler extends ExceptionHandler
             );
         });
 
+
+        $this->renderable(function (ErrorException $error, $request) {
+            return self::serverErrResponse($error);
+        });
+
         $this->renderable(function (QueryException $error, $request) {
             return self::serverErrResponse($error);
         });

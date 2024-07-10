@@ -123,10 +123,8 @@ Route::group(
         Route::get('/profile', 'UserController@profile');
         Route::post('/edit', 'UserController@edit');
         Route::post('/search-name', 'UserController@search_by_name');
-
         Route::post('/follow', 'UserController@follow');
         Route::post('/unfollow', 'UserController@unfollow');
-
         Route::post('/other-user', 'UserController@other_user');
         Route::post('/other-user-posts', 'UserController@other_user_posts');
 
@@ -137,8 +135,10 @@ Route::group(
 
         Route::post('/user-followers', 'UserController@user_followers');
         Route::post('/user-following', 'UserController@user_following');
-
         Route::post('/logout', 'AuthController@logout');
+
+        Route::post('/change-password', 'UserController@change_password');
+
     }
 );
 

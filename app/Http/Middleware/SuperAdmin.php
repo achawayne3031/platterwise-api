@@ -17,6 +17,9 @@ class SuperAdmin
      */
     public function handle(Request $request, Closure $next)
     {
+
+       
+
         if (
             auth()
                 ->guard('super-admin-api')

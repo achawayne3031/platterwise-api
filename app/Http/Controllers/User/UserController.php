@@ -24,6 +24,86 @@ class UserController extends Controller
 {
     //
 
+    public function change_password(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validate = UserAuthValidator::validate_rules($request, 'change_password');
+
+            if (!$validate->fails() && $validate->validated()) {
+                try {
+                    $uid = Auth::id();
+
+                    $user_data = DBHelpers::query_filter_first(AppUser::class, [
+                        'id' => $uid,
+                    ]);
+
+
+                    if (password_verify($request->old_password, $user_data->password)) {
+                        $data = [
+                            'password' => \bcrypt($request->new_password),
+                        ];
+
+                        $update = DBHelpers::update_query_v3(
+                            AppUser::class,
+                            $data,
+                            ['id' => $uid]
+                        );
+
+                        if ($update) {
+                            return ResponseHelper::success_response(
+                                'User password update was successful',
+                                null
+                            );
+                        } else {
+                            return ResponseHelper::error_response(
+                                'Update failed, Database insertion issues',
+                                null,
+                                401
+                            );
+                        }
+
+                    } else {
+                        return ResponseHelper::error_response(
+                            'Invalid password',
+                            null,
+                            401
+                        );
+                    }
+
+
+
+
+
+                } catch (Exception $e) {
+                    return ResponseHelper::error_response(
+                        'Server Error',
+                        $e->getMessage(),
+                        401
+                    );
+                }
+            } else {
+                $errors = json_decode($validate->errors());
+                $props = [
+                    'old_password',
+                    'new_password'
+                ];
+                $error_res = ErrorValidation::arrange_error($errors, $props);
+
+                return ResponseHelper::error_response(
+                    'validation error',
+                    $error_res,
+                    401
+                );
+            }
+        } else {
+            return ResponseHelper::error_response(
+                'HTTP Request not allowed',
+                '',
+                404
+            );
+        }
+    }
+
     public function user_following(Request $request)
     {
         if ($request->isMethod('post')) {
